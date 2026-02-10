@@ -38,6 +38,7 @@ import {
   LogIn,
   LogOut,
   User,
+  Ghost,
 } from "lucide-react";
 
 // Firebase importy
@@ -69,7 +70,7 @@ import {
 // 🔧 KONFIGURACE A KONSTANTY
 // ==========================================
 
-const APP_VERSION = "v2.3.1-visual-polish";
+const APP_VERSION = "v2.3.3-auth-debug";
 
 // Pomocné funkce
 const getEnv = (key) => {
@@ -228,7 +229,7 @@ const KitCard = React.memo(({ kit, onClick, projectName }) => {
   );
 });
 
-// --- SETTINGS MODAL (Google Auth + Visual Restore) ---
+// --- SETTINGS MODAL ---
 const SettingsModal = ({ user, onClose, kits, projects }) => {
   const [copied, setCopied] = useState(false);
   const [importing, setImporting] = useState(false);
@@ -363,6 +364,17 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
     }
   };
 
+  const handleAnonymousLogin = async () => {
+    try {
+      setAuthLoading(true);
+      await signInAnonymously(auth);
+    } catch (e) {
+      alert("Chyba přihlášení: " + e.message);
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
   const migrateData = async (sourceUid, targetUid) => {
     const batch = writeBatch(db);
     let count = 0;
@@ -403,10 +415,24 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
   };
 
   const handleLogout = async () => {
-    if (confirm("Opravdu se odhlásit?")) {
+    // Zde jsem odstranil confirm(), který mohl blokovat odhlášení
+    setAuthLoading(true);
+    try {
       await signOut(auth);
-      onClose();
+      // Úspěšné odhlášení by mělo automaticky aktualizovat 'user' na null přes onAuthStateChanged v App.jsx
+    } catch (error) {
+      alert("Chyba při odhlašování: " + error.message);
+    } finally {
+      setAuthLoading(false);
     }
+  };
+
+  // Vylepšené zobrazení jména
+  const getDisplayName = () => {
+    if (!user) return "Nepřihlášen";
+    if (user.isAnonymous) return "Anonymní uživatel";
+    if (user.email) return user.email;
+    return "Uživatel bez emailu";
   };
 
   return (
@@ -426,21 +452,44 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
           <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
             <div className="flex items-center gap-3 mb-3">
               <div
-                className={`p-2 rounded-full ${user?.isAnonymous ? "bg-orange-500/20 text-orange-400" : "bg-green-500/20 text-green-400"}`}
+                className={`p-2 rounded-full ${!user ? "bg-slate-700 text-slate-400" : user.isAnonymous ? "bg-orange-500/20 text-orange-400" : "bg-green-500/20 text-green-400"}`}
               >
-                <User size={20} />
+                {user ? <User size={20} /> : <Ghost size={20} />}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-slate-500 font-bold uppercase">
                   Přihlášen jako
                 </p>
                 <p className="text-sm text-white font-medium truncate">
-                  {user?.isAnonymous ? "Anonymní uživatel" : user?.email}
+                  {getDisplayName()}
                 </p>
               </div>
             </div>
 
-            {user?.isAnonymous ? (
+            {/* TLAČÍTKA PODLE STAVU PŘIHLÁŠENÍ */}
+            {!user ? (
+              <div className="space-y-2">
+                <button
+                  onClick={handleGoogleLogin}
+                  disabled={authLoading}
+                  className="w-full bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-lg font-bold text-sm flex items-center justify-center gap-2"
+                >
+                  {authLoading ? (
+                    <Loader2 className="animate-spin" size={16} />
+                  ) : (
+                    <LogIn size={16} />
+                  )}
+                  Přihlásit přes Google
+                </button>
+                <button
+                  onClick={handleAnonymousLogin}
+                  disabled={authLoading}
+                  className="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-lg font-bold text-sm flex items-center justify-center gap-2"
+                >
+                  <Ghost size={16} /> Pokračovat anonymně
+                </button>
+              </div>
+            ) : user.isAnonymous ? (
               <button
                 onClick={handleGoogleLogin}
                 disabled={authLoading}
@@ -451,14 +500,20 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
                 ) : (
                   <LogIn size={16} />
                 )}
-                {migrationStatus || "Přihlásit přes Google"}
+                {migrationStatus || "Přejít na Google účet"}
               </button>
             ) : (
               <button
                 onClick={handleLogout}
+                disabled={authLoading}
                 className="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-colors"
               >
-                <LogOut size={16} /> Odhlásit se
+                {authLoading ? (
+                  <Loader2 className="animate-spin" size={16} />
+                ) : (
+                  <LogOut size={16} />
+                )}{" "}
+                Odhlásit se
               </button>
             )}
           </div>
@@ -482,7 +537,6 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
                 )}
               </button>
             </div>
-            {/* RESTORED: Vysvětlující popisek */}
             <p className="text-xs text-slate-500">
               Toto ID slouží k identifikaci vašich dat v cloudu. Uschovejte ho
               pro případnou manuální synchronizaci, pokud nepoužíváte Google
@@ -496,13 +550,14 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
             )}
           </div>
 
-          {/* RESTORED: Status synchronizace Box */}
           <div className="bg-blue-900/20 p-4 rounded-xl border border-blue-500/20">
             <h4 className="font-bold text-blue-400 mb-1 flex items-center gap-2">
               <RefreshCw size={16} /> Status synchronizace
             </h4>
             <p className="text-sm text-blue-200/80">
-              Všechna data jsou automaticky ukládána do cloudu v reálném čase.
+              {user
+                ? "Všechna data jsou automaticky ukládána do cloudu v reálném čase."
+                : "Jste offline. Přihlašte se pro synchronizaci."}
             </p>
           </div>
 
@@ -538,7 +593,6 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
                 />
               </label>
             </div>
-            {/* RESTORED: Vysvětlující popisek k exportu */}
             <p className="text-[10px] text-slate-500 mt-2 text-center">
               Export vytvoří soubor JSON se všemi modely a projekty. Import
               tento soubor načte a obnoví data.
