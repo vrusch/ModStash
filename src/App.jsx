@@ -70,7 +70,7 @@ import {
 // 🔧 KONFIGURACE A KONSTANTY
 // ==========================================
 
-const APP_VERSION = "v2.3.3-auth-debug";
+const APP_VERSION = "v2.3.5-rollback";
 
 // Pomocné funkce
 const getEnv = (key) => {
@@ -103,7 +103,11 @@ const firebaseConfig = {
 };
 
 if (typeof __firebase_config !== "undefined") {
-  Object.assign(firebaseConfig, JSON.parse(__firebase_config));
+  try {
+    Object.assign(firebaseConfig, JSON.parse(__firebase_config));
+  } catch (e) {
+    console.warn("Config parse error");
+  }
 }
 
 // Inicializace Firebase
@@ -331,18 +335,21 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
 
   // --- GOOGLE LOGIN & MIGRATION ---
   const handleGoogleLogin = async () => {
-    if (!auth) return;
+    if (!auth) {
+      alert("Chyba: Firebase Auth není inicializován.");
+      return;
+    }
+
     const oldUid = user?.uid;
     const isAnonymous = user?.isAnonymous;
     const provider = new GoogleAuthProvider();
 
     try {
       setAuthLoading(true);
-      // 1. Sign In
       const result = await signInWithPopup(auth, provider);
       const newUser = result.user;
 
-      // 2. Check if we need migration (Anonymous -> Google)
+      // Migrace dat
       if (isAnonymous && oldUid && newUser.uid !== oldUid) {
         if (kits.length > 0 || projects.length > 0) {
           if (
@@ -376,10 +383,10 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
   };
 
   const migrateData = async (sourceUid, targetUid) => {
+    if (!db) return;
     const batch = writeBatch(db);
     let count = 0;
 
-    // Migrate Kits
     kits.forEach((kit) => {
       const newRef = doc(
         db,
@@ -393,8 +400,6 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
       batch.set(newRef, kit);
       count++;
     });
-
-    // Migrate Projects
     projects.forEach((proj) => {
       const newRef = doc(
         db,
@@ -409,17 +414,14 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
       count++;
     });
 
-    if (count > 0) {
-      await batch.commit();
-    }
+    if (count > 0) await batch.commit();
   };
 
   const handleLogout = async () => {
-    // Zde jsem odstranil confirm(), který mohl blokovat odhlášení
+    if (!auth) return;
     setAuthLoading(true);
     try {
       await signOut(auth);
-      // Úspěšné odhlášení by mělo automaticky aktualizovat 'user' na null přes onAuthStateChanged v App.jsx
     } catch (error) {
       alert("Chyba při odhlašování: " + error.message);
     } finally {
@@ -427,12 +429,12 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
     }
   };
 
-  // Vylepšené zobrazení jména
   const getDisplayName = () => {
     if (!user) return "Nepřihlášen";
     if (user.isAnonymous) return "Anonymní uživatel";
     if (user.email) return user.email;
-    return "Uživatel bez emailu";
+    // Pokud máme uživatele bez emailu (Custom Token atd.)
+    return `Uživatel (ID: ${user.uid.substring(0, 6)}...)`;
   };
 
   return (
@@ -466,7 +468,6 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
               </div>
             </div>
 
-            {/* TLAČÍTKA PODLE STAVU PŘIHLÁŠENÍ */}
             {!user ? (
               <div className="space-y-2">
                 <button
@@ -478,7 +479,7 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
                     <Loader2 className="animate-spin" size={16} />
                   ) : (
                     <LogIn size={16} />
-                  )}
+                  )}{" "}
                   Přihlásit přes Google
                 </button>
                 <button
@@ -499,7 +500,7 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
                   <Loader2 className="animate-spin" size={16} />
                 ) : (
                   <LogIn size={16} />
-                )}
+                )}{" "}
                 {migrationStatus || "Přejít na Google účet"}
               </button>
             ) : (
@@ -542,12 +543,6 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
               pro případnou manuální synchronizaci, pokud nepoužíváte Google
               účet.
             </p>
-            {user?.isAnonymous && (
-              <p className="text-[10px] text-orange-400 mt-1 flex items-center gap-1">
-                <AlertTriangle size={10} /> Data jsou uložena pouze v tomto
-                prohlížeči. Pro trvalou zálohu se přihlašte.
-              </p>
-            )}
           </div>
 
           <div className="bg-blue-900/20 p-4 rounded-xl border border-blue-500/20">
