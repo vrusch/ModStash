@@ -32,6 +32,12 @@ import {
   CloudOff,
   Loader2,
   AlertTriangle,
+  Copy,
+  Settings,
+  Lock,
+  CloudCog,
+  Skull,
+  Trophy,
 } from "lucide-react";
 
 // Firebase importy
@@ -56,10 +62,10 @@ import {
 } from "firebase/auth";
 
 // ==========================================
-// 🔧 KONFIGURACE FIREBASE (Podle vzoru Modelářský Sklad)
+// 🔧 KONFIGURACE FIREBASE (Modelářský Deník)
 // ==========================================
 
-const APP_VERSION = "v1.8.0-stable";
+const APP_VERSION = "v1.9.8-icons-trunc";
 
 // Pomocná funkce pro bezpečné čtení env proměnných
 const getEnv = (key) => {
@@ -122,6 +128,8 @@ const KitCard = ({ kit, onClick, projectName }) => {
         return "border-l-4 border-l-green-500 opacity-70";
       case "wishlist":
         return "border-l-4 border-l-purple-500 border-dashed";
+      case "scrap":
+        return "border-l-4 border-l-slate-600 opacity-50 grayscale";
       default:
         return "border-slate-700";
     }
@@ -133,22 +141,34 @@ const KitCard = ({ kit, onClick, projectName }) => {
       className={`bg-slate-800 rounded-lg p-3 mb-2 shadow-sm hover:bg-slate-750 cursor-pointer transition-all border border-slate-700 ${getStatusColor(kit.status)} relative group`}
     >
       <div className="flex justify-between items-start">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] font-bold bg-slate-900 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700">
+        <div className="flex-1 min-w-0">
+          {" "}
+          {/* min-w-0 pro správný truncate */}
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="text-[10px] font-bold bg-slate-900 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700 whitespace-nowrap">
               {kit.scale}
             </span>
             <span className="text-xs font-bold text-slate-400 uppercase tracking-wider truncate">
               {kit.brand} {kit.catNum && `• ${kit.catNum}`}
             </span>
           </div>
-          <h3 className="font-bold text-slate-100 leading-tight mb-1">
-            {kit.name}
+          {/* HLAVNÍ NÁZEV + VARIANTA (INLINE) */}
+          <h3 className="font-bold text-slate-100 leading-tight truncate text-base">
+            {kit.subject ? (
+              <>
+                {kit.subject}
+                <span className="text-slate-400 text-xs font-bold ml-1.5 opacity-80">
+                  {kit.name}
+                </span>
+              </>
+            ) : (
+              kit.name
+            )}
           </h3>
-
           {projectName && (
             <div className="flex items-center gap-1.5 text-xs text-blue-400 mt-2 font-medium">
-              <Folder size={14} /> <span>{projectName}</span>
+              <Folder size={14} />{" "}
+              <span className="truncate">{projectName}</span>
             </div>
           )}
           {!projectName && kit.legacyProject && (
@@ -156,33 +176,122 @@ const KitCard = ({ kit, onClick, projectName }) => {
               className="flex items-center gap-1.5 text-xs text-slate-500 mt-2 italic"
               title="Tento model byl součástí projektu, který byl smazán."
             >
-              <History size={14} /> <span>Ex-projekt: {kit.legacyProject}</span>
+              <History size={14} />{" "}
+              <span className="truncate">Ex-projekt: {kit.legacyProject}</span>
             </div>
           )}
         </div>
-        {kit.status === "wip" && (
-          <div className="flex flex-col items-end">
-            <span className="text-xs font-mono text-orange-400">
-              {kit.progress}%
-            </span>
-            <div className="w-12 h-1 bg-slate-700 rounded-full mt-1">
-              <div
-                className="h-full bg-orange-500 rounded-full"
-                style={{ width: `${kit.progress}%` }}
-              ></div>
-            </div>
-          </div>
-        )}
-        {kit.status === "wishlist" && (
-          <ShoppingCart size={16} className="text-purple-400" />
-        )}
 
-        {(kit.scalematesUrl ||
-          (kit.attachments && kit.attachments.length > 0)) && (
-          <div className="absolute bottom-2 right-2 text-slate-600">
-            <Paperclip size={14} />
+        {/* Pravá strana karty - IKONY STAVŮ */}
+        <div className="ml-2 flex flex-col items-end shrink-0 gap-1">
+          {/* Status Icon */}
+          {kit.status === "wip" && (
+            <div className="flex flex-col items-end">
+              <span className="text-xs font-mono text-orange-400">
+                {kit.progress}%
+              </span>
+              <div className="w-12 h-1 bg-slate-700 rounded-full mt-1">
+                <div
+                  className="h-full bg-orange-500 rounded-full"
+                  style={{ width: `${kit.progress}%` }}
+                ></div>
+              </div>
+            </div>
+          )}
+          {kit.status === "wishlist" && (
+            <ShoppingCart size={18} className="text-purple-400" />
+          )}
+          {kit.status === "scrap" && (
+            <Skull size={18} className="text-slate-500" />
+          )}
+          {kit.status === "finished" && (
+            <Trophy size={18} className="text-green-500" />
+          )}
+          {kit.status === "new" && (
+            <Package size={18} className="text-blue-400" />
+          )}
+
+          {/* Attachment Icon */}
+          {(kit.scalematesUrl ||
+            (kit.attachments && kit.attachments.length > 0)) && (
+            <div
+              className={`text-slate-600 ${kit.status === "wip" ? "mt-1" : ""}`}
+            >
+              <Paperclip size={14} />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- MODÁLNÍ OKNO NASTAVENÍ / CLOUD IDENTITY ---
+const SettingsModal = ({ user, onClose }) => {
+  const [copied, setCopied] = useState(false);
+
+  const copyToClipboard = () => {
+    if (user?.uid) {
+      navigator.clipboard.writeText(user.uid);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+      <div className="bg-slate-900 w-full max-w-md rounded-2xl border border-slate-700 shadow-2xl overflow-hidden">
+        <div className="bg-slate-800 p-4 border-b border-slate-700 flex justify-between items-center">
+          <h2 className="text-lg font-bold text-white flex items-center gap-2">
+            <Cloud className="text-blue-400" size={20} /> Nastavení Cloudu
+          </h2>
+          <button onClick={onClose} className="text-slate-400 hover:text-white">
+            <X size={24} />
+          </button>
+        </div>
+
+        <div className="p-6 space-y-6">
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+              ID Deníku (Warehouse ID)
+            </label>
+            <div className="flex gap-2">
+              <code className="flex-1 bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm font-mono text-slate-300 break-all">
+                {user?.uid || "Nepřipojeno"}
+              </code>
+              <button
+                onClick={copyToClipboard}
+                className="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 p-3 rounded-lg transition-colors relative"
+                title="Kopírovat ID"
+              >
+                {copied ? (
+                  <Check size={20} className="text-green-500" />
+                ) : (
+                  <Copy size={20} />
+                )}
+              </button>
+            </div>
+            <p className="text-xs text-slate-500">
+              Toto ID slouží k identifikaci vašich dat v cloudu. Uschovejte ho
+              pro případnou synchronizaci na jiném zařízení.
+            </p>
           </div>
-        )}
+
+          <div className="bg-blue-900/20 p-4 rounded-xl border border-blue-500/20">
+            <h4 className="font-bold text-blue-400 mb-1 flex items-center gap-2">
+              <Cloud size={16} /> Status synchronizace
+            </h4>
+            <p className="text-sm text-blue-200/80">
+              Všechna data jsou automaticky ukládána do cloudu v reálném čase.
+            </p>
+          </div>
+        </div>
+
+        <div className="p-4 bg-slate-950 border-t border-slate-800 text-center">
+          <span className="text-xs text-slate-600">
+            Verze aplikace: {APP_VERSION}
+          </span>
+        </div>
       </div>
     </div>
   );
@@ -207,6 +316,7 @@ const ProjectDetailModal = ({
     brand: "",
     name: "",
     scale: "",
+    subject: "",
   });
   const [showAddWishlist, setShowAddWishlist] = useState(false);
   const [newAccessory, setNewAccessory] = useState({
@@ -239,7 +349,7 @@ const ProjectDetailModal = ({
         status: "wishlist",
         projectId: project.id,
       });
-      setNewWishlistKit({ brand: "", name: "", scale: "" });
+      setNewWishlistKit({ brand: "", name: "", scale: "", subject: "" });
       setShowAddWishlist(false);
     }
   };
@@ -354,8 +464,13 @@ const ProjectDetailModal = ({
                             className="text-purple-400 shrink-0"
                           />
                         )}
-                        <span className="text-sm truncate">{k.name}</span>
-                        <span className="text-[10px] text-slate-500">
+                        <span className="text-sm truncate">
+                          {k.subject ? (
+                            <span className="font-bold mr-1">{k.subject}</span>
+                          ) : null}
+                          {k.name}
+                        </span>
+                        <span className="text-[10px] text-slate-500 shrink-0">
                           {k.scale}
                         </span>
                       </div>
@@ -403,7 +518,8 @@ const ProjectDetailModal = ({
                       <option value="">-- Vyber model ze skladu --</option>
                       {availableKits.map((k) => (
                         <option key={k.id} value={k.id}>
-                          {k.name} ({k.scale})
+                          {k.subject ? `${k.subject} ${k.name}` : k.name} (
+                          {k.scale})
                         </option>
                       ))}
                     </select>
@@ -418,17 +534,30 @@ const ProjectDetailModal = ({
                 )}
                 {showAddWishlist && (
                   <div className="mt-3 p-2 bg-slate-900 rounded border border-slate-700 animate-in slide-in-from-top-2 space-y-2">
-                    <input
-                      className="w-full bg-slate-800 border border-slate-600 rounded p-1.5 text-xs text-white"
-                      placeholder="Název modelu"
-                      value={newWishlistKit.name}
-                      onChange={(e) =>
-                        setNewWishlistKit({
-                          ...newWishlistKit,
-                          name: e.target.value,
-                        })
-                      }
-                    />
+                    <div className="space-y-2">
+                      <input
+                        className="w-full bg-slate-800 border border-slate-600 rounded p-1.5 text-xs text-white"
+                        placeholder="Předloha / Typ (např. F-16C)"
+                        value={newWishlistKit.subject}
+                        onChange={(e) =>
+                          setNewWishlistKit({
+                            ...newWishlistKit,
+                            subject: e.target.value,
+                          })
+                        }
+                      />
+                      <input
+                        className="w-full bg-slate-800 border border-slate-600 rounded p-1.5 text-xs text-white"
+                        placeholder="Název krabice / Varianta"
+                        value={newWishlistKit.name}
+                        onChange={(e) =>
+                          setNewWishlistKit({
+                            ...newWishlistKit,
+                            name: e.target.value.toLowerCase(),
+                          })
+                        }
+                      />
+                    </div>
                     <div className="flex gap-2">
                       <input
                         className="flex-1 bg-slate-800 border border-slate-600 rounded p-1.5 text-xs text-white"
@@ -437,7 +566,9 @@ const ProjectDetailModal = ({
                         onChange={(e) =>
                           setNewWishlistKit({
                             ...newWishlistKit,
-                            brand: e.target.value,
+                            brand:
+                              e.target.value.charAt(0).toUpperCase() +
+                              e.target.value.slice(1),
                           })
                         }
                       />
@@ -538,9 +669,9 @@ const ProjectDetailModal = ({
                                 href={acc.url}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="text-[10px] text-blue-400 hover:underline flex items-center gap-1"
+                                className="text-xs text-blue-400 flex items-center gap-1 hover:underline"
                               >
-                                <LinkIcon size={10} /> Link
+                                <LinkIcon size={10} /> Odkaz do obchodu
                               </a>
                             )}
                           </div>
@@ -564,17 +695,7 @@ const ProjectDetailModal = ({
           )}
         </div>
 
-        <div className="p-4 border-t border-slate-800 bg-slate-800/30 flex justify-between rounded-b-xl">
-          {data.id ? (
-            <button
-              onClick={() => onDelete(data.id)}
-              className="text-red-400 hover:text-red-300 px-3 py-2 text-sm flex items-center gap-2"
-            >
-              <Trash2 size={16} /> Smazat
-            </button>
-          ) : (
-            <div></div>
-          )}
+        <div className="p-4 border-t border-slate-800 bg-slate-800/30 flex justify-end rounded-b-xl">
           <button
             onClick={() => onSave(data)}
             className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-bold shadow-lg flex items-center gap-2"
@@ -603,7 +724,18 @@ const KitDetailModal = ({ kit, onClose, onSave, onDelete, projects }) => {
     type: "manual",
   });
 
-  const handleSave = () => onSave(data);
+  // Validace měřítka
+  const isScaleValid = (scaleStr) => {
+    if (!scaleStr) return true; // prázdné je validní (nepovinné)
+    return /^\d+\/\d+$/.test(scaleStr);
+  };
+
+  const handleSave = () => {
+    // Pokud není validní měřítko, upozorníme, ale uložíme (nebo zablokujeme?)
+    // Zadání znělo "hlídat vstup", vizuální indikace zatím stačí, nebo lze blokovat uložení.
+    // Zde nechám uložení, ale UI bude svítit červeně.
+    onSave(data);
+  };
 
   const addTodo = () => {
     if (!newTodo.trim()) return;
@@ -666,71 +798,143 @@ const KitDetailModal = ({ kit, onClose, onSave, onDelete, projects }) => {
   };
 
   const openScalematesSearch = () => {
-    const query = encodeURIComponent(
-      `${data.brand} ${data.catNum} ${data.name}`,
-    );
+    // Hledáme primárně podle předlohy, pokud je, jinak podle názvu
+    const searchString = `${data.brand} ${data.catNum} ${data.subject || data.name}`;
+    const query = encodeURIComponent(searchString);
     window.open(`https://www.scalemates.com/search.php?q=${query}`, "_blank");
   };
+
+  // Logic pro přístupnost záložky stavba
+  const isBuildTabDisabled = data.status !== "wip";
 
   return (
     <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 animate-in fade-in">
       <div className="bg-slate-900 w-full max-w-2xl rounded-xl border border-slate-700 flex flex-col max-h-[95vh] shadow-2xl">
-        <div className="p-4 border-b border-slate-800 bg-slate-800/50 flex justify-between items-start rounded-t-xl">
-          <div className="flex-1 mr-4">
-            <input
-              className="text-xl font-bold bg-transparent border-none text-white w-full focus:ring-0 p-0 placeholder-slate-500"
-              value={data.name}
-              onChange={(e) => setData({ ...data, name: e.target.value })}
-              placeholder="Název modelu"
-            />
-            <div className="flex gap-2 mt-2">
+        {/* HLAVIČKA DETAILU - PŘEPRACOVANÁ */}
+        <div className="p-4 border-b border-slate-800 bg-slate-800/50 flex flex-col gap-3 rounded-t-xl">
+          <div className="flex justify-between items-start">
+            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+              <Box size={16} /> Detail Modelu
+            </h3>
+            <button
+              onClick={onClose}
+              className="text-slate-400 hover:text-white p-1 bg-slate-800 rounded-full hover:bg-slate-700"
+            >
+              <X size={20} />
+            </button>
+          </div>
+
+          <div className="space-y-3">
+            {/* 1. Řádek: Výrobce | Měřítko | Kat. Číslo */}
+            <div className="flex gap-2">
               <input
-                className="bg-slate-950 text-xs text-slate-300 border border-slate-700 rounded px-2 py-1 w-20 text-center"
+                className="flex-1 bg-slate-950 text-sm text-white border border-slate-700 rounded px-3 py-2 placeholder-slate-600 focus:border-blue-500 outline-none"
+                value={data.brand}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  const capitalized =
+                    val.length > 0
+                      ? val.charAt(0).toUpperCase() + val.slice(1)
+                      : val;
+                  setData({ ...data, brand: capitalized });
+                }}
+                placeholder="Výrobce (např. Eduard)"
+              />
+              <input
+                className={`w-20 text-center bg-slate-950 text-sm text-white border ${isScaleValid(data.scale) ? "border-slate-700" : "border-red-500 text-red-300"} rounded px-3 py-2 placeholder-slate-600 focus:border-blue-500 outline-none`}
                 value={data.scale}
                 onChange={(e) => setData({ ...data, scale: e.target.value })}
-                placeholder="Měřítko"
+                placeholder="1/48"
+                title={
+                  isScaleValid(data.scale)
+                    ? "Měřítko"
+                    : "Zadejte formát číslo/číslo"
+                }
               />
               <input
-                className="bg-slate-950 text-xs text-slate-300 border border-slate-700 rounded px-2 py-1 flex-1"
-                value={data.brand}
-                onChange={(e) => setData({ ...data, brand: e.target.value })}
-                placeholder="Výrobce"
+                className="w-24 text-center bg-slate-950 text-sm text-white border border-slate-700 rounded px-3 py-2 placeholder-slate-600 focus:border-blue-500 outline-none"
+                value={data.catNum}
+                onChange={(e) => setData({ ...data, catNum: e.target.value })}
+                placeholder="Kat. č."
               />
             </div>
+
+            {/* 2. Řádek: Předloha a Název vedle sebe */}
+            <div className="flex gap-2">
+              {/* Předloha */}
+              <div className="relative flex-1">
+                <label className="absolute -top-2 left-2 px-1 bg-slate-900 text-[10px] text-blue-400 font-bold z-10">
+                  Předloha / Typ
+                </label>
+                <input
+                  className="w-full bg-slate-950 text-sm font-bold text-white border border-slate-700 rounded px-3 py-2 placeholder-slate-600 focus:border-blue-500 outline-none"
+                  value={data.subject || ""}
+                  onChange={(e) =>
+                    setData({ ...data, subject: e.target.value })
+                  }
+                  placeholder="např. F-16C"
+                />
+              </div>
+
+              {/* Název Krabice */}
+              <div className="relative flex-[1.5]">
+                <label className="absolute -top-2 left-2 px-1 bg-slate-900 text-[10px] text-slate-500 font-bold z-10">
+                  Název Krabice
+                </label>
+                <input
+                  className="w-full bg-slate-950 text-xs font-bold text-white border border-slate-700 rounded px-3 py-2.5 placeholder-slate-600 focus:border-blue-500 outline-none"
+                  value={data.name}
+                  onChange={(e) =>
+                    setData({ ...data, name: e.target.value.toLowerCase() })
+                  }
+                  placeholder="např. tiger meet 2010"
+                />
+              </div>
+            </div>
           </div>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-white p-1"
-          >
-            <X size={24} />
-          </button>
         </div>
 
+        {/* TABS */}
         <div className="flex border-b border-slate-800 bg-slate-950 overflow-x-auto">
           <button
             onClick={() => setActiveTab("info")}
-            className={`flex-1 min-w-[80px] py-3 text-sm font-medium flex justify-center items-center gap-2 ${activeTab === "info" ? "text-blue-400 border-b-2 border-blue-400" : "text-slate-500"}`}
+            className={`flex-1 min-w-[80px] py-3 text-sm font-medium flex justify-center items-center gap-2 ${activeTab === "info" ? "text-blue-400 border-b-2 border-blue-400" : "text-slate-500 hover:text-slate-300"}`}
           >
             <FileText size={16} />{" "}
             <span className="hidden sm:inline">Info</span>
           </button>
+
+          {/* Tlačítko Stavba - podmíněně aktivní */}
           <button
-            onClick={() => setActiveTab("build")}
-            className={`flex-1 min-w-[80px] py-3 text-sm font-medium flex justify-center items-center gap-2 ${activeTab === "build" ? "text-orange-400 border-b-2 border-orange-400" : "text-slate-500"}`}
+            onClick={() => !isBuildTabDisabled && setActiveTab("build")}
+            disabled={isBuildTabDisabled}
+            className={`flex-1 min-w-[80px] py-3 text-sm font-medium flex justify-center items-center gap-2 transition-colors ${
+              activeTab === "build"
+                ? "text-orange-400 border-b-2 border-orange-400"
+                : isBuildTabDisabled
+                  ? "text-slate-700 cursor-not-allowed"
+                  : "text-slate-500 hover:text-slate-300"
+            }`}
+            title={
+              isBuildTabDisabled
+                ? "Dostupné pouze pro modely ve stavu 'Rozestavěno'"
+                : ""
+            }
           >
-            <Hammer size={16} />{" "}
+            {isBuildTabDisabled ? <Lock size={14} /> : <Hammer size={16} />}
             <span className="hidden sm:inline">Stavba</span>
           </button>
+
           <button
             onClick={() => setActiveTab("parts")}
-            className={`flex-1 min-w-[80px] py-3 text-sm font-medium flex justify-center items-center gap-2 ${activeTab === "parts" ? "text-green-400 border-b-2 border-green-400" : "text-slate-500"}`}
+            className={`flex-1 min-w-[80px] py-3 text-sm font-medium flex justify-center items-center gap-2 ${activeTab === "parts" ? "text-green-400 border-b-2 border-green-400" : "text-slate-500 hover:text-slate-300"}`}
           >
             <Layers size={16} />{" "}
             <span className="hidden sm:inline">Doplňky</span>
           </button>
           <button
             onClick={() => setActiveTab("files")}
-            className={`flex-1 min-w-[80px] py-3 text-sm font-medium flex justify-center items-center gap-2 ${activeTab === "files" ? "text-purple-400 border-b-2 border-purple-400" : "text-slate-500"}`}
+            className={`flex-1 min-w-[80px] py-3 text-sm font-medium flex justify-center items-center gap-2 ${activeTab === "files" ? "text-purple-400 border-b-2 border-purple-400" : "text-slate-500 hover:text-slate-300"}`}
           >
             <Paperclip size={16} />{" "}
             <span className="hidden sm:inline">Přílohy</span>
@@ -740,7 +944,7 @@ const KitDetailModal = ({ kit, onClose, onSave, onDelete, projects }) => {
         <div className="flex-1 overflow-y-auto p-4 bg-slate-900">
           {activeTab === "info" && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <div>
                   <label className="block text-xs text-slate-500 mb-1">
                     Status
@@ -756,43 +960,44 @@ const KitDetailModal = ({ kit, onClose, onSave, onDelete, projects }) => {
                     <option value="wip">🚧 Rozestavěno</option>
                     <option value="finished">🏆 Hotovo</option>
                     <option value="wishlist">🛒 Chci koupit</option>
+                    <option value="scrap">♻️ Vrakoviště</option>
                   </select>
+                  {data.status !== "wip" && (
+                    <p className="text-[10px] text-slate-500 mt-1 italic">
+                      <Lock size={10} className="inline mr-1" />
+                      Pro zpřístupnění záložky "Stavba" přepněte na
+                      "Rozestavěno".
+                    </p>
+                  )}
                 </div>
+
+                {/* Projekt */}
                 <div>
-                  <label className="block text-xs text-slate-500 mb-1">
-                    Katalogové číslo
+                  <label className="block text-xs text-slate-500 mb-1 flex items-center gap-2">
+                    <Folder size={12} /> Projekt
                   </label>
-                  <input
-                    value={data.catNum}
+                  <select
+                    value={data.projectId || ""}
                     onChange={(e) =>
-                      setData({ ...data, catNum: e.target.value })
+                      setData({
+                        ...data,
+                        projectId: e.target.value
+                          ? String(e.target.value)
+                          : null,
+                      })
                     }
                     className="w-full bg-slate-800 border border-slate-700 rounded p-2 text-sm text-white"
-                  />
+                  >
+                    <option value="">-- Žádný projekt --</option>
+                    {projects.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
-              <div>
-                <label className="block text-xs text-slate-500 mb-1 flex items-center gap-2">
-                  <Folder size={12} /> Projekt
-                </label>
-                <select
-                  value={data.projectId || ""}
-                  onChange={(e) =>
-                    setData({
-                      ...data,
-                      projectId: e.target.value ? String(e.target.value) : null,
-                    })
-                  }
-                  className="w-full bg-slate-800 border border-slate-700 rounded p-2 text-sm text-white"
-                >
-                  <option value="">-- Žádný projekt --</option>
-                  {projects.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+
               <div>
                 <label className="block text-xs text-slate-500 mb-1">
                   Poznámky / Idea
@@ -807,8 +1012,8 @@ const KitDetailModal = ({ kit, onClose, onSave, onDelete, projects }) => {
             </div>
           )}
 
-          {activeTab === "build" && (
-            <div className="space-y-4">
+          {activeTab === "build" && !isBuildTabDisabled && (
+            <div className="space-y-4 animate-in fade-in slide-in-from-right-4">
               <div className="bg-slate-800 p-3 rounded-lg border border-slate-700">
                 <div className="flex justify-between text-xs text-slate-400 mb-2">
                   <span>Postup</span>
@@ -877,6 +1082,18 @@ const KitDetailModal = ({ kit, onClose, onSave, onDelete, projects }) => {
                   )}
                 </div>
               </div>
+            </div>
+          )}
+
+          {activeTab === "build" && isBuildTabDisabled && (
+            <div className="flex flex-col items-center justify-center py-10 text-slate-500">
+              <Lock size={48} className="mb-4 opacity-50" />
+              <p className="text-sm font-medium">Stavební deník je uzamčen.</p>
+              <p className="text-xs mt-2 text-slate-600 max-w-xs text-center">
+                Tato sekce je dostupná pouze pro modely ve stavu{" "}
+                <strong>"Rozestavěno"</strong>. Změňte status modelu v záložce
+                Info.
+              </p>
             </div>
           )}
 
@@ -1110,13 +1327,7 @@ const KitDetailModal = ({ kit, onClose, onSave, onDelete, projects }) => {
           )}
         </div>
 
-        <div className="p-4 border-t border-slate-800 bg-slate-800/50 flex justify-between rounded-b-xl">
-          <button
-            onClick={() => onDelete(data.id)}
-            className="text-red-400 hover:bg-red-900/20 px-4 py-2 rounded flex items-center gap-2 transition-colors"
-          >
-            <Trash2 size={18} /> Smazat
-          </button>
+        <div className="p-4 border-t border-slate-800 bg-slate-800/50 flex justify-end rounded-b-xl">
           <button
             onClick={handleSave}
             className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded font-bold shadow-lg flex items-center gap-2"
@@ -1139,6 +1350,7 @@ export default function App() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [showSettings, setShowSettings] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -1318,6 +1530,7 @@ export default function App() {
       catNum: "",
       scale: "",
       name: "",
+      subject: "",
       projectId: null,
       progress: 0,
       todo: [],
@@ -1424,11 +1637,10 @@ export default function App() {
 
   // Filtry
   const filteredKits = useMemo(() => {
-    return kits.filter(
-      (k) =>
-        k.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        k.brand.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
+    return kits.filter((k) => {
+      const searchText = (k.name + k.brand + (k.subject || "")).toLowerCase();
+      return searchText.includes(searchTerm.toLowerCase());
+    });
   }, [kits, searchTerm]);
 
   const groupedKits = useMemo(() => {
@@ -1437,6 +1649,7 @@ export default function App() {
       new: filteredKits.filter((k) => k.status === "new"),
       wishlist: filteredKits.filter((k) => k.status === "wishlist"),
       finished: filteredKits.filter((k) => k.status === "finished"),
+      scrap: filteredKits.filter((k) => k.status === "scrap"), // Přidáno vrakoviště
     };
   }, [filteredKits]);
 
@@ -1451,8 +1664,8 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 font-sans pb-20">
-      {/* HLAVIČKA */}
-      <div className="bg-slate-800 border-b border-slate-700 sticky top-0 z-10">
+      {/* HLAVIČKA - PŘEPRACOVANÁ PODLE VZORU 'BARVY' */}
+      <div className="bg-slate-800 border-b border-slate-700 sticky top-0 z-10 shadow-md">
         <div className="max-w-md mx-auto px-4 py-4">
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-3">
@@ -1465,27 +1678,25 @@ export default function App() {
                 <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
                   Modelářský Deník
                 </h1>
-                {db ? (
-                  <span className="text-[10px] text-green-500 flex items-center gap-1">
-                    <Cloud size={10} /> Cloud Sync Active
-                  </span>
-                ) : (
-                  <span
-                    className="text-[10px] text-orange-500 flex items-center gap-1"
-                    title="Nastavte .env soubor pro aktivaci cloudu"
-                  >
-                    <AlertTriangle size={10} /> DEMO / Offline Mode
-                  </span>
-                )}
               </div>
             </div>
 
-            <button
-              onClick={view === "kits" ? createNewKit : createNewProject}
-              className="bg-blue-600 p-2 rounded-full shadow text-white hover:bg-blue-500 active:scale-95 transition-transform"
-            >
-              <Plus size={24} />
-            </button>
+            <div className="flex items-center gap-2">
+              {/* TLAČÍTKO NASTAVENÍ (vpravo nahoře jako v Barvách) */}
+              <button
+                onClick={() => setShowSettings(true)}
+                className="bg-slate-700/50 hover:bg-slate-700 text-blue-300 p-2 rounded-full border border-blue-500/20"
+              >
+                <CloudCog size={20} />
+              </button>
+              {/* TLAČÍTKO PŘIDAT */}
+              <button
+                onClick={view === "kits" ? createNewKit : createNewProject}
+                className="bg-blue-600 p-2 rounded-full shadow text-white hover:bg-blue-500 active:scale-95 transition-transform"
+              >
+                <Plus size={24} />
+              </button>
+            </div>
           </div>
 
           <div className="flex bg-slate-950 p-1 rounded-lg mb-3">
@@ -1504,7 +1715,7 @@ export default function App() {
           </div>
 
           {view === "kits" && (
-            <div className="relative">
+            <div className="relative mb-3">
               <Search
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
                 size={16}
@@ -1517,6 +1728,27 @@ export default function App() {
               />
             </div>
           )}
+
+          {/* STATUS ŘÁDEK (ID + ONLINE STATUS) */}
+          <div className="flex justify-between items-center px-1">
+            <div className="flex items-center gap-1 text-[10px] text-slate-500">
+              <Cloud size={10} /> ID:{" "}
+              <span className="font-mono text-blue-400">
+                {user?.uid ? user.uid.substring(0, 8).toUpperCase() : "..."}
+              </span>
+            </div>
+            <div>
+              {db ? (
+                <span className="text-[10px] text-green-500 flex items-center gap-1 font-medium">
+                  <Cloud size={10} /> Online
+                </span>
+              ) : (
+                <span className="text-[10px] text-orange-500 flex items-center gap-1 font-medium">
+                  <AlertTriangle size={10} /> Offline
+                </span>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1596,6 +1828,24 @@ export default function App() {
               ))}
             </section>
           )}
+          {groupedKits.scrap.length > 0 && (
+            <section>
+              <h2 className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-2 flex items-center gap-2">
+                <Trash2 size={12} /> Vrakoviště ({groupedKits.scrap.length})
+              </h2>
+              {groupedKits.scrap.map((kit) => (
+                <KitCard
+                  key={kit.id}
+                  kit={kit}
+                  onClick={() => {
+                    setIsNewKit(false);
+                    setActiveKit(kit);
+                  }}
+                  projectName={getProjectName(kit.projectId)}
+                />
+              ))}
+            </section>
+          )}
           {filteredKits.length === 0 && (
             <div className="text-center text-slate-500 py-10">
               <Package size={48} className="mx-auto mb-2 opacity-20" />
@@ -1640,7 +1890,11 @@ export default function App() {
                   </span>
                 </div>
                 <p className="text-sm text-slate-400 mb-4">
-                  {project.description || "Bez popisu"}
+                  {project.description
+                    ? project.description.length > 150
+                      ? project.description.substring(0, 150) + "..."
+                      : project.description
+                    : "Bez popisu"}
                 </p>
 
                 <div className="bg-slate-900/50 rounded-lg p-3 space-y-2 mb-3">
@@ -1660,7 +1914,14 @@ export default function App() {
                               className="text-purple-400 shrink-0"
                             />
                           )}
-                          <span className="truncate">{pk.name}</span>
+                          <span className="truncate">
+                            {pk.subject ? (
+                              <span className="font-bold text-slate-300 mr-1">
+                                {pk.subject}
+                              </span>
+                            ) : null}
+                            {pk.name}
+                          </span>
                         </div>
                       </div>
                     ))
@@ -1698,6 +1959,11 @@ export default function App() {
           onUpdateKitLink={handleUpdateKitLink}
           onCreateWishlistKit={handleCreateWishlistKit}
         />
+      )}
+
+      {/* SETTINGS MODAL */}
+      {showSettings && (
+        <SettingsModal user={user} onClose={() => setShowSettings(false)} />
       )}
     </div>
   );
