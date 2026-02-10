@@ -39,6 +39,7 @@ import {
   LogOut,
   User,
   Ghost,
+  WifiOff,
 } from "lucide-react";
 
 // Firebase importy
@@ -70,7 +71,7 @@ import {
 // 🔧 KONFIGURACE A KONSTANTY
 // ==========================================
 
-const APP_VERSION = "v2.3.5-rollback";
+const APP_VERSION = "v2.3.6-resilient-offline";
 
 // Pomocné funkce
 const getEnv = (key) => {
@@ -234,7 +235,7 @@ const KitCard = React.memo(({ kit, onClick, projectName }) => {
 });
 
 // --- SETTINGS MODAL ---
-const SettingsModal = ({ user, onClose, kits, projects }) => {
+const SettingsModal = ({ user, onClose, kits, projects, authError }) => {
   const [copied, setCopied] = useState(false);
   const [importing, setImporting] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
@@ -274,10 +275,23 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
       setImporting(true);
       const text = await file.text();
       const data = JSON.parse(text);
-      if ((!data.kits && !data.projects) || !db || !user)
-        throw new Error("Neplatná data nebo offline.");
-      const batch = writeBatch(db);
+      if (!data.kits && !data.projects)
+        throw new Error("Neplatná struktura dat.");
+
+      const batch = db ? writeBatch(db) : null;
       let count = 0;
+
+      // Pokud je user offline/nepřihlášen, import bohužel jen do paměti (což App.jsx zatím neumí propagovat zpět)
+      // V této verzi pro zjednodušení: Import vyžaduje Auth pro zápis do DB, nebo by musel přepsat stav v App
+      // Zde uděláme jen alert pro offline
+      if (!user || !db) {
+        alert(
+          "Pro import dat musíte být online a přihlášeni. (Offline import zatím není podporován)",
+        );
+        setImporting(false);
+        return;
+      }
+
       data.kits?.forEach((kit) => {
         if (kit.id) {
           batch.set(
@@ -312,6 +326,7 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
           count++;
         }
       });
+
       if (count > 0) {
         await batch.commit();
         alert(`Obnoveno ${count} položek.`);
@@ -365,7 +380,11 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
       }
     } catch (error) {
       console.error("Login failed", error);
-      alert("Přihlášení selhalo: " + error.message);
+      let msg = error.message;
+      if (error.code === "auth/unauthorized-domain") {
+        msg = `Tato doména není povolena ve Firebase Console.\n\nPřidejte prosím tuto doménu do Auth -> Settings -> Authorized Domains:\n${window.location.hostname}`;
+      }
+      alert("Přihlášení selhalo:\n" + msg);
     } finally {
       setAuthLoading(false);
     }
@@ -430,10 +449,9 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
   };
 
   const getDisplayName = () => {
-    if (!user) return "Nepřihlášen";
+    if (!user) return "Nepřihlášen (Offline)";
     if (user.isAnonymous) return "Anonymní uživatel";
     if (user.email) return user.email;
-    // Pokud máme uživatele bez emailu (Custom Token atd.)
     return `Uživatel (ID: ${user.uid.substring(0, 6)}...)`;
   };
 
@@ -456,7 +474,7 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
               <div
                 className={`p-2 rounded-full ${!user ? "bg-slate-700 text-slate-400" : user.isAnonymous ? "bg-orange-500/20 text-orange-400" : "bg-green-500/20 text-green-400"}`}
               >
-                {user ? <User size={20} /> : <Ghost size={20} />}
+                {user ? <User size={20} /> : <WifiOff size={20} />}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-slate-500 font-bold uppercase">
@@ -487,7 +505,7 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
                   disabled={authLoading}
                   className="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-lg font-bold text-sm flex items-center justify-center gap-2"
                 >
-                  <Ghost size={16} /> Pokračovat anonymně
+                  <Ghost size={16} /> Zkusit anonymní (Cloud)
                 </button>
               </div>
             ) : user.isAnonymous ? (
@@ -525,7 +543,7 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
             </label>
             <div className="flex gap-2">
               <code className="flex-1 bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm font-mono text-slate-300 break-all">
-                {user?.uid || "Nepřipojeno"}
+                {user?.uid || "Lokální režim"}
               </code>
               <button
                 onClick={copyToClipboard}
@@ -538,21 +556,28 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
                 )}
               </button>
             </div>
-            <p className="text-xs text-slate-500">
-              Toto ID slouží k identifikaci vašich dat v cloudu. Uschovejte ho
-              pro případnou manuální synchronizaci, pokud nepoužíváte Google
-              účet.
-            </p>
+            {authError && (
+              <div className="text-[10px] text-red-400 bg-red-900/10 border border-red-500/20 p-2 rounded mt-2">
+                <strong className="block mb-1">Chyba připojení:</strong>
+                {authError.includes("unauthorized-domain")
+                  ? `Doména "${window.location.hostname}" není povolena. Fungujete v offline režimu.`
+                  : authError}
+              </div>
+            )}
           </div>
 
-          <div className="bg-blue-900/20 p-4 rounded-xl border border-blue-500/20">
-            <h4 className="font-bold text-blue-400 mb-1 flex items-center gap-2">
+          <div
+            className={`p-4 rounded-xl border ${user ? "bg-blue-900/20 border-blue-500/20" : "bg-orange-900/10 border-orange-500/20"}`}
+          >
+            <h4
+              className={`font-bold mb-1 flex items-center gap-2 ${user ? "text-blue-400" : "text-orange-400"}`}
+            >
               <RefreshCw size={16} /> Status synchronizace
             </h4>
-            <p className="text-sm text-blue-200/80">
+            <p className="text-sm text-slate-300/80">
               {user
-                ? "Všechna data jsou automaticky ukládána do cloudu v reálném čase."
-                : "Jste offline. Přihlašte se pro synchronizaci."}
+                ? "Data se ukládají do cloudu."
+                : "Offline režim. Data jsou pouze v tomto prohlížeči a po obnovení stránky se mohou ztratit."}
             </p>
           </div>
 
@@ -588,10 +613,6 @@ const SettingsModal = ({ user, onClose, kits, projects }) => {
                 />
               </label>
             </div>
-            <p className="text-[10px] text-slate-500 mt-2 text-center">
-              Export vytvoří soubor JSON se všemi modely a projekty. Import
-              tento soubor načte a obnoví data.
-            </p>
           </div>
         </div>
         <div className="p-4 bg-slate-950 border-t border-slate-800 text-center">
@@ -1427,6 +1448,7 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [authError, setAuthError] = useState(null);
 
   const [activeKit, setActiveKit] = useState(null);
   const [isNewKit, setIsNewKit] = useState(false);
@@ -1447,6 +1469,7 @@ export default function App() {
         else await signInAnonymously(auth);
       } catch (e) {
         console.error("Auth Error:", e);
+        setAuthError(e.message);
         setLoading(false);
       }
     };
@@ -1454,6 +1477,8 @@ export default function App() {
 
     return onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      setAuthError(null); // Clear errors on success
+
       if (!currentUser) {
         setLoading(false);
         return;
@@ -1469,6 +1494,12 @@ export default function App() {
           "kits",
         ),
         (snap) => setKits(snap.docs.map((d) => ({ id: d.id, ...d.data() }))),
+        (err) => {
+          console.error(
+            "Snapshot Kit Error",
+            err,
+          ); /* Ignorovat permission-denied v UI */
+        },
       );
       const unsubProjs = onSnapshot(
         collection(
@@ -1481,6 +1512,10 @@ export default function App() {
         ),
         (snap) => {
           setProjects(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+          setLoading(false);
+        },
+        (err) => {
+          console.error("Snapshot Project Error", err);
           setLoading(false);
         },
       );
@@ -1504,12 +1539,20 @@ export default function App() {
     if (collectionName === "kits" && dataToSave.projectId)
       dataToSave.legacyProject = null;
 
-    // Optimistický update nebo Offline režim
-    if (!db) {
-      if (isNew)
-        setList([...list, { ...dataToSave, id: Date.now().toString() }]);
-      else setList(list.map((i) => (i.id === dataToSave.id ? dataToSave : i)));
-    } else if (user) {
+    // Fallback: Pokud není DB nebo není přihlášený uživatel (offline/error), ukládáme lokálně
+    if (!db || !user) {
+      if (isNew) {
+        setList((prev) => [
+          ...prev,
+          { ...dataToSave, id: Date.now().toString() },
+        ]);
+      } else {
+        setList((prev) =>
+          prev.map((i) => (i.id === dataToSave.id ? dataToSave : i)),
+        );
+      }
+    } else {
+      // Cloud save
       const colRef = collection(
         db,
         "artifacts",
@@ -1519,7 +1562,7 @@ export default function App() {
         collectionName,
       );
       if (isNew) {
-        const { id, ...cleanData } = dataToSave; // Odstranit dočasné ID
+        const { id, ...cleanData } = dataToSave;
         await addDoc(colRef, { ...cleanData, createdAt: serverTimestamp() });
       } else {
         const { id, ...cleanData } = dataToSave;
@@ -1532,8 +1575,10 @@ export default function App() {
 
   const deleteItem = async (collectionName, id, list, setList) => {
     if (!confirm("Opravdu smazat?")) return;
-    if (!db) setList(list.filter((i) => i.id !== id));
-    else if (user)
+
+    if (!db || !user) {
+      setList((prev) => prev.filter((i) => i.id !== id));
+    } else {
       await deleteDoc(
         doc(
           db,
@@ -1545,6 +1590,8 @@ export default function App() {
           id,
         ),
       );
+    }
+
     if (collectionName === "kits") setActiveKit(null);
     else setActiveProject(null);
   };
@@ -1597,9 +1644,15 @@ export default function App() {
             <div className="flex gap-2">
               <button
                 onClick={() => setShowSettings(true)}
-                className="bg-slate-700/50 hover:bg-slate-700 text-blue-300 p-2 rounded-full border border-blue-500/20"
+                className="bg-slate-700/50 hover:bg-slate-700 text-blue-300 p-2 rounded-full border border-blue-500/20 relative"
               >
                 <CloudCog size={20} />
+                {!user && (
+                  <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
+                  </span>
+                )}
               </button>
               <button
                 onClick={() => {
@@ -1659,11 +1712,11 @@ export default function App() {
             <div className="flex gap-1">
               <Cloud size={10} /> ID:{" "}
               <span className="font-mono text-blue-400">
-                {user?.uid?.substring(0, 8) || "..."}
+                {user?.uid?.substring(0, 8) || "Offline"}
               </span>
             </div>
-            <div className={db ? "text-green-500" : "text-orange-500"}>
-              {db ? "Online" : "Offline"}
+            <div className={user ? "text-green-500" : "text-orange-500"}>
+              {user ? "Online" : "Offline / Demo"}
             </div>
           </div>
         </div>
@@ -1814,6 +1867,7 @@ export default function App() {
           onClose={() => setShowSettings(false)}
           kits={kits}
           projects={projects}
+          authError={authError}
         />
       )}
     </div>
