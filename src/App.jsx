@@ -46,6 +46,10 @@ import {
   ClipboardCopy,
   ShoppingBag,
   ArrowRight,
+  BarChart3,
+  PieChart,
+  TrendingUp,
+  Award,
 } from "lucide-react";
 
 // Firebase importy
@@ -79,7 +83,7 @@ import {
 // 🔧 KONFIGURACE A KONSTANTY
 // ==========================================
 
-const APP_VERSION = "v2.14.0-shopping-logic-fix";
+const APP_VERSION = "v2.15.0-dashboard";
 
 // Normalizace vstupů
 const Normalizer = {
@@ -238,6 +242,33 @@ const FilterChip = ({ label, active, onClick }) => (
     {label}
   </button>
 );
+
+// --- DASHBOARD CARD ---
+const StatCard = ({ title, value, subtitle, icon: Icon, color = "blue" }) => {
+  const colorClasses = {
+    blue: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+    orange: "bg-orange-500/10 text-orange-500 border-orange-500/20",
+    green: "bg-green-500/10 text-green-500 border-green-500/20",
+    purple: "bg-purple-500/10 text-purple-500 border-purple-500/20",
+  };
+
+  return (
+    <div
+      className={`p-4 rounded-xl border ${colorClasses[color]} flex flex-col items-center justify-center text-center`}
+    >
+      <div
+        className={`p-2 rounded-full mb-2 ${colorClasses[color].replace("border", "bg").replace("/20", "/20")}`}
+      >
+        <Icon size={24} />
+      </div>
+      <h3 className="text-2xl font-bold text-white mb-0.5">{value}</h3>
+      <p className="text-xs font-bold uppercase tracking-wider opacity-80">
+        {title}
+      </p>
+      {subtitle && <p className="text-[10px] opacity-60 mt-1">{subtitle}</p>}
+    </div>
+  );
+};
 
 // --- KARTA MODELU ---
 const KitCard = React.memo(({ kit, onClick, projectName }) => {
@@ -1761,6 +1792,40 @@ export default function App() {
     }
   };
 
+  // --- DASHBOARD STATS LOGIC ---
+  const stats = useMemo(() => {
+    const totalKits = kits.filter(
+      (k) =>
+        k.status === "new" || k.status === "wip" || k.status === "finished",
+    ).length;
+    const stashCount = kits.filter((k) => k.status === "new").length;
+    const wipCount = kits.filter((k) => k.status === "wip").length;
+    const finishedCount = kits.filter((k) => k.status === "finished").length;
+
+    // Nejčastější značka
+    const brands = {};
+    kits.forEach((k) => {
+      if (k.brand) brands[k.brand] = (brands[k.brand] || 0) + 1;
+    });
+    const topBrand = Object.entries(brands).sort((a, b) => b[1] - a[1])[0];
+
+    // Nejčastější měřítko
+    const scales = {};
+    kits.forEach((k) => {
+      if (k.scale) scales[k.scale] = (scales[k.scale] || 0) + 1;
+    });
+    const topScale = Object.entries(scales).sort((a, b) => b[1] - a[1])[0];
+
+    return {
+      totalKits,
+      stashCount,
+      wipCount,
+      finishedCount,
+      topBrand,
+      topScale,
+    };
+  }, [kits]);
+
   // --- FILTROVÁNÍ HELPERS ---
   const availableScales = useMemo(
     () => [...new Set(kits.map((k) => k.scale).filter(Boolean))].sort(),
@@ -1921,24 +1986,30 @@ export default function App() {
               </button>
             </div>
           </div>
-          <div className="flex bg-slate-950 p-1 rounded-lg mb-3">
+          <div className="flex bg-slate-950 p-1 rounded-lg mb-3 gap-1 overflow-x-auto">
             <button
               onClick={() => setView("kits")}
-              className={`flex-1 py-2 text-sm font-bold rounded flex gap-2 justify-center ${view === "kits" ? "bg-slate-700 text-white" : "text-slate-500"}`}
+              className={`flex-1 py-2 px-2 text-sm font-bold rounded flex gap-2 justify-center items-center whitespace-nowrap ${view === "kits" ? "bg-slate-700 text-white" : "text-slate-500"}`}
             >
               <Box size={16} /> Sklad
             </button>
             <button
               onClick={() => setView("projects")}
-              className={`flex-1 py-2 text-sm font-bold rounded flex gap-2 justify-center ${view === "projects" ? "bg-slate-700 text-white" : "text-slate-500"}`}
+              className={`flex-1 py-2 px-2 text-sm font-bold rounded flex gap-2 justify-center items-center whitespace-nowrap ${view === "projects" ? "bg-slate-700 text-white" : "text-slate-500"}`}
             >
               <Folder size={16} /> Projekty
             </button>
             <button
               onClick={() => setView("shopping")}
-              className={`flex-1 py-2 text-sm font-bold rounded flex gap-2 justify-center ${view === "shopping" ? "bg-slate-700 text-orange-400" : "text-slate-500"}`}
+              className={`flex-1 py-2 px-2 text-sm font-bold rounded flex gap-2 justify-center items-center whitespace-nowrap ${view === "shopping" ? "bg-slate-700 text-orange-400" : "text-slate-500"}`}
             >
               <ShoppingCart size={16} /> Nákup
+            </button>
+            <button
+              onClick={() => setView("dashboard")}
+              className={`flex-1 py-2 px-2 text-sm font-bold rounded flex gap-2 justify-center items-center whitespace-nowrap ${view === "dashboard" ? "bg-slate-700 text-blue-400" : "text-slate-500"}`}
+            >
+              <BarChart3 size={16} /> Přehled
             </button>
           </div>
 
@@ -1962,9 +2033,13 @@ export default function App() {
               />
             </div>
             <button
-              onClick={() => view !== "shopping" && setShowFilter(!showFilter)}
+              onClick={() =>
+                view !== "shopping" &&
+                view !== "dashboard" &&
+                setShowFilter(!showFilter)
+              }
               className={`p-2 rounded-lg border flex items-center justify-center transition-opacity ${
-                view === "shopping"
+                view === "shopping" || view === "dashboard"
                   ? "opacity-0 pointer-events-none border-transparent bg-transparent"
                   : showFilter || hasActiveFilters
                     ? "bg-blue-600 border-blue-500 text-white"
@@ -1976,7 +2051,7 @@ export default function App() {
           </div>
 
           {/* FILTER PANEL */}
-          {showFilter && view !== "shopping" && (
+          {showFilter && view !== "shopping" && view !== "dashboard" && (
             <div className="bg-slate-900 border border-slate-700 rounded-lg p-3 mb-3 animate-in slide-in-from-top-2">
               <div className="flex justify-between items-center mb-2">
                 <h4 className="text-xs font-bold text-slate-500 uppercase">
@@ -2313,6 +2388,80 @@ export default function App() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {view === "dashboard" && (
+          <div className="space-y-4 animate-in fade-in">
+            <div className="grid grid-cols-2 gap-3">
+              <StatCard
+                title="V Kitníku"
+                value={stats.stashCount}
+                icon={Package}
+                color="blue"
+                subtitle="Kusů skladem"
+              />
+              <StatCard
+                title="Na stole"
+                value={stats.wipCount}
+                icon={Hammer}
+                color="orange"
+                subtitle="Rozestavěno"
+              />
+              <StatCard
+                title="Hotovo"
+                value={stats.finishedCount}
+                icon={Trophy}
+                color="green"
+                subtitle="Dokončených modelů"
+              />
+              <StatCard
+                title="Celkem"
+                value={stats.totalKits}
+                icon={Box}
+                color="purple"
+                subtitle="Evidovaných modelů"
+              />
+            </div>
+
+            <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
+              <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
+                <Award className="text-yellow-500" size={18} /> Top Statistiky
+              </h3>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center bg-slate-900/50 p-3 rounded-lg">
+                  <span className="text-xs text-slate-400 uppercase font-bold">
+                    Nejoblíbenější Značka
+                  </span>
+                  <span className="text-sm font-bold text-blue-400">
+                    {stats.topBrand
+                      ? `${stats.topBrand[0]} (${stats.topBrand[1]}x)`
+                      : "-"}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center bg-slate-900/50 p-3 rounded-lg">
+                  <span className="text-xs text-slate-400 uppercase font-bold">
+                    Nejčastější Měřítko
+                  </span>
+                  <span className="text-sm font-bold text-orange-400">
+                    {stats.topScale
+                      ? `${stats.topScale[0]} (${stats.topScale[1]}x)`
+                      : "-"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-slate-800 rounded-xl p-4 border border-slate-700 text-center">
+              <TrendingUp className="mx-auto text-slate-500 mb-2" size={24} />
+              <p className="text-xs text-slate-400 italic">
+                {stats.wipCount > 5
+                  ? "Máš rozděláno více než 5 modelů. Tomu se říká 'Modelářská paralýza'! 😅"
+                  : stats.stashCount > 50
+                    ? "Tvůj kitník je větší než zásoby malého e-shopu. Respekt! 🫡"
+                    : "Krásně organizovaná sbírka. Jen tak dál!"}
+              </p>
+            </div>
           </div>
         )}
       </div>
