@@ -40,6 +40,7 @@ import {
   User,
   Ghost,
   WifiOff,
+  Key,
 } from "lucide-react";
 
 // Firebase importy
@@ -71,7 +72,7 @@ import {
 // 🔧 KONFIGURACE A KONSTANTY
 // ==========================================
 
-const APP_VERSION = "v2.3.6-resilient-offline";
+const APP_VERSION = "v2.3.7-final-debug";
 
 // Pomocné funkce
 const getEnv = (key) => {
@@ -94,6 +95,7 @@ const Normalizer = {
 };
 
 // Firebase Config
+// POZOR: Vite vyžaduje prefix VITE_ pro proměnné prostředí
 const firebaseConfig = {
   apiKey: getEnv("VITE_FIREBASE_API_KEY"),
   authDomain: getEnv("VITE_FIREBASE_AUTH_DOMAIN"),
@@ -113,14 +115,20 @@ if (typeof __firebase_config !== "undefined") {
 
 // Inicializace Firebase
 let app, auth, db;
+let initError = null;
+
 try {
+  // Kontrola, zda máme API Key (kritické pro inicializaci)
   if (firebaseConfig.apiKey) {
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
     db = getFirestore(app);
+  } else {
+    initError = "Chybí API Key (Zkontrolujte VITE_ prefix na Vercelu)";
   }
 } catch (error) {
   console.error("Firebase Init Error:", error);
+  initError = error.message;
 }
 
 // ==========================================
@@ -235,7 +243,7 @@ const KitCard = React.memo(({ kit, onClick, projectName }) => {
 });
 
 // --- SETTINGS MODAL ---
-const SettingsModal = ({ user, onClose, kits, projects, authError }) => {
+const SettingsModal = ({ user, onClose, kits, projects }) => {
   const [copied, setCopied] = useState(false);
   const [importing, setImporting] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
@@ -281,13 +289,8 @@ const SettingsModal = ({ user, onClose, kits, projects, authError }) => {
       const batch = db ? writeBatch(db) : null;
       let count = 0;
 
-      // Pokud je user offline/nepřihlášen, import bohužel jen do paměti (což App.jsx zatím neumí propagovat zpět)
-      // V této verzi pro zjednodušení: Import vyžaduje Auth pro zápis do DB, nebo by musel přepsat stav v App
-      // Zde uděláme jen alert pro offline
       if (!user || !db) {
-        alert(
-          "Pro import dat musíte být online a přihlášeni. (Offline import zatím není podporován)",
-        );
+        alert("Pro import dat musíte být online a přihlášeni.");
         setImporting(false);
         return;
       }
@@ -348,10 +351,12 @@ const SettingsModal = ({ user, onClose, kits, projects, authError }) => {
     }
   };
 
-  // --- GOOGLE LOGIN & MIGRATION ---
+  // --- GOOGLE LOGIN ---
   const handleGoogleLogin = async () => {
     if (!auth) {
-      alert("Chyba: Firebase Auth není inicializován.");
+      alert(
+        `CHYBA: Aplikace nevidí API klíče.\n\nDiagnostika:\nApiKey: ${firebaseConfig.apiKey ? "OK" : "CHYBÍ"}\nAuth: ${!!auth}\n\nUjistěte se, že proměnné na Vercelu začínají na "VITE_".`,
+      );
       return;
     }
 
@@ -382,7 +387,9 @@ const SettingsModal = ({ user, onClose, kits, projects, authError }) => {
       console.error("Login failed", error);
       let msg = error.message;
       if (error.code === "auth/unauthorized-domain") {
-        msg = `Tato doména není povolena ve Firebase Console.\n\nPřidejte prosím tuto doménu do Auth -> Settings -> Authorized Domains:\n${window.location.hostname}`;
+        msg = `Firebase blokuje tuto doménu.\n\nJděte do Firebase Console -> Authentication -> Settings -> Authorized Domains\nA přidejte tam: ${window.location.hostname}`;
+      } else if (error.code === "auth/operation-not-allowed") {
+        msg = `Google přihlášení není povoleno.\n\nJděte do Firebase Console -> Authentication -> Sign-in method\nA povolte "Google".`;
       }
       alert("Přihlášení selhalo:\n" + msg);
     } finally {
@@ -390,7 +397,15 @@ const SettingsModal = ({ user, onClose, kits, projects, authError }) => {
     }
   };
 
+  // --- ANONYMOUS LOGIN ---
   const handleAnonymousLogin = async () => {
+    if (!auth) {
+      alert(
+        `CHYBA: Aplikace nevidí API klíče.\n\nDiagnostika:\nApiKey: ${firebaseConfig.apiKey ? "OK" : "CHYBÍ"}\nAuth: ${!!auth}\n\nUjistěte se, že proměnné na Vercelu začínají na "VITE_".`,
+      );
+      return;
+    }
+
     try {
       setAuthLoading(true);
       await signInAnonymously(auth);
@@ -556,14 +571,6 @@ const SettingsModal = ({ user, onClose, kits, projects, authError }) => {
                 )}
               </button>
             </div>
-            {authError && (
-              <div className="text-[10px] text-red-400 bg-red-900/10 border border-red-500/20 p-2 rounded mt-2">
-                <strong className="block mb-1">Chyba připojení:</strong>
-                {authError.includes("unauthorized-domain")
-                  ? `Doména "${window.location.hostname}" není povolena. Fungujete v offline režimu.`
-                  : authError}
-              </div>
-            )}
           </div>
 
           <div
@@ -577,7 +584,7 @@ const SettingsModal = ({ user, onClose, kits, projects, authError }) => {
             <p className="text-sm text-slate-300/80">
               {user
                 ? "Data se ukládají do cloudu."
-                : "Offline režim. Data jsou pouze v tomto prohlížeči a po obnovení stránky se mohou ztratit."}
+                : "Offline režim. Data jsou pouze v tomto prohlížeči."}
             </p>
           </div>
 
@@ -612,6 +619,36 @@ const SettingsModal = ({ user, onClose, kits, projects, authError }) => {
                   disabled={importing}
                 />
               </label>
+            </div>
+          </div>
+
+          {/* DIAGNOSTIKA PRO VERCEL */}
+          <div className="mt-6 pt-4 border-t border-slate-800">
+            <p className="text-[10px] text-slate-500 font-mono mb-1">
+              DIAGNOSTIKA PŘIPOJENÍ:
+            </p>
+            <div className="text-[10px] bg-slate-950 p-2 rounded text-slate-400 font-mono space-y-1">
+              <div className="flex justify-between">
+                <span>API KEY:</span>
+                <span
+                  className={
+                    firebaseConfig.apiKey ? "text-green-500" : "text-red-500"
+                  }
+                >
+                  {firebaseConfig.apiKey
+                    ? "NALEZEN"
+                    : "CHYBÍ (Zkontrolujte VITE_ prefix)"}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>AUTH INIT:</span>
+                <span className={auth ? "text-green-500" : "text-red-500"}>
+                  {auth ? "OK" : "SELHALO"}
+                </span>
+              </div>
+              {initError && (
+                <div className="text-red-500 mt-1">{initError}</div>
+              )}
             </div>
           </div>
         </div>
@@ -1448,7 +1485,6 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [authError, setAuthError] = useState(null);
 
   const [activeKit, setActiveKit] = useState(null);
   const [isNewKit, setIsNewKit] = useState(false);
@@ -1469,7 +1505,6 @@ export default function App() {
         else await signInAnonymously(auth);
       } catch (e) {
         console.error("Auth Error:", e);
-        setAuthError(e.message);
         setLoading(false);
       }
     };
@@ -1477,8 +1512,6 @@ export default function App() {
 
     return onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      setAuthError(null); // Clear errors on success
-
       if (!currentUser) {
         setLoading(false);
         return;
@@ -1494,12 +1527,6 @@ export default function App() {
           "kits",
         ),
         (snap) => setKits(snap.docs.map((d) => ({ id: d.id, ...d.data() }))),
-        (err) => {
-          console.error(
-            "Snapshot Kit Error",
-            err,
-          ); /* Ignorovat permission-denied v UI */
-        },
       );
       const unsubProjs = onSnapshot(
         collection(
@@ -1512,10 +1539,6 @@ export default function App() {
         ),
         (snap) => {
           setProjects(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
-          setLoading(false);
-        },
-        (err) => {
-          console.error("Snapshot Project Error", err);
           setLoading(false);
         },
       );
@@ -1539,20 +1562,12 @@ export default function App() {
     if (collectionName === "kits" && dataToSave.projectId)
       dataToSave.legacyProject = null;
 
-    // Fallback: Pokud není DB nebo není přihlášený uživatel (offline/error), ukládáme lokálně
+    // Optimistický update nebo Offline režim
     if (!db || !user) {
-      if (isNew) {
-        setList((prev) => [
-          ...prev,
-          { ...dataToSave, id: Date.now().toString() },
-        ]);
-      } else {
-        setList((prev) =>
-          prev.map((i) => (i.id === dataToSave.id ? dataToSave : i)),
-        );
-      }
-    } else {
-      // Cloud save
+      if (isNew)
+        setList([...list, { ...dataToSave, id: Date.now().toString() }]);
+      else setList(list.map((i) => (i.id === dataToSave.id ? dataToSave : i)));
+    } else if (user) {
       const colRef = collection(
         db,
         "artifacts",
@@ -1562,7 +1577,7 @@ export default function App() {
         collectionName,
       );
       if (isNew) {
-        const { id, ...cleanData } = dataToSave;
+        const { id, ...cleanData } = dataToSave; // Odstranit dočasné ID
         await addDoc(colRef, { ...cleanData, createdAt: serverTimestamp() });
       } else {
         const { id, ...cleanData } = dataToSave;
@@ -1575,10 +1590,8 @@ export default function App() {
 
   const deleteItem = async (collectionName, id, list, setList) => {
     if (!confirm("Opravdu smazat?")) return;
-
-    if (!db || !user) {
-      setList((prev) => prev.filter((i) => i.id !== id));
-    } else {
+    if (!db || !user) setList(list.filter((i) => i.id !== id));
+    else if (user)
       await deleteDoc(
         doc(
           db,
@@ -1590,8 +1603,6 @@ export default function App() {
           id,
         ),
       );
-    }
-
     if (collectionName === "kits") setActiveKit(null);
     else setActiveProject(null);
   };
@@ -1644,15 +1655,9 @@ export default function App() {
             <div className="flex gap-2">
               <button
                 onClick={() => setShowSettings(true)}
-                className="bg-slate-700/50 hover:bg-slate-700 text-blue-300 p-2 rounded-full border border-blue-500/20 relative"
+                className="bg-slate-700/50 hover:bg-slate-700 text-blue-300 p-2 rounded-full border border-blue-500/20"
               >
                 <CloudCog size={20} />
-                {!user && (
-                  <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
-                  </span>
-                )}
               </button>
               <button
                 onClick={() => {
@@ -1712,11 +1717,11 @@ export default function App() {
             <div className="flex gap-1">
               <Cloud size={10} /> ID:{" "}
               <span className="font-mono text-blue-400">
-                {user?.uid?.substring(0, 8) || "Offline"}
+                {user?.uid?.substring(0, 8) || "..."}
               </span>
             </div>
-            <div className={user ? "text-green-500" : "text-orange-500"}>
-              {user ? "Online" : "Offline / Demo"}
+            <div className={db ? "text-green-500" : "text-orange-500"}>
+              {db ? "Online" : "Offline"}
             </div>
           </div>
         </div>
@@ -1867,7 +1872,6 @@ export default function App() {
           onClose={() => setShowSettings(false)}
           kits={kits}
           projects={projects}
-          authError={authError}
         />
       )}
     </div>
