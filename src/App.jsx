@@ -97,7 +97,7 @@ import {
 // 🔧 KONFIGURACE A KONSTANTY
 // ==========================================
 
-const APP_VERSION = "v2.28.0-visual-final";
+const APP_VERSION = "v2.27.11-syntax-fixed";
 
 const safeRender = (value) => {
   if (value === null || value === undefined) return "";
@@ -793,11 +793,9 @@ const SettingsModal = ({
   const [authLoading, setAuthLoading] = useState(false);
   const [authError, setAuthError] = useState(null);
   const [manualIdInput, setManualIdInput] = useState(activeUid || "");
-
   useEffect(() => {
     setManualIdInput(activeUid || "");
   }, [activeUid]);
-
   const handleExport = () => {
     const data = {
       version: APP_VERSION,
@@ -1756,128 +1754,74 @@ const KitDetailModal = ({
                       </div>
                     </div>
                     <div className="space-y-4">
-                      {selectedBrand === "Vlastní Mix" ? (
+                      {rackPaints.inventory.length > 0 && (
                         <div>
-                          <h4 className="text-[10px] font-bold text-purple-500 uppercase mb-2 flex items-center gap-1 border-b border-slate-800 pb-1">
-                            <FlaskConical size={10} /> Moje Mixy (
-                            {allPaints.filter((p) => p.isMix).length})
+                          <h4 className="text-[10px] font-bold text-green-500 uppercase mb-2 flex items-center gap-1 border-b border-slate-800 pb-1">
+                            <Package size={10} /> Máš skladem (
+                            {rackPaints.inventory.length})
                           </h4>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            {allPaints
-                              .filter(
-                                (p) =>
-                                  p.isMix &&
-                                  (!paintSearch ||
-                                    p.name
-                                      .toLowerCase()
-                                      .includes(paintSearch.toLowerCase())),
-                              )
-                              .map((p) => (
+                            {rackPaints.inventory.map((p) => (
+                              <div
+                                key={p.id}
+                                onClick={() => handleAddPaint(p.id)}
+                                className="bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-blue-500 p-2 rounded cursor-pointer flex items-center gap-2 transition-colors"
+                              >
                                 <div
-                                  key={p.id}
-                                  onClick={() => handleAddPaint(p.id)}
-                                  className="bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-purple-500 p-2 rounded cursor-pointer flex items-center gap-2 transition-colors"
-                                >
-                                  <div className="w-6 h-6 rounded border border-slate-600 shrink-0 flex items-center justify-center bg-slate-900">
-                                    <FlaskConical
-                                      size={12}
-                                      className="text-white opacity-50"
-                                    />
+                                  className="w-6 h-6 rounded border border-slate-600 shrink-0"
+                                  style={{ backgroundColor: p.hex }}
+                                ></div>
+                                <div className="min-w-0">
+                                  <div className="text-xs font-bold text-white">
+                                    {p.code}
                                   </div>
-                                  <div className="min-w-0">
-                                    <div className="text-xs font-bold text-white">
-                                      {p.code}
-                                    </div>
-                                    <div className="text-[10px] text-slate-400 truncate">
-                                      {p.name}
-                                    </div>
+                                  <div className="text-[10px] text-slate-400 truncate">
+                                    {p.name}
                                   </div>
-                                  <Plus
-                                    size={14}
-                                    className="ml-auto text-purple-500"
-                                  />
                                 </div>
-                              ))}
-                            {allPaints.filter((p) => p.isMix).length === 0 && (
-                              <p className="text-xs text-slate-500 italic col-span-2 text-center">
-                                Zatím žádné vlastní mixy.
-                              </p>
-                            )}
+                                <Check
+                                  size={14}
+                                  className="ml-auto text-green-500"
+                                />
+                              </div>
+                            ))}
                           </div>
                         </div>
-                      ) : (
-                        <>
-                          {rackPaints.inventory.length > 0 && (
-                            <div>
-                              <h4 className="text-[10px] font-bold text-green-500 uppercase mb-2 flex items-center gap-1 border-b border-slate-800 pb-1">
-                                <Package size={10} /> Máš skladem (
-                                {rackPaints.inventory.length})
-                              </h4>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                {rackPaints.inventory.map((p) => (
-                                  <div
-                                    key={p.id}
-                                    onClick={() => handleAddPaint(p.id)}
-                                    className="bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-blue-500 p-2 rounded cursor-pointer flex items-center gap-2 transition-colors"
-                                  >
-                                    <div
-                                      className="w-6 h-6 rounded border border-slate-600 shrink-0"
-                                      style={{ backgroundColor: p.hex }}
-                                    ></div>
-                                    <div className="min-w-0">
-                                      <div className="text-xs font-bold text-white">
-                                        {p.code}
-                                      </div>
-                                      <div className="text-[10px] text-slate-400 truncate">
-                                        {p.name}
-                                      </div>
-                                    </div>
-                                    <Check
-                                      size={14}
-                                      className="ml-auto text-green-500"
-                                    />
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                          {rackPaints.catalog.length > 0 && (
-                            <div>
-                              <h4 className="text-[10px] font-bold text-purple-400 uppercase mb-2 flex items-center gap-1 border-b border-slate-800 pb-1">
-                                <Wand2 size={10} /> Katalog (Přidat do nákupu)
-                              </h4>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                {rackPaints.catalog.map(([key, val]) => (
-                                  <div
-                                    key={key}
-                                    onClick={() => handleCatalogAdd(key, val)}
-                                    className="bg-slate-800/50 hover:bg-slate-800 border border-slate-800 hover:border-purple-500 p-2 rounded cursor-pointer flex items-center gap-2 transition-colors group"
-                                  >
-                                    <div
-                                      className="w-6 h-6 rounded border border-slate-700 shrink-0 opacity-80"
-                                      style={{ backgroundColor: val.hex }}
-                                    ></div>
-                                    <div className="min-w-0">
-                                      <div className="text-xs font-bold text-slate-300 group-hover:text-white">
-                                        {val.displayCode}
-                                      </div>
-                                      <div className="text-[10px] text-slate-500 group-hover:text-slate-400 truncate">
-                                        {val.name}
-                                      </div>
-                                    </div>
-                                    <Plus
-                                      size={14}
-                                      className="ml-auto text-slate-600 group-hover:text-purple-400"
-                                    />
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                        </>
                       )}
-                      {selectedBrand !== "Vlastní Mix" &&
-                        rackPaints.inventory.length === 0 &&
+                      {rackPaints.catalog.length > 0 && (
+                        <div>
+                          <h4 className="text-[10px] font-bold text-purple-400 uppercase mb-2 flex items-center gap-1 border-b border-slate-800 pb-1">
+                            <Wand2 size={10} /> Katalog (Přidat do nákupu)
+                          </h4>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            {rackPaints.catalog.map(([key, val]) => (
+                              <div
+                                key={key}
+                                onClick={() => handleCatalogAdd(key, val)}
+                                className="bg-slate-800/50 hover:bg-slate-800 border border-slate-800 hover:border-purple-500 p-2 rounded cursor-pointer flex items-center gap-2 transition-colors group"
+                              >
+                                <div
+                                  className="w-6 h-6 rounded border border-slate-700 shrink-0 opacity-80"
+                                  style={{ backgroundColor: val.hex }}
+                                ></div>
+                                <div className="min-w-0">
+                                  <div className="text-xs font-bold text-slate-300 group-hover:text-white">
+                                    {val.displayCode}
+                                  </div>
+                                  <div className="text-[10px] text-slate-500 group-hover:text-slate-400 truncate">
+                                    {val.name}
+                                  </div>
+                                </div>
+                                <Plus
+                                  size={14}
+                                  className="ml-auto text-slate-600 group-hover:text-purple-400"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      {rackPaints.inventory.length === 0 &&
                         rackPaints.catalog.length === 0 && (
                           <div className="text-center py-8">
                             <p className="text-xs text-slate-500 mb-2">
@@ -2072,7 +2016,7 @@ const KitDetailModal = ({
                   {data.accessories?.map((acc) => (
                     <div
                       key={acc.id}
-                      className="flex items-center justify-between bg-slate-900 p-2 rounded border border-slate-700"
+                      className="flex items-center justify-between bg-slate-800 p-2 rounded border border-slate-700"
                     >
                       <div className="flex items-center gap-2 overflow-hidden">
                         {acc.status === "owned" ? (
@@ -2326,6 +2270,509 @@ const KitDetailModal = ({
               </div>
             </div>
           )}
+        </div>
+        <div className="p-4 border-t border-slate-800 bg-slate-800/30 flex justify-end rounded-b-xl">
+          <button
+            onClick={() => isFormValid && handleSaveWrapper()}
+            disabled={!isFormValid || isSaving}
+            className={`px-6 py-2 rounded-lg font-bold shadow-lg flex items-center gap-2 transition-all ${isFormValid && !isSaving ? "bg-blue-600 hover:bg-blue-500 text-white" : "bg-slate-700 text-slate-500 cursor-not-allowed"}`}
+          >
+            {isSaving ? (
+              <Loader2 className="animate-spin" size={18} />
+            ) : (
+              <Save size={18} />
+            )}{" "}
+            Uložit
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- PAINT DETAIL MODAL (s Mix funkcí a Striktním Výběrem) ---
+const PaintDetailModal = ({
+  paint,
+  onClose,
+  onSave,
+  existingPaints,
+  allKits,
+}) => {
+  const [data, setData] = useState({
+    brand: "",
+    code: "",
+    name: "",
+    type: "Akryl",
+    finish: "Matná",
+    status: "in_stock",
+    hex: "#999999",
+    notes: "",
+    thinner: "",
+    ratioPaint: 60,
+    ratioThinner: 40,
+    isMix: false,
+    mixParts: [],
+    ...paint,
+  });
+  const [isSaving, setIsSaving] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [duplicateError, setDuplicateError] = useState(null);
+
+  // Mix state
+  const [newMixPart, setNewMixPart] = useState({ paintId: "", ratio: 1 });
+
+  const usage = useMemo(() => {
+    if (!allKits) return [];
+    return allKits.filter((k) => k.paints?.some((kp) => kp.id === paint.id));
+  }, [allKits, paint.id]);
+
+  useEffect(() => {
+    if (data.brand && data.code && existingPaints) {
+      const cleanBrand = data.brand.toLowerCase();
+      const cleanCode = data.code.toLowerCase().replace(/[\s\-\.]/g, "");
+      const duplicate = existingPaints.find(
+        (p) =>
+          p.id !== paint.id &&
+          p.brand.toLowerCase() === cleanBrand &&
+          p.code.toLowerCase().replace(/[\s\-\.]/g, "") === cleanCode,
+      );
+      setDuplicateError(
+        duplicate
+          ? `Tuto barvu už máte ve skladu (${duplicate.status === "in_stock" ? "Skladem" : duplicate.status}).`
+          : null,
+      );
+    }
+  }, [data.brand, data.code, existingPaints, paint.id]);
+
+  useEffect(() => {
+    if (!data.isMix && data.brand && data.code && !paint.id) {
+      const searchBrand = data.brand.toUpperCase().replace(/\s+/g, "");
+      const searchCode = data.code.toUpperCase().replace(/[\s\-\.]/g, "");
+      const matches = Object.entries(MASTER_CATALOG).filter(
+        ([key, val]) => key.startsWith(searchBrand) && key.includes(searchCode),
+      );
+      setSuggestions(matches);
+      setShowSuggestions(matches.length > 0);
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  }, [data.brand, data.code, paint.id, data.isMix]);
+
+  const handleSelectSuggestion = ([key, val]) => {
+    setData((prev) => ({
+      ...prev,
+      code: val.displayCode || prev.code,
+      name: val.name,
+      type: val.type,
+      finish: val.finish,
+      hex: val.hex,
+    }));
+    setShowSuggestions(false);
+  };
+  const isFormValid =
+    data.name && (data.isMix || (data.brand && data.code)) && !duplicateError;
+  const handleRatioChange = (type, value) => {
+    if (value === "") {
+      setData((d) => ({ ...d, ratioPaint: "", ratioThinner: "" }));
+      return;
+    }
+    const num = parseInt(value);
+    if (isNaN(num)) return;
+    if (num > 100) return;
+    if (type === "paint")
+      setData((d) => ({ ...d, ratioPaint: num, ratioThinner: 100 - num }));
+    else setData((d) => ({ ...d, ratioThinner: num, ratioPaint: 100 - num }));
+  };
+  const handleSaveWrapper = async () => {
+    setIsSaving(true);
+    try {
+      await onSave(data);
+      onClose();
+    } catch (e) {
+      console.error("Chyba při ukládání:", e);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Mix logic
+  const addMixPart = () => {
+    if (!newMixPart.paintId || newMixPart.ratio <= 0) return;
+    const selectedPaint = existingPaints.find(
+      (p) => p.id === newMixPart.paintId,
+    );
+    if (!selectedPaint) return;
+    setData((prev) => ({
+      ...prev,
+      mixParts: [
+        ...(prev.mixParts || []),
+        {
+          ...newMixPart,
+          name: selectedPaint.name,
+          code: selectedPaint.code,
+          brand: selectedPaint.brand,
+        },
+      ],
+    }));
+    setNewMixPart({ paintId: "", ratio: 1 });
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 animate-in fade-in">
+      <div className="bg-slate-900 w-full max-w-lg rounded-xl border border-slate-700 shadow-2xl flex flex-col max-h-[95vh]">
+        <div className="p-4 border-b border-slate-800 bg-slate-800/50 flex justify-between items-center rounded-t-xl">
+          <h3 className="text-lg font-bold text-white flex items-center gap-2">
+            {data.isMix ? (
+              <FlaskConical size={20} className="text-purple-400" />
+            ) : (
+              <Palette size={20} className="text-blue-400" />
+            )}{" "}
+            {paint.id ? "Upravit barvu" : "Nová barva"}
+          </h3>
+          <button onClick={onClose} className="text-slate-400 hover:text-white">
+            <X size={24} />
+          </button>
+        </div>
+        <div className="p-4 space-y-4 flex-1 overflow-y-auto bg-slate-900 relative">
+          {duplicateError && (
+            <div className="bg-red-500/10 border border-red-500/30 text-red-300 px-3 py-2 rounded-lg text-xs flex items-center gap-2 animate-pulse font-bold">
+              <Ban size={16} className="shrink-0 text-red-500" /> Nelze uložit
+              duplikát: {duplicateError}
+            </div>
+          )}
+
+          <div
+            className="flex items-center gap-2 mb-2 p-2 bg-slate-800/50 rounded border border-slate-700 cursor-pointer"
+            onClick={() =>
+              setData((d) => ({
+                ...d,
+                isMix: !d.isMix,
+                brand: !d.isMix ? "Vlastní Mix" : "",
+                code: !d.isMix ? "MIX-" + Date.now().toString().slice(-4) : "",
+              }))
+            }
+          >
+            <div
+              className={`w-4 h-4 rounded border flex items-center justify-center ${data.isMix ? "bg-purple-500 border-purple-500" : "border-slate-500"}`}
+            >
+              {data.isMix && <Check size={12} className="text-white" />}
+            </div>
+            <span
+              className={`text-sm font-bold ${data.isMix ? "text-purple-400" : "text-slate-400"}`}
+            >
+              🧪 Vlastní Mix / Míchaná barva
+            </span>
+          </div>
+
+          {!data.isMix && (
+            <div className="flex gap-3">
+              <div className="flex-1 relative">
+                <label className="absolute -top-2 left-2 px-1 bg-slate-900 text-[10px] font-bold z-10 text-blue-400">
+                  Značka *
+                </label>
+                <select
+                  className="w-full bg-slate-950 text-sm font-bold text-white border border-slate-700 rounded px-3 py-2.5 outline-none focus:border-blue-500 transition-colors appearance-none cursor-pointer"
+                  value={data.brand}
+                  onChange={(e) => setData({ ...data, brand: e.target.value })}
+                >
+                  <option value="">-- Vyber --</option>
+                  {BRANDS.map((b) => (
+                    <option key={b} value={b}>
+                      {b}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex-1 relative">
+                <FloatingInput
+                  label="Kód *"
+                  value={data.code}
+                  onChange={(e) =>
+                    setData({ ...data, code: Normalizer.code(e.target.value) })
+                  }
+                  placeholder="XF-1"
+                  labelColor="text-blue-400"
+                />
+                {showSuggestions && (
+                  <div className="absolute top-full left-0 right-0 bg-slate-800 border border-slate-600 rounded-lg mt-1 z-50 shadow-xl max-h-40 overflow-y-auto">
+                    <div className="p-2 text-[10px] text-slate-400 font-bold uppercase border-b border-slate-700 bg-slate-900/50">
+                      Nalezeno v katalogu:
+                    </div>
+                    {suggestions.map(([key, val]) => (
+                      <div
+                        key={key}
+                        onClick={() => handleSelectSuggestion([key, val])}
+                        className="p-2 hover:bg-blue-600/20 hover:text-blue-300 cursor-pointer text-xs flex items-center gap-2 transition-colors border-b border-slate-700/50 last:border-0"
+                      >
+                        <Wand2 size={12} className="text-purple-400" />
+                        <span className="font-bold text-white">
+                          {val.displayCode}
+                        </span>
+                        <span className="text-slate-300 truncate">
+                          {val.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          <FloatingInput
+            label="Název / Odstín *"
+            value={data.name}
+            onChange={(e) =>
+              setData({ ...data, name: Normalizer.name(e.target.value) })
+            }
+            placeholder={data.isMix ? "Můj stínovací mix" : "flat black"}
+            labelColor={data.isMix ? "text-purple-400" : "text-blue-400"}
+          />
+
+          <div className="flex gap-3">
+            <FloatingSelect
+              className="flex-1"
+              label="Typ"
+              value={data.type}
+              onChange={(e) => setData({ ...data, type: e.target.value })}
+              options={[
+                { value: "Akryl", label: "💧 Akryl" },
+                { value: "Enamel", label: "🛢️ Enamel" },
+                { value: "Lacquer", label: "☣️ Lacquer" },
+                { value: "Olej", label: "🎨 Olej" },
+                { value: "Pigment", label: "🏜️ Pigment" },
+              ]}
+            />
+            <FloatingSelect
+              className="flex-1"
+              label="Povrch"
+              value={data.finish}
+              onChange={(e) => setData({ ...data, finish: e.target.value })}
+              options={[
+                { value: "Matná", label: "Matná" },
+                { value: "Polomat", label: "Polomat" },
+                { value: "Lesklá", label: "Lesklá" },
+                { value: "Kovová", label: "Kovová" },
+                { value: "Transparentní", label: "Transparentní" },
+              ]}
+            />
+            {/* ZMĚNA: Přidána možnost "Dochází" pro Mixy */}
+            <FloatingSelect
+              className="flex-1"
+              label="Status"
+              value={data.status}
+              onChange={(e) => setData({ ...data, status: e.target.value })}
+              options={
+                data.isMix
+                  ? [
+                      { value: "in_stock", label: "✅ Mám namícháno" },
+                      { value: "low", label: "⚠️ Dochází" },
+                      { value: "empty", label: "🧪 Jen recept" },
+                    ]
+                  : [
+                      { value: "in_stock", label: "✅ Skladem" },
+                      { value: "low", label: "⚠️ Dochází" },
+                      { value: "empty", label: "❌ Prázdné" },
+                      { value: "wanted", label: "🛒 Koupit" },
+                    ]
+              }
+            />
+          </div>
+
+          {data.isMix && (
+            <div className="bg-slate-800 p-3 rounded-xl border border-slate-700/50">
+              <h4 className="text-xs font-bold text-purple-400 uppercase mb-2 flex items-center gap-2">
+                <FlaskConical size={14} /> Receptura (Ingredience)
+              </h4>
+              <div className="flex gap-2 mb-2">
+                <select
+                  className="flex-1 bg-slate-950 border border-slate-600 rounded text-xs text-white p-2"
+                  value={newMixPart.paintId}
+                  onChange={(e) =>
+                    setNewMixPart({ ...newMixPart, paintId: e.target.value })
+                  }
+                >
+                  <option value="">-- Vyber barvu ze skladu --</option>
+                  {existingPaints
+                    .filter((p) => p.status === "in_stock")
+                    .map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.brand} {p.code} {p.name}
+                      </option>
+                    ))}
+                </select>
+                <input
+                  type="number"
+                  min="1"
+                  className="w-16 bg-slate-950 border border-slate-600 rounded text-xs text-white p-2 text-center"
+                  placeholder="Díly"
+                  value={newMixPart.ratio}
+                  onChange={(e) =>
+                    setNewMixPart({
+                      ...newMixPart,
+                      ratio: parseInt(e.target.value) || 0,
+                    })
+                  }
+                />
+                <button
+                  onClick={addMixPart}
+                  disabled={!newMixPart.paintId}
+                  className="bg-purple-600 text-white p-2 rounded disabled:opacity-50"
+                >
+                  <Plus size={16} />
+                </button>
+              </div>
+              <div className="space-y-1">
+                {data.mixParts?.map((part, idx) => (
+                  <div
+                    key={idx}
+                    className="flex justify-between items-center bg-slate-900 p-2 rounded border border-slate-700 text-xs"
+                  >
+                    <span>
+                      <span className="font-bold text-purple-400">
+                        {part.ratio} dílů
+                      </span>{" "}
+                      - {part.brand} {part.code} {part.name}
+                    </span>
+                    <button
+                      onClick={() =>
+                        setData((prev) => ({
+                          ...prev,
+                          mixParts: prev.mixParts.filter((_, i) => i !== idx),
+                        }))
+                      }
+                      className="text-slate-500 hover:text-red-400"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                ))}
+                {(!data.mixParts || data.mixParts.length === 0) && (
+                  <p className="text-[10px] text-slate-500 italic text-center">
+                    Zatím žádné ingredience.
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {!data.isMix && (
+            <p className="text-[10px] text-blue-400/50 font-bold -mt-2 mb-2">
+              * tyto údaje jsou povinné (značka, kód, název)
+            </p>
+          )}
+
+          <div className="bg-slate-800 p-3 rounded-xl border border-slate-700/50">
+            <h4 className="text-xs font-bold text-slate-400 uppercase mb-2 flex items-center gap-2">
+              <Droplets size={14} className="text-blue-400" /> Ředění
+            </h4>
+            <div className="flex gap-3 items-end">
+              <FloatingInput
+                className="flex-[2]"
+                label="Ředidlo"
+                value={data.thinner || ""}
+                onChange={(e) => setData({ ...data, thinner: e.target.value })}
+                placeholder="Např. Tamiya X-20A"
+              />
+              <div className="flex items-center gap-1 bg-slate-900 border border-slate-700 rounded px-2 py-1 h-[42px]">
+                <div className="text-center">
+                  <label className="text-[8px] text-slate-500 font-bold block">
+                    BARVA
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    className="w-8 bg-transparent text-center text-sm font-bold text-white outline-none appearance-none"
+                    placeholder="60"
+                    value={data.ratioPaint}
+                    onChange={(e) => handleRatioChange("paint", e.target.value)}
+                  />
+                </div>
+                <span className="text-slate-500 font-bold">:</span>
+                <div className="text-center">
+                  <label className="text-[8px] text-slate-500 font-bold block">
+                    ŘEDIDLO
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    className="w-8 bg-transparent text-center text-sm font-bold text-white outline-none appearance-none"
+                    placeholder="40"
+                    value={data.ratioThinner}
+                    onChange={(e) =>
+                      handleRatioChange("thinner", e.target.value)
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="bg-slate-800 p-3 rounded-lg border border-slate-700">
+            <label className="block text-[10px] font-bold text-slate-500 uppercase mb-2">
+              Odstín (Preview)
+            </label>
+            <div className="flex items-center gap-4">
+              <input
+                type="color"
+                value={data.hex}
+                onChange={(e) => setData({ ...data, hex: e.target.value })}
+                className="w-12 h-12 rounded cursor-pointer border-none bg-transparent"
+              />
+              <div className="flex-1">
+                <input
+                  type="text"
+                  value={data.hex}
+                  onChange={(e) => setData({ ...data, hex: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-sm font-mono text-white uppercase outline-none focus:border-blue-500"
+                  placeholder="#000000"
+                />
+                <p className="text-[10px] text-slate-500 mt-1">
+                  Klikni na čtvereček nebo vlož kód.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-slate-800 p-3 rounded-xl border border-slate-700/50">
+            <h4 className="text-xs font-bold text-slate-400 uppercase mb-2 flex items-center gap-2">
+              <Box size={14} className="text-purple-400" /> Použití v modelech
+            </h4>
+            {usage.length > 0 ? (
+              <div className="space-y-1">
+                {usage.map((k) => (
+                  <div
+                    key={k.id}
+                    className="text-xs text-slate-300 flex items-center gap-2 bg-slate-900 p-2 rounded"
+                  >
+                    <ChevronRight size={10} className="text-slate-500" />
+                    <span className="font-bold">{k.subject}</span>
+                    <span>{k.name}</span>
+                    {k.paints?.find((p) => p.id === paint.id)?.note && (
+                      <span className="text-[10px] text-slate-500 italic ml-auto">
+                        ({k.paints.find((p) => p.id === paint.id).note})
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-slate-600 italic">
+                Tato barva není přiřazena k žádnému modelu.
+              </p>
+            )}
+          </div>
+          <div className="pt-2">
+            <FloatingTextarea
+              label="Poznámky (např. chování v pistoli)"
+              value={data.notes || ""}
+              onChange={(e) => setData({ ...data, notes: e.target.value })}
+              height="h-24"
+              labelColor="text-orange-400"
+            />
+          </div>
         </div>
         <div className="p-4 border-t border-slate-800 bg-slate-800/30 flex justify-end rounded-b-xl">
           <button
