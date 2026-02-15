@@ -142,6 +142,75 @@ const CzechFlag = ({ className }) => (
   </svg>
 );
 
+// --- LOGO KOMPONENTA (KitHub Wordmark) ---
+const AppLogo = ({ className = "h-8" }) => (
+  <svg
+    className={className}
+    viewBox="0 0 140 40"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    {/* Text "Kit" - bílý */}
+    <text
+      x="0"
+      y="30"
+      fill="white"
+      fontFamily="system-ui, sans-serif"
+      fontWeight="900"
+      fontSize="28"
+      letterSpacing="-1"
+    >
+      Kit
+    </text>
+    {/* Text "Hub" - modrý */}
+    <text
+      x="42"
+      y="30"
+      fill="#3b82f6"
+      fontFamily="system-ui, sans-serif"
+      fontWeight="900"
+      fontSize="28"
+      letterSpacing="-1"
+    >
+      Hub
+    </text>
+
+    {/* Vtokový rámeček (Symbol) napravo */}
+    <g transform="translate(100, 5)">
+      {/* Hlavní svislá lišta */}
+      <rect x="0" y="0" width="6" height="30" rx="3" fill="#334155" />
+      {/* Barevné díly */}
+      <rect
+        x="4"
+        y="6"
+        width="12"
+        height="4"
+        rx="2"
+        fill="#3b82f6"
+        opacity="0.9"
+      />
+      <rect
+        x="4"
+        y="13"
+        width="16"
+        height="4"
+        rx="2"
+        fill="#f97316"
+        opacity="0.9"
+      />
+      <rect
+        x="4"
+        y="20"
+        width="12"
+        height="4"
+        rx="2"
+        fill="#3b82f6"
+        opacity="0.9"
+      />
+    </g>
+  </svg>
+);
+
 const MASTER_CATALOG = {
   // Tamiya
   TAMIYA_XF1: {
@@ -3440,15 +3509,10 @@ export default function App() {
         <div className="max-w-md mx-auto px-4 py-4">
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-3">
-              <img
-                src="favicon.png"
-                alt="Logo"
-                className="w-10 h-10 rounded-xl shadow-lg border border-slate-600 object-cover"
-              />
-              <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
-                Modelářský Deník
-              </h1>
+              {/* Použití nové SVG komponenty */}
+              <AppLogo className="h-8 md:h-10" />
             </div>
+
             <div className="flex gap-2">
               <button
                 onClick={() => setShowSettings(true)}
