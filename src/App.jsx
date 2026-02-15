@@ -97,7 +97,7 @@ import {
 // 🔧 KONFIGURACE A KONSTANTY
 // ==========================================
 
-const APP_VERSION = "v2.29.5-formatted-clean";
+const APP_VERSION = "v2.29.6-formatted-clean";
 
 const safeRender = (value) => {
   if (value === null || value === undefined) return "";
