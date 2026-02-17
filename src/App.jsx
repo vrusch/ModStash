@@ -21,6 +21,7 @@ import ProjectCard from "./components/cards/ProjectCard";
 import ShoppingAccessoryCard from "./components/cards/ShoppingAccessoryCard";
 import SettingsModal from "./components/modals/SettingsModal";
 import ProjectDetailModal from "./components/modals/ProjectDetailModal";
+import LanguageModal from "./components/modals/LanguageModal";
 import KitDetailModal from "./components/modals/KitDetailModal";
 import PaintDetailModal from "./components/modals/PaintDetailModal";
 import { useAuth } from "./hooks/useAuth";
@@ -38,7 +39,6 @@ const BRANDS = brandsData;
 const MASTER_CATALOG = masterCatalog;
 const APP_VERSION = import.meta.env.PACKAGE_VERSION || "Dev";
 
-
 // ==========================================
 // 🧩 SUB-KOMPONENTY (UI Elements)
 // ==========================================
@@ -49,6 +49,8 @@ const APP_VERSION = import.meta.env.PACKAGE_VERSION || "Dev";
 
 export default function App() {
   const [showSettings, setShowSettings] = useState(false);
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
+  const [language, setLanguage] = useState("cs");
   const [confirmModal, setConfirmModal] = useState({
     isOpen: false,
     title: "",
@@ -65,7 +67,14 @@ export default function App() {
   const [activePaint, setActivePaint] = useState(null);
   const [isNewPaint, setIsNewPaint] = useState(false);
 
-  const requestConfirm = (title, message, onConfirm, isDestructive = false, confirmText = "Ano", showCancel = true) => {
+  const requestConfirm = (
+    title,
+    message,
+    onConfirm,
+    isDestructive = false,
+    confirmText = "Ano",
+    showCancel = true,
+  ) => {
     setConfirmModal({
       isOpen: true,
       title,
@@ -134,7 +143,11 @@ export default function App() {
         setActivePaint={setActivePaint}
         activeUid={activeUid}
         isOnline={isOnline}
-        onShowAlert={(msg) => requestConfirm("Info", msg, null, false, "Rozumím", false)}
+        onShowAlert={(msg) =>
+          requestConfirm("Info", msg, null, false, "Rozumím", false)
+        }
+        language={language}
+        setShowLanguageModal={setShowLanguageModal}
       />
 
       {/* CONTENT */}
@@ -395,16 +408,29 @@ export default function App() {
           masterCatalog={MASTER_CATALOG}
         />
       )}
+      {showLanguageModal && (
+        <LanguageModal
+          activeLanguage={language}
+          onSelectLanguage={setLanguage}
+          onClose={() => setShowLanguageModal(false)}
+        />
+      )}
       {activeProject && (
         <ProjectDetailModal
           project={activeProject}
           allKits={kits}
           onClose={() => setActiveProject(null)}
-          onSave={(d) =>
-            saveItem("projects", d, isNewProject)
-          }
+          onSave={(d) => saveItem("projects", d, isNewProject)}
           onUpdateKitLink={(kid, pid) =>
-            saveItem("kits", { ...kits.find((k) => k.id === kid), projectId: pid, legacyProject: null }, false)
+            saveItem(
+              "kits",
+              {
+                ...kits.find((k) => k.id === kid),
+                projectId: pid,
+                legacyProject: null,
+              },
+              false,
+            )
           }
           onCreateWishlistKit={(d) => saveItem("kits", d, true)}
           onAddWishlistKit={() => {

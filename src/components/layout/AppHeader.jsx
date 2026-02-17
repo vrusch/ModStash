@@ -11,8 +11,16 @@ import {
   Filter,
   XCircle,
   Paintbrush,
+  Wifi,
+  WifiOff,
 } from "lucide-react";
-import { AppLogo, CzechFlag } from "../ui/Icons";
+import {
+  AppLogo,
+  CzechFlag,
+  USUKFlag,
+  SpanishFlag,
+  GermanFlag,
+} from "../ui/Icons";
 import { FilterChip } from "../ui/FormElements";
 
 const AppHeader = ({
@@ -27,6 +35,8 @@ const AppHeader = ({
   activeUid,
   isOnline,
   onShowAlert,
+  language,
+  setShowLanguageModal,
 }) => {
   return (
     <div className="bg-slate-800 border-b border-slate-700 sticky top-0 z-10 shadow-md">
@@ -79,7 +89,9 @@ const AppHeader = ({
                     mixParts: [],
                   });
                 } else {
-                  onShowAlert("Pro přidání položky přepněte na Modely, Barvy nebo Projekty.");
+                  onShowAlert(
+                    "Pro přidání položky přepněte na Modely, Barvy nebo Projekty.",
+                  );
                 }
               }}
               className="p-2 rounded-full shadow text-white hover:brightness-110 bg-blue-600"
@@ -134,7 +146,10 @@ const AppHeader = ({
             />
           </div>
           <button
-            onClick={() => logic.view !== "shopping" && logic.setShowFilter(!logic.showFilter)}
+            onClick={() =>
+              logic.view !== "shopping" &&
+              logic.setShowFilter(!logic.showFilter)
+            }
             className={`p-2 w-10 h-10 rounded-lg border flex items-center justify-center transition-opacity shrink-0 ${logic.view === "shopping" ? "opacity-0 pointer-events-none border-transparent bg-transparent" : logic.showFilter || logic.hasActiveFilters ? "bg-blue-600 border-blue-500 text-white" : "bg-slate-800 border-slate-700 text-slate-400"}`}
           >
             <Filter size={20} />
@@ -266,10 +281,27 @@ const AppHeader = ({
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <div className={isOnline ? "text-green-500" : "text-orange-500"}>
+            <div
+              className={`flex items-center gap-1 ${isOnline ? "text-green-500" : "text-orange-500"}`}
+            >
+              {isOnline ? <Wifi size={12} /> : <WifiOff size={12} />}
               {isOnline ? "Online" : "Offline"}
             </div>
-            <CzechFlag className="w-4 h-3 rounded shadow-sm opacity-75 hover:opacity-100 transition-opacity" />
+            <button
+              onClick={() => setShowLanguageModal(true)}
+              className="cursor-pointer hover:scale-110 transition-transform"
+              title="Změnit jazyk"
+            >
+              {language === "en" ? (
+                <USUKFlag className="w-4 h-3 rounded shadow-sm" />
+              ) : language === "es" ? (
+                <SpanishFlag className="w-4 h-3 rounded shadow-sm" />
+              ) : language === "de" ? (
+                <GermanFlag className="w-4 h-3 rounded shadow-sm" />
+              ) : (
+                <CzechFlag className="w-4 h-3 rounded shadow-sm" />
+              )}
+            </button>
           </div>
         </div>
       </div>
