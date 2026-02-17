@@ -112,73 +112,19 @@ const KitCard = React.memo(
               )}
             </h3>
 
-            <div className="flex flex-wrap justify-between items-center gap-2 mt-2">
-              <div>
-                {projectName && (
-                  <div
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (onOpenProject) onOpenProject(kit.projectId);
-                    }}
-                    className="flex items-center gap-1.5 text-xs text-blue-400 font-medium hover:underline cursor-pointer"
-                  >
-                    <Folder size={14} />{" "}
-                    <span className="truncate">{safeRender(projectName)}</span>
-                  </div>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                {/* Paints Badge */}
-                {hasPaintsAssigned &&
-                  kit.status !== "finished" &&
-                  kit.status !== "scrap" && (
-                    <div
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (onOpenDetail) onOpenDetail(kit, "paints");
-                        else if (onOpenPaints) onOpenPaints(kit);
-                      }}
-                      className={`flex items-center gap-1.5 text-xs font-bold rounded px-1.5 py-0.5 border cursor-pointer hover:opacity-80 transition-opacity ${isPaintsComplete ? "bg-green-500/10 text-green-400 border-green-500/20" : "bg-red-500/10 text-red-400 border-red-500/20"}`}
-                    >
-                      <Palette size={12} />
-                      <span>
-                        {ownedPaints}/{totalPaints}
-                      </span>
-                    </div>
-                  )}
-
-                {/* Accessories Badge */}
-                {hasAcc &&
-                  kit.status !== "finished" &&
-                  kit.status !== "scrap" && (
-                    <div
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (onOpenDetail) onOpenDetail(kit, "parts");
-                      }}
-                      className="flex items-center gap-1.5 text-xs font-bold rounded px-1.5 py-0.5 border cursor-pointer hover:opacity-80 transition-opacity bg-blue-500/10 text-blue-400 border-blue-500/20"
-                    >
-                      <Layers size={12} />
-                      <span>
-                        {ownedAcc}/{totalAcc}
-                      </span>
-                    </div>
-                  )}
-
-                {/* Files Badge */}
-                {hasFiles && (
-                  <div
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (onOpenDetail) onOpenDetail(kit, "files");
-                    }}
-                    className="flex items-center gap-1.5 text-xs font-bold rounded px-1.5 py-0.5 border cursor-pointer hover:opacity-80 transition-opacity bg-slate-700/50 text-slate-300 border-slate-600"
-                  >
-                    <Paperclip size={12} />
-                    <span>{filesCount}</span>
-                  </div>
-                )}
-              </div>
+            <div className="flex items-center gap-2 mt-2">
+              {projectName && (
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onOpenProject) onOpenProject(kit.projectId);
+                  }}
+                  className="flex items-center gap-1.5 text-xs text-blue-400 font-medium hover:underline cursor-pointer min-w-0"
+                >
+                  <Folder size={14} className="shrink-0" />{" "}
+                  <span className="truncate">{safeRender(projectName)}</span>
+                </div>
+              )}
             </div>
 
             {!projectName && kit.legacyProject && (
@@ -221,6 +167,58 @@ const KitCard = React.memo(
                 )}
               </>
             )}
+            <div className="flex items-center gap-2 mt-1">
+              {/* Paints Badge */}
+              {hasPaintsAssigned &&
+                kit.status !== "finished" &&
+                kit.status !== "scrap" && (
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (onOpenDetail) onOpenDetail(kit, "paints");
+                      else if (onOpenPaints) onOpenPaints(kit);
+                    }}
+                    className={`flex items-center gap-1.5 text-xs font-bold rounded px-1.5 py-0.5 border cursor-pointer hover:opacity-80 transition-opacity ${isPaintsComplete ? "bg-green-500/10 text-green-400 border-green-500/20" : "bg-red-500/10 text-red-400 border-red-500/20"}`}
+                  >
+                    <Palette size={12} />
+                    <span>
+                      {ownedPaints}/{totalPaints}
+                    </span>
+                  </div>
+                )}
+
+              {/* Accessories Badge */}
+              {hasAcc &&
+                kit.status !== "finished" &&
+                kit.status !== "scrap" && (
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (onOpenDetail) onOpenDetail(kit, "parts");
+                    }}
+                    className="flex items-center gap-1.5 text-xs font-bold rounded px-1.5 py-0.5 border cursor-pointer hover:opacity-80 transition-opacity bg-blue-500/10 text-blue-400 border-blue-500/20"
+                  >
+                    <Layers size={12} />
+                    <span>
+                      {ownedAcc}/{totalAcc}
+                    </span>
+                  </div>
+                )}
+
+              {/* Files Badge */}
+              {hasFiles && (
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onOpenDetail) onOpenDetail(kit, "files");
+                  }}
+                  className="flex items-center gap-1.5 text-xs font-bold rounded px-1.5 py-0.5 border cursor-pointer hover:opacity-80 transition-opacity bg-slate-700/50 text-slate-300 border-slate-600"
+                >
+                  <Paperclip size={12} />
+                  <span>{filesCount}</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

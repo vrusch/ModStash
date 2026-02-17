@@ -1,4 +1,4 @@
-Tato verze přináší **kompletní architektonický přepis (refactoring)** celé aplikace. Cílem bylo odstranit technický dluh, rozbít monolitický kód a připravit aplikaci na snadnější vývoj nových funkcí.
+Release verze v2.30.0 přináší **kompletní architektonický přepis (refactoring)** celé aplikace. Cílem bylo odstranit technický dluh, rozbít monolitický kód a připravit aplikaci na snadnější vývoj nových funkcí.
 
 Z uživatelského hlediska zůstává funkčnost a vzhled beze změny (1:1 parita), ale aplikace je nyní stabilnější a připravená na škálování.
 
@@ -43,3 +43,7 @@ src/
 ├── hooks/           # useAuth, useInventory, useAppLogic
 ├── utils/           # Pomocné funkce
 └── App.jsx          # Hlavní vstupní bod (Layout only)
+
+
+## 📋 Changelog
+Všechny podstatné změny v tomto projektu naleznete v souboru [CHANGELOG.md](./CHANGELOG.md).
