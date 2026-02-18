@@ -13,6 +13,10 @@ import {
   Loader2,
   Check,
   ChevronRight,
+  Info,
+  Lock,
+  Sparkles,
+  ShieldAlert,
 } from "lucide-react";
 import {
   FloatingInput,
@@ -20,8 +24,8 @@ import {
   FloatingSelect,
 } from "../ui/FormElements";
 import { Normalizer } from "../../utils/normalizers";
-import MASTER_CATALOG from "../../data/catalog.json";
-import BRANDS from "../../data/brands.json";
+// Importujeme nové dynamické API
+import PaintAPI from "../../data/paints/PaintAPI";
 
 const PaintDetailModal = ({
   paint,
@@ -30,6 +34,11 @@ const PaintDetailModal = ({
   existingPaints,
   allKits,
 }) => {
+  // --- 1. INITIALIZATION & STATE ---
+
+  // Pokud má barva ID, jde o editaci (Detail). Pokud ne, je to Nová barva.
+  const isEditMode = !!paint.id;
+
   const [data, setData] = useState({
     brand: "",
     code: "",
@@ -46,26 +55,88 @@ const PaintDetailModal = ({
     mixParts: [],
     ...paint,
   });
+
+  // Stavy pro hierarchický výběr (pouze pro režim Nová barva)
+  const [selectedSeries, setSelectedSeries] = useState("");
+  const [availableSeries, setAvailableSeries] = useState([]);
+
+  // UI stavy
   const [isSaving, setIsSaving] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [duplicateError, setDuplicateError] = useState(null);
 
-  // Mix state
+  // Stav pro přidávání do mixu
   const [newMixPart, setNewMixPart] = useState({ paintId: "", ratio: 1 });
 
-  const usage = useMemo(() => {
-    if (!allKits) return [];
-    return allKits.filter((k) => k.paints?.some((kp) => kp.id === paint.id));
-  }, [allKits, paint.id]);
+  // --- 2. LOGIKA (EFFECTS) ---
 
+  // A) Načtení řad (pouze pokud měníme značku u nové barvy)
   useEffect(() => {
-    if (data.brand && data.code && existingPaints) {
+    if (data.brand) {
+      const series = PaintAPI.getSeriesList(data.brand);
+      setAvailableSeries(series);
+    } else {
+      setAvailableSeries([]);
+    }
+  }, [data.brand]);
+
+  // B) SPECIFIKACE: Získání info o typu barvy (Akryl, Lacquer...)
+  const currentSpec = useMemo(() => {
+    if (!data.brand || !data.type) return null;
+    // Získáme specifikace pro danou značku (např. tamiya_spec.json) z API
+    const allSpecs = PaintAPI.getSpecs(data.brand);
+    // Vrátíme konkrétní typ (např. klíč "Akryl")
+    return allSpecs ? allSpecs[data.type] : null;
+  }, [data.brand, data.type]);
+
+  // C) AUTO-FILL: Doplnění ředidla podle specifikace
+  useEffect(() => {
+    // Vyplníme jen u nové barvy a jen když je pole prázdné
+    if (currentSpec && currentSpec.thinner && !data.thinner && !isEditMode) {
+      setData((prev) => ({ ...prev, thinner: currentSpec.thinner }));
+    }
+  }, [currentSpec, isEditMode]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // D) NAŠEPTÁVAČ (Autocomplete)
+  useEffect(() => {
+    // Našeptáváme jen pro: Novou barvu, Není Mix, Máme značku, Píšeme kód
+    if (!data.isMix && data.brand && data.code && !isEditMode) {
+      const searchCode = data.code.toUpperCase().replace(/[\s\-\.]/g, "");
+
+      // Zjistíme, kde hledat (konkrétní řada vs. celá značka)
+      const sourceData = selectedSeries
+        ? PaintAPI.getSpecificSeries(data.brand, selectedSeries)
+        : PaintAPI.getBrandPaints(data.brand);
+
+      // Filtrujeme (podle kódu i názvu) - ošetříme undefined
+      const entries = sourceData ? Object.entries(sourceData) : [];
+
+      const matches = entries
+        .filter(([key, val]) => {
+          const valCode = (val.displayCode || "")
+            .toUpperCase()
+            .replace(/[\s\-\.]/g, "");
+          const valName = (val.name || "").toUpperCase();
+          return valCode.includes(searchCode) || valName.includes(searchCode);
+        })
+        .slice(0, 10); // Max 10 výsledků
+
+      setSuggestions(matches);
+      setShowSuggestions(matches.length > 0);
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  }, [data.brand, data.code, selectedSeries, isEditMode, data.isMix]);
+
+  // E) VALIDACE DUPLICIT (jen u nové barvy, abychom nepřidali to samé dvakrát)
+  useEffect(() => {
+    if (!isEditMode && data.brand && data.code && existingPaints) {
       const cleanBrand = data.brand.toLowerCase();
       const cleanCode = data.code.toLowerCase().replace(/[\s\-\.]/g, "");
       const duplicate = existingPaints.find(
         (p) =>
-          p.id !== paint.id &&
           p.brand.toLowerCase() === cleanBrand &&
           p.code.toLowerCase().replace(/[\s\-\.]/g, "") === cleanCode,
       );
@@ -75,36 +146,50 @@ const PaintDetailModal = ({
           : null,
       );
     }
-  }, [data.brand, data.code, existingPaints, paint.id]);
+  }, [data.brand, data.code, existingPaints, isEditMode]);
 
-  useEffect(() => {
-    if (!data.isMix && data.brand && data.code && !paint.id) {
-      const searchBrand = data.brand.toUpperCase().replace(/\s+/g, "");
-      const searchCode = data.code.toUpperCase().replace(/[\s\-\.]/g, "");
-      const matches = Object.entries(MASTER_CATALOG).filter(
-        ([key, val]) => key.startsWith(searchBrand) && key.includes(searchCode),
-      );
-      setSuggestions(matches);
-      setShowSuggestions(matches.length > 0);
-    } else {
-      setSuggestions([]);
-      setShowSuggestions(false);
-    }
-  }, [data.brand, data.code, paint.id, data.isMix]);
+  // F) DETEKCE ZMĚN (pro tlačítko Uložit)
+  const hasChanges = useMemo(() => {
+    const normalize = (obj) => JSON.stringify(obj);
+    const initialData = {
+      brand: "",
+      code: "",
+      name: "",
+      type: "Akryl",
+      finish: "Matná",
+      status: "in_stock",
+      hex: "#999999",
+      notes: "",
+      thinner: "",
+      ratioPaint: 60,
+      ratioThinner: 40,
+      isMix: false,
+      mixParts: [],
+      ...paint,
+    };
+    return normalize(data) !== normalize(initialData);
+  }, [data, paint]);
+
+  // G) POUŽITÍ V MODELECH
+  const usage = useMemo(() => {
+    if (!allKits) return [];
+    return allKits.filter((k) => k.paints?.some((kp) => kp.id === paint.id));
+  }, [allKits, paint.id]);
+
+  // --- 3. HANDLERS ---
 
   const handleSelectSuggestion = ([key, val]) => {
     setData((prev) => ({
       ...prev,
       code: val.displayCode || prev.code,
       name: val.name,
-      type: val.type,
+      type: val.type, // Změna typu triggerne načtení specifikací (Info box)
       finish: val.finish,
-      hex: val.hex,
+      hex: val.hex || prev.hex,
     }));
     setShowSuggestions(false);
   };
-  const isFormValid =
-    data.name && (data.isMix || (data.brand && data.code)) && !duplicateError;
+
   const handleRatioChange = (type, value) => {
     if (value === "") {
       setData((d) => ({ ...d, ratioPaint: "", ratioThinner: "" }));
@@ -117,6 +202,7 @@ const PaintDetailModal = ({
       setData((d) => ({ ...d, ratioPaint: num, ratioThinner: 100 - num }));
     else setData((d) => ({ ...d, ratioThinner: num, ratioPaint: 100 - num }));
   };
+
   const handleSaveWrapper = async () => {
     setIsSaving(true);
     try {
@@ -129,13 +215,13 @@ const PaintDetailModal = ({
     }
   };
 
-  // Mix logic
   const addMixPart = () => {
     if (!newMixPart.paintId || newMixPart.ratio <= 0) return;
     const selectedPaint = existingPaints.find(
       (p) => p.id === newMixPart.paintId,
     );
     if (!selectedPaint) return;
+
     setData((prev) => ({
       ...prev,
       mixParts: [
@@ -151,9 +237,15 @@ const PaintDetailModal = ({
     setNewMixPart({ paintId: "", ratio: 1 });
   };
 
+  const isFormValid =
+    data.name && (data.isMix || (data.brand && data.code)) && !duplicateError;
+
+  // --- 4. RENDER ---
+
   return (
     <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 animate-in fade-in">
       <div className="bg-slate-900 w-full max-w-lg rounded-xl border border-slate-700 shadow-2xl flex flex-col max-h-[95vh]">
+        {/* HLAVIČKA */}
         <div className="p-4 border-b border-slate-800 bg-slate-800/50 flex justify-between items-center rounded-t-xl">
           <h3 className="text-lg font-bold text-white flex items-center gap-2">
             {data.isMix ? (
@@ -161,97 +253,187 @@ const PaintDetailModal = ({
             ) : (
               <Palette size={20} className="text-blue-400" />
             )}{" "}
-            {paint.id ? "Upravit barvu" : "Nová barva"}
+            {isEditMode ? "Detail barvy" : "Nová barva"}
           </h3>
           <button onClick={onClose} className="text-slate-400 hover:text-white">
             <X size={24} />
           </button>
         </div>
+
+        {/* OBSAH */}
         <div className="p-4 space-y-4 flex-1 overflow-y-auto bg-slate-900 relative">
+          {/* Chybová hláška */}
           {duplicateError && (
             <div className="bg-red-500/10 border border-red-500/30 text-red-300 px-3 py-2 rounded-lg text-xs flex items-center gap-2 animate-pulse font-bold">
-              <Ban size={16} className="shrink-0 text-red-500" /> Nelze uložit
-              duplikát: {duplicateError}
+              <Ban size={16} className="shrink-0 text-red-500" />
+              {duplicateError}
             </div>
           )}
 
-          <div
-            className="flex items-center gap-2 mb-2 p-2 bg-slate-800/50 rounded border border-slate-700 cursor-pointer"
-            onClick={() =>
-              setData((d) => ({
-                ...d,
-                isMix: !d.isMix,
-                brand: !d.isMix ? "Vlastní Mix" : "",
-                code: !d.isMix ? "MIX-" + Date.now().toString().slice(-4) : "",
-              }))
-            }
-          >
-            <div
-              className={`w-4 h-4 rounded border flex items-center justify-center ${data.isMix ? "bg-purple-500 border-purple-500" : "border-slate-500"}`}
-            >
-              {data.isMix && <Check size={12} className="text-white" />}
-            </div>
-            <span
-              className={`text-sm font-bold ${data.isMix ? "text-purple-400" : "text-slate-400"}`}
-            >
-              🧪 Vlastní Mix / Míchaná barva
-            </span>
-          </div>
+          {/* --- SEKCE A: IDENTIFIKACE PRODUKTU --- */}
 
-          {!data.isMix && (
-            <div className="flex gap-3">
-              <div className="flex-1 relative">
-                <label className="absolute -top-2 left-2 px-1 bg-slate-900 text-[10px] font-bold z-10 text-blue-400">
-                  Značka *
-                </label>
-                <select
-                  className="w-full bg-slate-950 text-sm font-bold text-white border border-slate-700 rounded px-3 py-2.5 outline-none focus:border-blue-500 transition-colors appearance-none cursor-pointer"
-                  value={data.brand}
-                  onChange={(e) => setData({ ...data, brand: e.target.value })}
+          {/* REŽIM EDITACE: ZAMČENO */}
+          {isEditMode ? (
+            <div className="bg-slate-950 p-3 rounded-lg border border-slate-800 flex flex-col gap-2">
+              <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase">
+                <Lock size={12} /> Identifikace produktu (Fixní)
+              </div>
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-10 h-10 rounded bg-slate-800 flex items-center justify-center font-bold text-white shadow-sm border border-slate-700"
+                  style={{
+                    backgroundColor:
+                      data.hex !== "#999999" ? data.hex : undefined,
+                  }}
                 >
-                  <option value="">-- Vyber --</option>
-                  {BRANDS.map((b) => (
-                    <option key={b} value={b}>
-                      {b}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex-1 relative">
-                <FloatingInput
-                  label="Kód *"
-                  value={data.code}
-                  onChange={(e) =>
-                    setData({ ...data, code: Normalizer.code(e.target.value) })
-                  }
-                  placeholder="XF-1"
-                  labelColor="text-blue-400"
-                />
-                {showSuggestions && (
-                  <div className="absolute top-full left-0 right-0 bg-slate-800 border border-slate-600 rounded-lg mt-1 z-50 shadow-xl max-h-40 overflow-y-auto">
-                    <div className="p-2 text-[10px] text-slate-400 font-bold uppercase border-b border-slate-700 bg-slate-900/50">
-                      Nalezeno v katalogu:
-                    </div>
-                    {suggestions.map(([key, val]) => (
-                      <div
-                        key={key}
-                        onClick={() => handleSelectSuggestion([key, val])}
-                        className="p-2 hover:bg-blue-600/20 hover:text-blue-300 cursor-pointer text-xs flex items-center gap-2 transition-colors border-b border-slate-700/50 last:border-0"
-                      >
-                        <Wand2 size={12} className="text-purple-400" />
-                        <span className="font-bold text-white">
-                          {val.displayCode}
-                        </span>
-                        <span className="text-slate-300 truncate">
-                          {val.name}
-                        </span>
-                      </div>
-                    ))}
+                  {data.isMix ? (
+                    <FlaskConical size={18} />
+                  ) : (
+                    data.code.substring(0, 2)
+                  )}
+                </div>
+                <div>
+                  <div className="text-white font-bold text-lg leading-none">
+                    {data.code}
                   </div>
-                )}
+                  <div className="text-slate-400 text-sm">{data.brand}</div>
+                </div>
               </div>
             </div>
+          ) : (
+            /* REŽIM NOVÁ BARVA: EDITAČNÍ POLE */
+            <>
+              {/* Přepínač Mix - viditelný jen u nové barvy nebo když už to je mix */}
+              {(!isEditMode || data.isMix) && (
+                <div
+                  className={`flex items-center gap-2 mb-2 p-2 bg-slate-800/50 rounded border border-slate-700 transition-colors ${
+                    isEditMode
+                      ? "opacity-50 cursor-default"
+                      : "cursor-pointer hover:bg-slate-800"
+                  }`}
+                  onClick={() => {
+                    if (!isEditMode) {
+                      setData((d) => ({
+                        ...d,
+                        isMix: !d.isMix,
+                        brand: !d.isMix ? "Vlastní Mix" : "",
+                        code: !d.isMix
+                          ? "MIX-" + Date.now().toString().slice(-4)
+                          : "",
+                      }));
+                    }
+                  }}
+                >
+                  <div
+                    className={`w-4 h-4 rounded border flex items-center justify-center ${data.isMix ? "bg-purple-500 border-purple-500" : "border-slate-500"}`}
+                  >
+                    {data.isMix && <Check size={12} className="text-white" />}
+                  </div>
+                  <span
+                    className={`text-sm font-bold ${data.isMix ? "text-purple-400" : "text-slate-400"}`}
+                  >
+                    🧪 Vlastní Mix / Míchaná barva
+                  </span>
+                </div>
+              )}
+
+              {!data.isMix && (
+                <div className="space-y-3 animate-in slide-in-from-top-2">
+                  <div className="flex gap-3">
+                    <div className="flex-1 relative">
+                      <label className="absolute -top-2 left-2 px-1 bg-slate-900 text-[10px] font-bold z-10 text-blue-400">
+                        Výrobce *
+                      </label>
+                      <select
+                        className="w-full bg-slate-950 text-sm font-bold text-white border border-slate-700 rounded px-3 py-2.5 outline-none focus:border-blue-500 appearance-none cursor-pointer"
+                        value={data.brand}
+                        onChange={(e) => {
+                          setData({ ...data, brand: e.target.value, code: "" });
+                          setSelectedSeries("");
+                        }}
+                      >
+                        <option value="">-- Vyber --</option>
+                        {PaintAPI.getManufacturers().map((b) => (
+                          <option key={b.id} value={b.id}>
+                            {b.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {availableSeries.length > 0 && (
+                      <div className="flex-1 relative animate-in fade-in">
+                        <label className="absolute -top-2 left-2 px-1 bg-slate-900 text-[10px] font-bold z-10 text-slate-400">
+                          Řada
+                        </label>
+                        <select
+                          className="w-full bg-slate-950 text-sm text-slate-200 border border-slate-700 rounded px-3 py-2.5 outline-none focus:border-blue-500 appearance-none cursor-pointer"
+                          value={selectedSeries}
+                          onChange={(e) => setSelectedSeries(e.target.value)}
+                        >
+                          <option value="">Všechny řady</option>
+                          {availableSeries.map((s) => (
+                            <option key={s.id} value={s.id}>
+                              {s.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="relative">
+                    <FloatingInput
+                      label={
+                        selectedSeries ? `Kód (${selectedSeries}) *` : "Kód *"
+                      }
+                      value={data.code}
+                      onChange={(e) =>
+                        setData({
+                          ...data,
+                          code: Normalizer.code(e.target.value),
+                        })
+                      }
+                      placeholder="Zadejte kód (např. XF-1)..."
+                      labelColor="text-blue-400"
+                      disabled={!data.brand}
+                    />
+
+                    {/* Autocomplete Dropdown */}
+                    {showSuggestions && (
+                      <div className="absolute top-full left-0 right-0 bg-slate-800 border border-slate-600 rounded-lg mt-1 z-50 shadow-xl max-h-48 overflow-y-auto">
+                        <div className="p-2 text-[10px] text-slate-400 font-bold uppercase border-b border-slate-700 bg-slate-900/50 sticky top-0">
+                          Nalezeno v katalogu:
+                        </div>
+                        {suggestions.map(([key, val]) => (
+                          <div
+                            key={key}
+                            onClick={() => handleSelectSuggestion([key, val])}
+                            className="p-2 hover:bg-blue-600/20 hover:text-blue-300 cursor-pointer text-xs flex items-center gap-3 border-b border-slate-700/50 last:border-0"
+                          >
+                            <div
+                              className="w-4 h-4 rounded-full border border-slate-600 shadow-sm"
+                              style={{ backgroundColor: val.hex || "#000" }}
+                            />
+                            <div className="flex flex-col">
+                              <span className="font-bold text-white text-sm">
+                                {val.displayCode}
+                              </span>
+                            </div>
+                            <span className="text-slate-300 truncate ml-auto font-medium">
+                              {val.name}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </>
           )}
+
+          {/* --- SEKCE B: UŽIVATELSKÁ DATA --- */}
 
           <FloatingInput
             label="Název / Odstín *"
@@ -275,6 +457,7 @@ const PaintDetailModal = ({
                 { value: "Lacquer", label: "☣️ Lacquer" },
                 { value: "Olej", label: "🎨 Olej" },
                 { value: "Pigment", label: "🏜️ Pigment" },
+                { value: "Primer", label: "🛡️ Primer" },
               ]}
             />
             <FloatingSelect
@@ -287,10 +470,10 @@ const PaintDetailModal = ({
                 { value: "Polomat", label: "Polomat" },
                 { value: "Lesklá", label: "Lesklá" },
                 { value: "Kovová", label: "Kovová" },
+                { value: "Perleťová", label: "Perleťová" },
                 { value: "Transparentní", label: "Transparentní" },
               ]}
             />
-            {/* ZMĚNA: Přidána možnost "Dochází" pro Mixy */}
             <FloatingSelect
               className="flex-1"
               label="Status"
@@ -313,10 +496,43 @@ const PaintDetailModal = ({
             />
           </div>
 
+          {/* INFO BOX SPECIFIKACÍ */}
+          {currentSpec && (
+            <div className="bg-blue-900/20 border border-blue-500/20 rounded-lg p-3 animate-in fade-in slide-in-from-top-1">
+              <h4 className="text-blue-300 text-xs font-bold mb-1 flex items-center gap-1">
+                <Info size={12} /> {currentSpec.title}
+              </h4>
+              <p className="text-slate-400 text-[11px] italic leading-tight mb-2">
+                {currentSpec.description}
+              </p>
+              <div className="flex flex-col gap-1">
+                {currentSpec.bestFor && (
+                  <div className="flex items-start gap-2">
+                    <Sparkles size={10} className="text-yellow-500 mt-0.5" />
+                    <span className="text-[10px] text-slate-300">
+                      <span className="font-bold text-slate-500">Použití:</span>{" "}
+                      {currentSpec.bestFor}
+                    </span>
+                  </div>
+                )}
+                {currentSpec.safety && (
+                  <div className="flex items-start gap-2">
+                    <ShieldAlert size={10} className="text-orange-500 mt-0.5" />
+                    <span className="text-[10px] text-slate-300">
+                      <span className="font-bold text-slate-500">Safety:</span>{" "}
+                      {currentSpec.safety}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* MIX INGREDIENCE */}
           {data.isMix && (
             <div className="bg-slate-800 p-3 rounded-xl border border-slate-700/50">
               <h4 className="text-xs font-bold text-purple-400 uppercase mb-2 flex items-center gap-2">
-                <FlaskConical size={14} /> Receptura (Ingredience)
+                <FlaskConical size={14} /> Receptura
               </h4>
               <div className="flex gap-2 mb-2">
                 <select
@@ -326,7 +542,7 @@ const PaintDetailModal = ({
                     setNewMixPart({ ...newMixPart, paintId: e.target.value })
                   }
                 >
-                  <option value="">-- Vyber barvu ze skladu --</option>
+                  <option value="">-- Přidat barvu --</option>
                   {existingPaints
                     .filter((p) => p.status === "in_stock")
                     .map((p) => (
@@ -381,21 +597,11 @@ const PaintDetailModal = ({
                     </button>
                   </div>
                 ))}
-                {(!data.mixParts || data.mixParts.length === 0) && (
-                  <p className="text-[10px] text-slate-500 italic text-center">
-                    Zatím žádné ingredience.
-                  </p>
-                )}
               </div>
             </div>
           )}
 
-          {!data.isMix && (
-            <p className="text-[10px] text-blue-400/50 font-bold -mt-2 mb-2">
-              * tyto údaje jsou povinné (značka, kód, název)
-            </p>
-          )}
-
+          {/* ŘEDĚNÍ */}
           <div className="bg-slate-800 p-3 rounded-xl border border-slate-700/50">
             <h4 className="text-xs font-bold text-slate-400 uppercase mb-2 flex items-center gap-2">
               <Droplets size={14} className="text-blue-400" /> Ředění
@@ -443,6 +649,8 @@ const PaintDetailModal = ({
               </div>
             </div>
           </div>
+
+          {/* Color Preview */}
           <div className="bg-slate-800 p-3 rounded-lg border border-slate-700">
             <label className="block text-[10px] font-bold text-slate-500 uppercase mb-2">
               Odstín (Preview)
@@ -462,12 +670,11 @@ const PaintDetailModal = ({
                   className="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-sm font-mono text-white uppercase outline-none focus:border-blue-500"
                   placeholder="#000000"
                 />
-                <p className="text-[10px] text-slate-500 mt-1">
-                  Klikni na čtvereček nebo vlož kód.
-                </p>
               </div>
             </div>
           </div>
+
+          {/* POUŽITÍ V MODELECH */}
           <div className="bg-slate-800 p-3 rounded-xl border border-slate-700/50">
             <h4 className="text-xs font-bold text-slate-400 uppercase mb-2 flex items-center gap-2">
               <Box size={14} className="text-purple-400" /> Použití v modelech
@@ -482,11 +689,6 @@ const PaintDetailModal = ({
                     <ChevronRight size={10} className="text-slate-500" />
                     <span className="font-bold">{k.subject}</span>
                     <span>{k.name}</span>
-                    {k.paints?.find((p) => p.id === paint.id)?.note && (
-                      <span className="text-[10px] text-slate-500 italic ml-auto">
-                        ({k.paints.find((p) => p.id === paint.id).note})
-                      </span>
-                    )}
                   </div>
                 ))}
               </div>
@@ -496,9 +698,10 @@ const PaintDetailModal = ({
               </p>
             )}
           </div>
+
           <div className="pt-2">
             <FloatingTextarea
-              label="Poznámky (např. chování v pistoli)"
+              label="Poznámky"
               value={data.notes || ""}
               onChange={(e) => setData({ ...data, notes: e.target.value })}
               height="h-24"
@@ -506,11 +709,17 @@ const PaintDetailModal = ({
             />
           </div>
         </div>
+
+        {/* FOOTER */}
         <div className="p-4 border-t border-slate-800 bg-slate-800/30 flex justify-end rounded-b-xl">
           <button
-            onClick={() => isFormValid && handleSaveWrapper()}
-            disabled={!isFormValid || isSaving}
-            className={`px-6 py-2 rounded-lg font-bold shadow-lg flex items-center gap-2 transition-all ${isFormValid && !isSaving ? "bg-blue-600 hover:bg-blue-500 text-white" : "bg-slate-700 text-slate-500 cursor-not-allowed"}`}
+            onClick={() => isFormValid && hasChanges && handleSaveWrapper()}
+            disabled={!isFormValid || isSaving || !hasChanges}
+            className={`px-6 py-2 rounded-lg font-bold shadow-lg flex items-center gap-2 transition-all ${
+              isFormValid && hasChanges && !isSaving
+                ? "bg-blue-600 hover:bg-blue-500 text-white"
+                : "bg-slate-700 text-slate-500 cursor-not-allowed"
+            }`}
           >
             {isSaving ? (
               <Loader2 className="animate-spin" size={18} />

@@ -32,20 +32,22 @@ kithub
 │ ├─ config
 │ │ └─ firebase.js
 │ ├─ data
+│ │ ├─ brands.json
 │ │ ├─ catalog.json
 │ │ └─ paints
-│ │ ├─ Architektura dat barev.md
-│ │ ├─ brands.json
 │ │ ├─ gunze_C.json
 │ │ ├─ gunze_GX.json
 │ │ ├─ gunze_H.json
 │ │ ├─ gunze_MC.json
 │ │ ├─ gunze_SF.json
 │ │ ├─ gunze_spec.json
-│ │ ├─ index.js
 │ │ ├─ kit_brands.json
-│ │ ├─ tamiya.json
-│ │ └─ tamiya_spec.json
+│ │ ├─ PaintAPI.js
+│ │ ├─ tamiya_LP.json
+│ │ ├─ tamiya_other.json
+│ │ ├─ tamiya_spec.json
+│ │ ├─ tamiya_X.json
+│ │ └─ tamiya_XF.json
 │ ├─ hooks
 │ │ ├─ useAppLogic.js
 │ │ ├─ useAuth.js

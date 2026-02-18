@@ -6,102 +6,127 @@
  * UMOŽŇUJE DVA REŽIMY:
  * 1. "Flat" (Pro vyhledávání/sklad) - Vrací všechny barvy značky najednou.
  * 2. "Hierarchical" (Pro zadávání) - Umožňuje vybrat Značku -> Řadu -> Barvu.
+ *
+ * REFACTOR: Plně dynamické načítání pomocí import.meta.glob
  */
 
-// --- 1. IMPORTY DAT ---
+// --- 1. DYNAMICKÉ NAČTENÍ DAT ---
 
-// Tamiya
-import tamiyaPaints from "./tamiya.json";
-import tamiyaSpecs from "./tamiya_spec.json";
+// Načte všechny .json soubory v aktuální složce
+const modules = import.meta.glob("./*.json", { eager: true });
 
-// Gunze (Mr. Hobby)
-import gunzeC from "./gunze_C.json";
-import gunzeH from "./gunze_H.json";
-import gunzeGX from "./gunze_GX.json";
-import gunzeMC from "./gunze_MC.json";
-import gunzeSF from "./gunze_SF.json";
-import gunzeSpecs from "./gunze_spec.json";
+const catalogs = {};
+const specs = {};
+const brandsSet = new Set();
+
+// Soubory, které nejsou katalogy barev ani specifikace
+const IGNORED_FILES = ["brands", "catalog", "package"];
+
+// Mapování pro hezčí názvy (zachování původního UX)
+const DISPLAY_NAMES = {
+  gunze: "Gunze (Mr. Hobby)",
+  tamiya: "Tamiya",
+};
+
+// Mapování pro hezčí názvy řad (zachování původního UX)
+const SERIES_NAMES = {
+  master: "Hlavní katalog",
+  C: "Mr. Color (C) - Lacquer",
+  H: "Aqueous Hobby Color (H) - Akryl",
+  GX: "Mr. Color GX",
+  MC: "Mr. Metal Color",
+  SF: "Mr. Surfacer / Primer",
+};
+
+for (const path in modules) {
+  // path je např. "./gunze_C.json" nebo "./tamiya.json"
+  const fileName = path.split("/").pop().replace(".json", "");
+
+  if (IGNORED_FILES.includes(fileName)) continue;
+
+  const content = modules[path].default || modules[path];
+
+  if (fileName.endsWith("_spec")) {
+    // Specifikace: {brand}_spec.json
+    const brand = fileName.replace("_spec", "");
+    specs[brand] = content;
+    brandsSet.add(brand);
+  } else {
+    // Katalog: {brand}_{series}.json nebo {brand}.json
+    let brand, series;
+    if (fileName.includes("_")) {
+      const parts = fileName.split("_");
+      brand = parts[0];
+      series = parts.slice(1).join("_");
+    } else {
+      brand = fileName;
+      series = "master";
+    }
+
+    if (!catalogs[brand]) catalogs[brand] = {};
+    catalogs[brand][series] = content;
+    brandsSet.add(brand);
+  }
+}
 
 // --- 2. DEFINICE ZNAČEK A ŘAD ---
 
-export const BRANDS = {
-  TAMIYA: "tamiya",
-  GUNZE: "gunze",
-};
+export const BRANDS = Array.from(brandsSet).reduce((acc, brand) => {
+  acc[brand.toUpperCase()] = brand;
+  return acc;
+}, {});
 
 // Mapování: Která značka má jaké pod-řady (pro Select Box v modalu)
-const SERIES_MAP = {
-  [BRANDS.TAMIYA]: [
-    { id: "all", name: "Všechny řady (X, XF, LP...)" }, // Volitelné
-    { id: "master", name: "Hlavní katalog" }, // Tamiya máme zatím v jednom souboru
-  ],
-  [BRANDS.GUNZE]: [
-    { id: "C", name: "Mr. Color (C) - Lacquer" },
-    { id: "H", name: "Aqueous Hobby Color (H) - Akryl" },
-    { id: "GX", name: "Mr. Color GX" },
-    { id: "MC", name: "Mr. Metal Color" },
-    { id: "SF", name: "Mr. Surfacer / Primer" },
-  ],
-};
+const SERIES_MAP = {};
+for (const brand of brandsSet) {
+  const brandSeries = catalogs[brand] ? Object.keys(catalogs[brand]) : [];
+  SERIES_MAP[brand] = brandSeries.map((seriesId) => ({
+    id: seriesId,
+    name:
+      SERIES_NAMES[seriesId] ||
+      (seriesId === "master" ? "Main Catalog" : seriesId),
+  }));
+}
 
-// --- 3. INTERNÍ HELPERY ---
-
-// Sloučení Gunze pro globální hledání
-const getMergedGunze = () => ({
-  ...gunzeC,
-  ...gunzeH,
-  ...gunzeGX,
-  ...gunzeMC,
-  ...gunzeSF,
-});
-
-// --- 4. EXPORT API FUNKCÍ ---
+// --- 3. EXPORT API FUNKCÍ ---
 
 /**
  * 1. ZÍSKÁNÍ BAREV (Různé úrovně detailu)
  */
 
 // Vrátí úplně všechno (pro globální hledání napříč aplikací)
-export const getMasterCatalog = () => ({
-  ...tamiyaPaints,
-  ...getMergedGunze(),
-});
+export const getMasterCatalog = () => {
+  let allPaints = {};
+  for (const brand in catalogs) {
+    for (const series in catalogs[brand]) {
+      Object.assign(allPaints, catalogs[brand][series]);
+    }
+  }
+  return allPaints;
+};
 
 // Vrátí všechny barvy dané značky (pro filtry ve skladě)
 export const getBrandPaints = (brandId) => {
-  switch (brandId) {
-    case BRANDS.TAMIYA:
-      return tamiyaPaints;
-    case BRANDS.GUNZE:
-      return getMergedGunze();
-    default:
-      return {};
-  }
+  const brandCatalogs = catalogs[brandId];
+  if (!brandCatalogs) return {};
+  // Sloučení všech řad dané značky
+  return Object.values(brandCatalogs).reduce(
+    (acc, series) => Object.assign(acc, series),
+    {},
+  );
 };
 
 // Vrátí barvy KONKRÉTNÍ ŘADY (Pro Modal: Nová Barva)
-// Příklad: getSpecificSeries('gunze', 'H') -> vrátí jen H-ka
 export const getSpecificSeries = (brandId, seriesId) => {
-  if (brandId === BRANDS.TAMIYA) {
-    return tamiyaPaints; // Tamiya zatím nerozdělujeme na soubory
+  const brandCatalogs = catalogs[brandId];
+  if (!brandCatalogs) return {};
+
+  if (seriesId && brandCatalogs[seriesId]) {
+    return brandCatalogs[seriesId];
   }
-  if (brandId === BRANDS.GUNZE) {
-    switch (seriesId) {
-      case "C":
-        return gunzeC;
-      case "H":
-        return gunzeH;
-      case "GX":
-        return gunzeGX;
-      case "MC":
-        return gunzeMC;
-      case "SF":
-        return gunzeSF;
-      default:
-        return getMergedGunze();
-    }
-  }
-  return {};
+
+  // Fallback: vrátí vše od značky (pokud série neexistuje nebo není zadána)
+  return getBrandPaints(brandId);
 };
 
 /**
@@ -118,20 +143,15 @@ export const getSeriesList = (brandId) => {
  */
 
 export const getSpecs = (brandId) => {
-  switch (brandId) {
-    case BRANDS.TAMIYA:
-      return tamiyaSpecs;
-    case BRANDS.GUNZE:
-      return gunzeSpecs;
-    default:
-      return {};
-  }
+  return specs[brandId] || {};
 };
 
-export const getManufacturers = () => [
-  { id: BRANDS.TAMIYA, name: "Tamiya" },
-  { id: BRANDS.GUNZE, name: "Gunze (Mr. Hobby)" },
-];
+export const getManufacturers = () => {
+  return Array.from(brandsSet).map((id) => ({
+    id,
+    name: DISPLAY_NAMES[id] || id.charAt(0).toUpperCase() + id.slice(1),
+  }));
+};
 
 export default {
   BRANDS,
