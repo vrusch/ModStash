@@ -1,0 +1,128 @@
+{
+  "TAMIYA_X1": {
+    "displayCode": "X-1",
+    "name": "Black",
+    "type": "Akryl",
+    "finish": "Lesklá",
+    "hex": "#000000"
+  },
+  "TAMIYA_X2": {
+    "displayCode": "X-2",
+    "name": "White",
+    "type": "Akryl",
+    "finish": "Lesklá",
+    "hex": "#ffffff"
+  },
+  "TAMIYA_X3": {
+    "displayCode": "X-3",
+    "name": "Royal Blue",
+    "type": "Akryl",
+    "finish": "Lesklá",
+    "hex": "#002366"
+  },
+  "TAMIYA_X4": {
+    "displayCode": "X-4",
+    "name": "Blue",
+    "type": "Akryl",
+    "finish": "Lesklá",
+    "hex": "#0000ff"
+  },
+  "TAMIYA_X5": {
+    "displayCode": "X-5",
+    "name": "Green",
+    "type": "Akryl",
+    "finish": "Lesklá",
+    "hex": "#008000"
+  },
+  "TAMIYA_X6": {
+    "displayCode": "X-6",
+    "name": "Orange",
+    "type": "Akryl",
+    "finish": "Lesklá",
+    "hex": "#ffa500"
+  },
+  "TAMIYA_X7": {
+    "displayCode": "X-7",
+    "name": "Red",
+    "type": "Akryl",
+    "finish": "Lesklá",
+    "hex": "#ff0000"
+  },
+  "TAMIYA_X8": {
+    "displayCode": "X-8",
+    "name": "Lemon Yellow",
+    "type": "Akryl",
+    "finish": "Lesklá",
+    "hex": "#fff700"
+  },
+  "TAMIYA_X9": {
+    "displayCode": "X-9",
+    "name": "Brown",
+    "type": "Akryl",
+    "finish": "Lesklá",
+    "hex": "#a52a2a"
+  },
+  "TAMIYA_X10": {
+    "displayCode": "X-10",
+    "name": "Gun Metal",
+    "type": "Akryl",
+    "finish": "Lesklá",
+    "hex": "#2a2a2a"
+  },
+  "TAMIYA_X11": {
+    "displayCode": "X-11",
+    "name": "Chrome Silver",
+    "type": "Akryl",
+    "finish": "Lesklá",
+    "hex": "#c0c0c0"
+  },
+  "TAMIYA_X12": {
+    "displayCode": "X-12",
+    "name": "Gold Leaf",
+    "type": "Akryl",
+    "finish": "Lesklá",
+    "hex": "#ffd700"
+  },
+  "TAMIYA_X22": {
+    "displayCode": "X-22",
+    "name": "Clear",
+    "type": "Akryl",
+    "finish": "Lesklá",
+    "hex": "#f0f8ff"
+  },
+  "TAMIYA_X23": {
+    "displayCode": "X-23",
+    "name": "Clear Blue",
+    "type": "Akryl",
+    "finish": "Lesklá",
+    "hex": "#00008b"
+  },
+  "TAMIYA_X24": {
+    "displayCode": "X-24",
+    "name": "Clear Yellow",
+    "type": "Akryl",
+    "finish": "Lesklá",
+    "hex": "#ffff00"
+  },
+  "TAMIYA_X25": {
+    "displayCode": "X-25",
+    "name": "Clear Green",
+    "type": "Akryl",
+    "finish": "Lesklá",
+    "hex": "#006400"
+  },
+  "TAMIYA_X26": {
+    "displayCode": "X-26",
+    "name": "Clear Orange",
+    "type": "Akryl",
+    "finish": "Lesklá",
+    "hex": "#ff8c00"
+  },
+  "TAMIYA_X27": {
+    "displayCode": "X-27",
+    "name": "Clear Red",
+    "type": "Akryl",
+    "finish": "Lesklá",
+    "hex": "#8b0000"
+  }
+}

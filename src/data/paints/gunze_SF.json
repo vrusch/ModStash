@@ -68,33 +68,5 @@
     "type": "Primer",
     "finish": "Matná (Extra Jemná)",
     "hex": "#0D0D0D"
-  },
-  "GUNZE_MP242": {
-    "displayCode": "MP-242",
-    "name": "Mr. Metal Primer",
-    "type": "Primer",
-    "finish": "Lesklá",
-    "hex": "#F0F8FF"
-  },
-  "GUNZE_B504": {
-    "displayCode": "B-504",
-    "name": "Mr. Metal Primer (Bottle)",
-    "type": "Primer",
-    "finish": "Lesklá",
-    "hex": "#F0F8FF"
-  },
-  "GUNZE_B511": {
-    "displayCode": "B-511",
-    "name": "Mr. White Putty (Liquid)",
-    "type": "Tmel",
-    "finish": "Matná",
-    "hex": "#FFFFFF"
-  },
-  "GUNZE_B519": {
-    "displayCode": "B-519",
-    "name": "Mr. Dissolved Putty",
-    "type": "Tmel",
-    "finish": "Matná",
-    "hex": "#FFFFE0"
   }
 }

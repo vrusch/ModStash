@@ -1,0 +1,23 @@
+{
+  "TAMIYA_87075": {
+    "displayCode": "87075",
+    "name": "Liquid Surface Primer (Gray)",
+    "type": "Primer",
+    "finish": "Matná",
+    "hex": "#A9A9A9"
+  },
+  "TAMIYA_87096": {
+    "displayCode": "87096",
+    "name": "Liquid Surface Primer (White)",
+    "type": "Primer",
+    "finish": "Matná",
+    "hex": "#F5F5F5"
+  },
+  "TAMIYA_87204": {
+    "displayCode": "87204",
+    "name": "Metal Primer",
+    "type": "Primer",
+    "finish": "Lesklá",
+    "hex": "#F0F8FF"
+  }
+}
