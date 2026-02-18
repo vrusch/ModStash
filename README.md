@@ -34,6 +34,10 @@ Uživatelské rozhraní bylo rozděleno na atomické části:
 - **Utils:** Pomocné funkce (`Normalizer`, `safeRender`) přesunuty do `src/utils/`.
 - **Config:** Inicializace Firebase přesunuta do `src/config/`.
 
+
+## 📋 Changelog
+Všechny podstatné změny v tomto projektu naleznete v souboru [CHANGELOG.md](./CHANGELOG.md).
+
 ---
 
 ## 📂 Nová struktura projektu
@@ -50,8 +54,3 @@ src/
 ├── hooks/           # useAuth, useInventory, useAppLogic
 ├── utils/           # Pomocné funkce
 └── App.jsx          # Hlavní vstupní bod (Layout only)
-
-
-## 📋 Changelog
-Všechny podstatné změny v tomto projektu naleznete v souboru [CHANGELOG.md](./CHANGELOG.md).
-```
