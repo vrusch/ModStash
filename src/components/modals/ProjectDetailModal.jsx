@@ -49,6 +49,11 @@ const ProjectDetailModal = ({
     [allKits],
   );
 
+  const hasChanges = useMemo(() => {
+    const initialData = { accessories: [], ...project };
+    return JSON.stringify(data) !== JSON.stringify(initialData);
+  }, [data, project]);
+
   const addAccessory = () => {
     if (!newAccessory.name.trim()) return;
     setData({
@@ -328,9 +333,9 @@ const ProjectDetailModal = ({
         </div>
         <div className="p-4 border-t border-slate-800 bg-slate-800/30 flex justify-end rounded-b-xl">
           <button
-            onClick={() => isFormValid && handleSaveWrapper()}
-            disabled={!isFormValid || isSaving}
-            className={`px-6 py-2 rounded-lg font-bold shadow-lg flex items-center gap-2 transition-all ${isFormValid && !isSaving ? "bg-blue-600 hover:bg-blue-500 text-white" : "bg-slate-700 text-slate-500 cursor-not-allowed"}`}
+            onClick={() => isFormValid && hasChanges && handleSaveWrapper()}
+            disabled={!isFormValid || isSaving || !hasChanges}
+            className={`px-6 py-2 rounded-lg font-bold shadow-lg flex items-center gap-2 transition-all ${isFormValid && !isSaving && hasChanges ? "bg-blue-600 hover:bg-blue-500 text-white" : "bg-slate-700 text-slate-500 cursor-not-allowed"}`}
           >
             {isSaving ? (
               <Loader2 className="animate-spin" size={18} />
