@@ -103,7 +103,7 @@ const SettingsModal = ({
         : user.displayName || `ID: ${user.uid.substring(0, 6)}...`;
   return (
     <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
-      <div className="bg-slate-900 w-full max-w-md rounded-2xl border border-slate-700 shadow-2xl overflow-hidden h-[90vh]">
+      <div className="bg-slate-900 w-full max-w-md rounded-2xl border border-slate-700 shadow-2xl overflow-hidden h-[90vh] flex flex-col">
         <div className="bg-slate-800 p-4 border-b border-slate-700 flex justify-between items-center">
           <h2 className="text-lg font-bold text-white flex items-center gap-2">
             <Cloud className="text-blue-400" size={20} /> Nastavení Cloudu
