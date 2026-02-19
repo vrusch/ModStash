@@ -156,293 +156,300 @@ export default function App() {
     );
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans pb-20">
+    <div className="flex flex-col h-[100dvh] w-full overflow-hidden bg-slate-950 text-slate-100 font-sans">
       {/* HEADER */}
-      <AppHeader
-        logic={logic}
-        setShowSettings={setShowSettings}
-        setIsNewKit={setIsNewKit}
-        setActiveKit={setActiveKit}
-        setIsNewProject={setIsNewProject}
-        setActiveProject={setActiveProject}
-        setIsNewPaint={setIsNewPaint}
-        setActivePaint={setActivePaint}
-        activeUid={activeUid}
-        isOnline={isOnline}
-        onShowAlert={(msg) =>
-          requestConfirm("Info", msg, null, false, "Rozumím", false)
-        }
-        language={language}
-        setShowLanguageModal={setShowLanguageModal}
-      />
+      <div className="shrink-0 z-50 relative">
+        <AppHeader
+          logic={logic}
+          setShowSettings={setShowSettings}
+          setIsNewKit={setIsNewKit}
+          setActiveKit={setActiveKit}
+          setIsNewProject={setIsNewProject}
+          setActiveProject={setActiveProject}
+          setIsNewPaint={setIsNewPaint}
+          setActivePaint={setActivePaint}
+          activeUid={activeUid}
+          isOnline={isOnline}
+          onShowAlert={(msg) =>
+            requestConfirm("Info", msg, null, false, "Rozumím", false)
+          }
+          language={language}
+          setShowLanguageModal={setShowLanguageModal}
+        />
+      </div>
 
       {/* CONTENT */}
-      <div className="max-w-md mx-auto px-4 py-4 space-y-6">
-        {logic.view === "kits" && (
-          <>
-            {filterByPaintId && (
-              <div className="bg-blue-900/20 border border-blue-500/30 p-3 rounded-lg mb-4 flex justify-between items-center animate-in fade-in slide-in-from-top-2">
-                <div className="flex items-center gap-2">
-                  <div
-                    className="w-3 h-3 rounded-full border border-slate-600"
-                    style={{
-                      backgroundColor: paints.find(
-                        (p) => p.id === filterByPaintId,
-                      )?.hex,
-                    }}
-                  ></div>
-                  <span className="text-sm text-blue-200">
-                    Modely s barvou:{" "}
-                    <strong>
-                      {paints.find((p) => p.id === filterByPaintId)?.name}
-                    </strong>
-                  </span>
-                </div>
-                <button
-                  onClick={() => setFilterByPaintId(null)}
-                  className="text-slate-400 hover:text-white p-1"
-                >
-                  <X size={16} />
-                </button>
-              </div>
-            )}
-            {Object.entries(logic.groupedKits).map(([key, list]) => {
-              const filteredList = filterByPaintId
-                ? list.filter((k) =>
-                    k.paints?.some((p) => p.id === filterByPaintId),
-                  )
-                : list;
-
-              return (
-                filteredList.length > 0 && (
-                  <section key={key}>
-                    <div className="flex justify-between items-center mb-2">
-                      <h2
-                        className={`text-xs font-bold uppercase tracking-wider flex items-center gap-2 ${key === "wip" ? "text-orange-400" : key === "new" ? "text-blue-400" : key === "finished" ? "text-green-600" : key === "scrap" ? "text-slate-600" : "text-purple-400"}`}
-                      >
-                        {key === "wip" ? (
-                          <Hammer size={12} />
-                        ) : key === "new" ? (
-                          <Box size={12} />
-                        ) : key === "finished" ? (
-                          <CheckSquare size={12} />
-                        ) : key === "scrap" ? (
-                          <Trash2 size={12} />
-                        ) : (
-                          <ShoppingCart size={12} />
-                        )}{" "}
-                        {key === "wip"
-                          ? "Na stole"
-                          : key === "new"
-                            ? "V kitníku"
-                            : key === "finished"
-                              ? "Hotovo"
-                              : key === "scrap"
-                                ? "Vrakoviště"
-                                : "Nákupní seznam"}{" "}
-                        ({filteredList.length})
-                      </h2>
-                    </div>
-                    {filteredList.map((k) => (
-                      <KitCard
-                        key={k.id}
-                        kit={k}
-                        onClick={() => {
-                          setIsNewKit(false);
-                          setActiveKit(k);
-                        }}
-                        projectName={
-                          projects.find((p) => p.id === k.projectId)?.name
-                        }
-                        allPaints={paints}
-                        onOpenDetail={handleOpenKitDetail}
-                        onOpenProject={handleOpenProjectDetail}
-                      />
-                    ))}
-                  </section>
-                )
-              );
-            })}
-            {logic.filteredKits.length === 0 && (
-              <div className="text-center text-slate-500 py-10">
-                <Package size={48} className="mx-auto mb-2 opacity-20" />
-                <p>Prázdno (nebo skryto filtrem).</p>
-              </div>
-            )}
-          </>
-        )}
-
-        {logic.view === "projects" && (
-          <>
-            {logic.filteredProjects.length > 0 ? (
-              logic.filteredProjects.map((p) => (
-                <ProjectCard
-                  key={p.id}
-                  project={p}
-                  onClick={() => {
-                    setIsNewProject(false);
-                    setActiveProject(p);
-                  }}
-                  kits={kits}
-                />
-              ))
-            ) : (
-              <div className="text-center text-slate-500 py-10">
-                <Folder size={48} className="mx-auto mb-2 opacity-20" />
-                <p>Prázdno (nebo skryto filtrem).</p>
-              </div>
-            )}
-          </>
-        )}
-
-        {logic.view === "paints" && (
-          <div className="space-y-6">
-            {logic.groupedPaints.inventory.length > 0 && (
-              <section>
-                <div className="flex justify-between items-center mb-2">
-                  <h2 className="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center gap-2">
-                    <Package size={12} /> Mám ve skladu (
-                    {logic.groupedPaints.inventory.length})
-                  </h2>
-                </div>
-                <div className="space-y-2">
-                  {logic.groupedPaints.inventory.map((paint) => (
-                    <PaintCard
-                      key={paint.id}
-                      paint={paint}
-                      allKits={kits}
-                      allPaints={paints}
-                      onShowUsage={handleShowPaintUsage}
-                      onClick={() => {
-                        setIsNewPaint(false);
-                        setActivePaint(paint);
+      <main className="flex-1 overflow-y-auto overscroll-y-contain pb-24 p-2 sm:p-4 bg-slate-900/50">
+        <div className="max-w-md mx-auto space-y-6">
+          {logic.view === "kits" && (
+            <>
+              {filterByPaintId && (
+                <div className="bg-blue-900/20 border border-blue-500/30 p-3 rounded-lg mb-4 flex justify-between items-center animate-in fade-in slide-in-from-top-2">
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="w-3 h-3 rounded-full border border-slate-600"
+                      style={{
+                        backgroundColor: paints.find(
+                          (p) => p.id === filterByPaintId,
+                        )?.hex,
                       }}
-                      onDelete={(id) => deleteItem("paints", id)}
-                    />
-                  ))}
-                </div>
-              </section>
-            )}
-            {logic.groupedPaints.wishlist.length > 0 && (
-              <section>
-                <div className="flex justify-between items-center mb-2">
-                  <h2 className="text-xs font-bold text-purple-400 uppercase tracking-wider flex items-center gap-2">
-                    <ShoppingCart size={12} /> Nákupní seznam (
-                    {logic.groupedPaints.wishlist.length})
-                  </h2>
-                </div>
-                <div className="space-y-2">
-                  {logic.groupedPaints.wishlist.map((paint) => (
-                    <PaintCard
-                      key={paint.id}
-                      paint={paint}
-                      allKits={kits}
-                      allPaints={paints}
-                      onShowUsage={handleShowPaintUsage}
-                      onClick={() => {
-                        setIsNewPaint(false);
-                        setActivePaint(paint);
-                      }}
-                      onDelete={(id) => deleteItem("paints", id)}
-                    />
-                  ))}
-                </div>
-              </section>
-            )}
-            {logic.filteredPaints.length === 0 && (
-              <div className="text-center text-slate-500 py-10">
-                <Palette size={48} className="mx-auto mb-2 opacity-20" />
-                <p>Žádné barvy (nebo skryto filtrem).</p>
-              </div>
-            )}
-          </div>
-        )}
-
-        {logic.view === "shopping" && (
-          <div className="space-y-6">
-            <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 text-center">
-              <h2 className="text-lg font-bold text-white mb-2 flex items-center justify-center gap-2">
-                <ShoppingCart size={24} className="text-orange-400" /> Nákupní
-                seznam
-              </h2>
-              <p className="text-xs text-slate-400 mb-4">
-                Interaktivní seznam. Kliknutím na tašku{" "}
-                <ShoppingBag size={12} className="inline" /> přesunete položku
-                do skladu (koupeno).
-              </p>
-            </div>
-            {logic.shoppingList.kits.length === 0 &&
-              logic.shoppingList.accessories.length === 0 &&
-              logic.shoppingList.paints.length === 0 && (
-                <div className="text-center text-slate-500 py-10">
-                  <ShoppingBag size={48} className="mx-auto mb-2 opacity-20" />
-                  <p>Váš nákupní seznam je prázdný.</p>
+                    ></div>
+                    <span className="text-sm text-blue-200">
+                      Modely s barvou:{" "}
+                      <strong>
+                        {paints.find((p) => p.id === filterByPaintId)?.name}
+                      </strong>
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => setFilterByPaintId(null)}
+                    className="text-slate-400 hover:text-white p-1"
+                  >
+                    <X size={16} />
+                  </button>
                 </div>
               )}
-            {logic.shoppingList.kits.length > 0 && (
-              <div>
-                <h3 className="text-xs font-bold text-purple-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-                  <Box size={14} /> Chybějící Modely
-                </h3>
-                {logic.shoppingList.kits.map((k) => (
-                  <KitCard
-                    key={k.id}
-                    kit={k}
+              {Object.entries(logic.groupedKits).map(([key, list]) => {
+                const filteredList = filterByPaintId
+                  ? list.filter((k) =>
+                      k.paints?.some((p) => p.id === filterByPaintId),
+                    )
+                  : list;
+
+                return (
+                  filteredList.length > 0 && (
+                    <section key={key}>
+                      <div className="flex justify-between items-center mb-2">
+                        <h2
+                          className={`text-xs font-bold uppercase tracking-wider flex items-center gap-2 ${key === "wip" ? "text-orange-400" : key === "new" ? "text-blue-400" : key === "finished" ? "text-green-600" : key === "scrap" ? "text-slate-600" : "text-purple-400"}`}
+                        >
+                          {key === "wip" ? (
+                            <Hammer size={12} />
+                          ) : key === "new" ? (
+                            <Box size={12} />
+                          ) : key === "finished" ? (
+                            <CheckSquare size={12} />
+                          ) : key === "scrap" ? (
+                            <Trash2 size={12} />
+                          ) : (
+                            <ShoppingCart size={12} />
+                          )}{" "}
+                          {key === "wip"
+                            ? "Na stole"
+                            : key === "new"
+                              ? "V kitníku"
+                              : key === "finished"
+                                ? "Hotovo"
+                                : key === "scrap"
+                                  ? "Vrakoviště"
+                                  : "Nákupní seznam"}{" "}
+                          ({filteredList.length})
+                        </h2>
+                      </div>
+                      {filteredList.map((k) => (
+                        <KitCard
+                          key={k.id}
+                          kit={k}
+                          onClick={() => {
+                            setIsNewKit(false);
+                            setActiveKit(k);
+                          }}
+                          projectName={
+                            projects.find((p) => p.id === k.projectId)?.name
+                          }
+                          allPaints={paints}
+                          onOpenDetail={handleOpenKitDetail}
+                          onOpenProject={handleOpenProjectDetail}
+                        />
+                      ))}
+                    </section>
+                  )
+                );
+              })}
+              {logic.filteredKits.length === 0 && (
+                <div className="text-center text-slate-500 py-10">
+                  <Package size={48} className="mx-auto mb-2 opacity-20" />
+                  <p>Prázdno (nebo skryto filtrem).</p>
+                </div>
+              )}
+            </>
+          )}
+
+          {logic.view === "projects" && (
+            <>
+              {logic.filteredProjects.length > 0 ? (
+                logic.filteredProjects.map((p) => (
+                  <ProjectCard
+                    key={p.id}
+                    project={p}
                     onClick={() => {
-                      setIsNewKit(false);
-                      setActiveKit(k);
+                      setIsNewProject(false);
+                      setActiveProject(p);
                     }}
-                    projectName={
-                      projects.find((p) => p.id === k.projectId)?.name
-                    }
-                    onBuy={(item) => markAsBought(item, "kit")}
-                    allPaints={paints}
-                    onOpenDetail={handleOpenKitDetail}
+                    kits={kits}
                   />
-                ))}
+                ))
+              ) : (
+                <div className="text-center text-slate-500 py-10">
+                  <Folder size={48} className="mx-auto mb-2 opacity-20" />
+                  <p>Prázdno (nebo skryto filtrem).</p>
+                </div>
+              )}
+            </>
+          )}
+
+          {logic.view === "paints" && (
+            <div className="space-y-6">
+              {logic.groupedPaints.inventory.length > 0 && (
+                <section>
+                  <div className="flex justify-between items-center mb-2">
+                    <h2 className="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center gap-2">
+                      <Package size={12} /> Mám ve skladu (
+                      {logic.groupedPaints.inventory.length})
+                    </h2>
+                  </div>
+                  <div className="space-y-2">
+                    {logic.groupedPaints.inventory.map((paint) => (
+                      <PaintCard
+                        key={paint.id}
+                        paint={paint}
+                        allKits={kits}
+                        allPaints={paints}
+                        onShowUsage={handleShowPaintUsage}
+                        onClick={() => {
+                          setIsNewPaint(false);
+                          setActivePaint(paint);
+                        }}
+                        onDelete={(id) => deleteItem("paints", id)}
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
+              {logic.groupedPaints.wishlist.length > 0 && (
+                <section>
+                  <div className="flex justify-between items-center mb-2">
+                    <h2 className="text-xs font-bold text-purple-400 uppercase tracking-wider flex items-center gap-2">
+                      <ShoppingCart size={12} /> Nákupní seznam (
+                      {logic.groupedPaints.wishlist.length})
+                    </h2>
+                  </div>
+                  <div className="space-y-2">
+                    {logic.groupedPaints.wishlist.map((paint) => (
+                      <PaintCard
+                        key={paint.id}
+                        paint={paint}
+                        allKits={kits}
+                        allPaints={paints}
+                        onShowUsage={handleShowPaintUsage}
+                        onClick={() => {
+                          setIsNewPaint(false);
+                          setActivePaint(paint);
+                        }}
+                        onDelete={(id) => deleteItem("paints", id)}
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
+              {logic.filteredPaints.length === 0 && (
+                <div className="text-center text-slate-500 py-10">
+                  <Palette size={48} className="mx-auto mb-2 opacity-20" />
+                  <p>Žádné barvy (nebo skryto filtrem).</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {logic.view === "shopping" && (
+            <div className="space-y-6">
+              <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 text-center">
+                <h2 className="text-lg font-bold text-white mb-2 flex items-center justify-center gap-2">
+                  <ShoppingCart size={24} className="text-orange-400" /> Nákupní
+                  seznam
+                </h2>
+                <p className="text-xs text-slate-400 mb-4">
+                  Interaktivní seznam. Kliknutím na tašku{" "}
+                  <ShoppingBag size={12} className="inline" /> přesunete položku
+                  do skladu (koupeno).
+                </p>
               </div>
-            )}
-            {logic.shoppingList.paints.length > 0 && (
-              <div>
-                <h3 className="text-xs font-bold text-blue-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-                  <Paintbrush size={14} /> Barvy a Chemie
-                </h3>
-                <div className="space-y-1">
-                  {logic.shoppingList.paints.map((p) => (
-                    <PaintCard
-                      key={p.id}
-                      paint={p}
-                      allKits={kits}
-                      allPaints={paints}
+              {logic.shoppingList.kits.length === 0 &&
+                logic.shoppingList.accessories.length === 0 &&
+                logic.shoppingList.paints.length === 0 && (
+                  <div className="text-center text-slate-500 py-10">
+                    <ShoppingBag
+                      size={48}
+                      className="mx-auto mb-2 opacity-20"
+                    />
+                    <p>Váš nákupní seznam je prázdný.</p>
+                  </div>
+                )}
+              {logic.shoppingList.kits.length > 0 && (
+                <div>
+                  <h3 className="text-xs font-bold text-purple-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <Box size={14} /> Chybějící Modely
+                  </h3>
+                  {logic.shoppingList.kits.map((k) => (
+                    <KitCard
+                      key={k.id}
+                      kit={k}
                       onClick={() => {
-                        setIsNewPaint(false);
-                        setActivePaint(p);
+                        setIsNewKit(false);
+                        setActiveKit(k);
                       }}
-                      onBuy={(item) => markAsBought(item, "paint")}
+                      projectName={
+                        projects.find((p) => p.id === k.projectId)?.name
+                      }
+                      onBuy={(item) => markAsBought(item, "kit")}
+                      allPaints={paints}
+                      onOpenDetail={handleOpenKitDetail}
                     />
                   ))}
                 </div>
-              </div>
-            )}
-            {logic.shoppingList.accessories.length > 0 && (
-              <div>
-                <h3 className="text-xs font-bold text-orange-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-                  <Layers size={14} /> Chybějící Doplňky
-                </h3>
-                <div className="space-y-2">
-                  {logic.shoppingList.accessories.map((acc, index) => (
-                    <ShoppingAccessoryCard
-                      key={`${acc.id}-${index}`}
-                      accessory={acc}
-                      onBuy={buyAccessory}
-                    />
-                  ))}
+              )}
+              {logic.shoppingList.paints.length > 0 && (
+                <div>
+                  <h3 className="text-xs font-bold text-blue-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <Paintbrush size={14} /> Barvy a Chemie
+                  </h3>
+                  <div className="space-y-1">
+                    {logic.shoppingList.paints.map((p) => (
+                      <PaintCard
+                        key={p.id}
+                        paint={p}
+                        allKits={kits}
+                        allPaints={paints}
+                        onClick={() => {
+                          setIsNewPaint(false);
+                          setActivePaint(p);
+                        }}
+                        onBuy={(item) => markAsBought(item, "paint")}
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+              )}
+              {logic.shoppingList.accessories.length > 0 && (
+                <div>
+                  <h3 className="text-xs font-bold text-orange-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <Layers size={14} /> Chybějící Doplňky
+                  </h3>
+                  <div className="space-y-2">
+                    {logic.shoppingList.accessories.map((acc, index) => (
+                      <ShoppingAccessoryCard
+                        key={`${acc.id}-${index}`}
+                        accessory={acc}
+                        onBuy={buyAccessory}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </main>
 
       {/* CONFIRMATION MODAL */}
       <ConfirmModal

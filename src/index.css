@@ -2,12 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
+:root {
+  background-color: #020617; /* slate-950 */
 }
+
+body,
 html {
-  scrollbar-gutter: stable;
-  overscroll-behavior-y: contain;
+  height: 100%;
+  width: 100%;
+  overflow: hidden; /* Zamezí scrollování celého okna */
+  overscroll-behavior: none; /* Zamezí "pružení" na iOS */
+  background-color: #020617;
 }
