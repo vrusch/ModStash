@@ -11,6 +11,7 @@ import {
   ShoppingBag,
   Paintbrush,
   Trash2,
+  Palette,
 } from "lucide-react";
 import brandsData from "./data/brands.json";
 import masterCatalog from "./data/catalog.json";
@@ -255,9 +256,7 @@ export default function App() {
                         setIsNewPaint(false);
                         setActivePaint(paint);
                       }}
-                      onDelete={(id) =>
-                        deleteItem("paints", id, paints, setPaints)
-                      }
+                      onDelete={(id) => deleteItem("paints", id)}
                     />
                   ))}
                 </div>
@@ -280,9 +279,7 @@ export default function App() {
                         setIsNewPaint(false);
                         setActivePaint(paint);
                       }}
-                      onDelete={(id) =>
-                        deleteItem("paints", id, paints, setPaints)
-                      }
+                      onDelete={(id) => deleteItem("paints", id)}
                     />
                   ))}
                 </div>

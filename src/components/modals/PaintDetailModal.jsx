@@ -443,6 +443,7 @@ const PaintDetailModal = ({
             }
             placeholder={data.isMix ? "Můj stínovací mix" : "flat black"}
             labelColor={data.isMix ? "text-purple-400" : "text-blue-400"}
+            disabled={isEditMode}
           />
 
           <div className="flex gap-3">
@@ -459,6 +460,7 @@ const PaintDetailModal = ({
                 { value: "Pigment", label: "🏜️ Pigment" },
                 { value: "Primer", label: "🛡️ Primer" },
               ]}
+              disabled={isEditMode}
             />
             <FloatingSelect
               className="flex-1"
@@ -473,6 +475,7 @@ const PaintDetailModal = ({
                 { value: "Perleťová", label: "Perleťová" },
                 { value: "Transparentní", label: "Transparentní" },
               ]}
+              disabled={isEditMode}
             />
             <FloatingSelect
               className="flex-1"
@@ -613,6 +616,7 @@ const PaintDetailModal = ({
                 value={data.thinner || ""}
                 onChange={(e) => setData({ ...data, thinner: e.target.value })}
                 placeholder="Např. Tamiya X-20A"
+                disabled={isEditMode}
               />
               <div className="flex items-center gap-1 bg-slate-900 border border-slate-700 rounded px-2 py-1 h-[42px]">
                 <div className="text-center">
@@ -651,28 +655,30 @@ const PaintDetailModal = ({
           </div>
 
           {/* Color Preview */}
-          <div className="bg-slate-800 p-3 rounded-lg border border-slate-700">
-            <label className="block text-[10px] font-bold text-slate-500 uppercase mb-2">
-              Odstín (Preview)
-            </label>
-            <div className="flex items-center gap-4">
-              <input
-                type="color"
-                value={data.hex}
-                onChange={(e) => setData({ ...data, hex: e.target.value })}
-                className="w-12 h-12 rounded cursor-pointer border-none bg-transparent"
-              />
-              <div className="flex-1">
+          {!isEditMode && (
+            <div className="bg-slate-800 p-3 rounded-lg border border-slate-700">
+              <label className="block text-[10px] font-bold text-slate-500 uppercase mb-2">
+                Odstín (Preview)
+              </label>
+              <div className="flex items-center gap-4">
                 <input
-                  type="text"
+                  type="color"
                   value={data.hex}
                   onChange={(e) => setData({ ...data, hex: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-sm font-mono text-white uppercase outline-none focus:border-blue-500"
-                  placeholder="#000000"
+                  className="w-12 h-12 rounded cursor-pointer border-none bg-transparent"
                 />
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    value={data.hex}
+                    onChange={(e) => setData({ ...data, hex: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-sm font-mono text-white uppercase outline-none focus:border-blue-500"
+                    placeholder="#000000"
+                  />
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* POUŽITÍ V MODELECH */}
           <div className="bg-slate-800 p-3 rounded-xl border border-slate-700/50">

@@ -121,6 +121,7 @@ const PaintCard = React.memo(
               </div>
               {onDelete && (
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     onDelete(paint.id);
