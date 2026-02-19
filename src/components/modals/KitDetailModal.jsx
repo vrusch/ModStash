@@ -819,21 +819,70 @@ const KitDetailModal = ({
           )}
           {activeTab === "build" && !isBuildLocked && (
             <div className="space-y-4 p-4">
-              <div className="bg-slate-800 p-3 rounded-lg border border-slate-700">
-                <div className="flex justify-between text-xs text-slate-400 mb-2">
-                  <span>Postup</span>
-                  <span>{data.progress}%</span>
+              <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 shadow-inner">
+                <div className="flex justify-between items-end mb-4 px-1">
+                  <div>
+                    <span className="text-[10px] font-bold text-orange-500 block tracking-wider mb-1">
+                      DOKONČENO
+                    </span>
+                    <span className="text-4xl font-bold text-white leading-none">
+                      {data.progress}
+                      <span className="text-sm text-slate-500 font-normal ml-1">
+                        %
+                      </span>
+                    </span>
+                  </div>
+                  <Hammer size={24} className="text-slate-700 mb-1" />
                 </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={data.progress}
-                  onChange={(e) =>
-                    setData({ ...data, progress: Number(e.target.value) })
-                  }
-                  className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-orange-500"
-                />
+
+                {/* Slider */}
+                <div className="relative h-8 mb-6 flex items-center">
+                  {/* Track */}
+                  <div className="absolute inset-x-0 h-3 rounded-full overflow-hidden flex bg-slate-800">
+                    <div
+                      style={{ width: `${data.progress}%` }}
+                      className="bg-orange-500 h-full transition-all duration-100 shadow-[0_0_10px_rgba(249,115,22,0.5)]"
+                    />
+                  </div>
+                  {/* Input */}
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="5"
+                    value={data.progress}
+                    onChange={(e) =>
+                      setData({ ...data, progress: Number(e.target.value) })
+                    }
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                  {/* Thumb */}
+                  <div
+                    className="absolute h-6 w-6 bg-white rounded-full shadow-lg border-2 border-slate-900 pointer-events-none transition-all duration-100 flex items-center justify-center"
+                    style={{
+                      left: `calc(${data.progress}% - 12px)`,
+                    }}
+                  >
+                    <div className="w-1.5 h-1.5 bg-slate-900 rounded-full" />
+                  </div>
+                </div>
+
+                {/* Presets */}
+                <div className="flex justify-between gap-2">
+                  {[0, 25, 50, 75, 100].map((val) => (
+                    <button
+                      key={val}
+                      onClick={() => setData({ ...data, progress: val })}
+                      className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all border ${
+                        data.progress === val
+                          ? "bg-slate-800 text-white border-slate-600 shadow-sm"
+                          : "bg-transparent text-slate-500 border-slate-800 hover:bg-slate-900 hover:text-slate-300"
+                      }`}
+                    >
+                      {val}%
+                    </button>
+                  ))}
+                </div>
               </div>
               <div>
                 <h4 className="text-sm font-bold text-slate-300 mb-2">Plán</h4>
