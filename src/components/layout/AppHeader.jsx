@@ -83,6 +83,7 @@ const AppHeader = ({
                     brand: "",
                     catNum: "",
                     scale: "",
+                    subject: "",
                     name: "",
                     projectId: null,
                     progress: 0,
@@ -167,17 +168,14 @@ const AppHeader = ({
             />
           </div>
           <button
-            onClick={() =>
-              logic.view !== "shopping" &&
-              logic.setShowFilter(!logic.showFilter)
-            }
-            className={`p-2 w-10 h-10 rounded-lg border flex items-center justify-center transition-opacity shrink-0 ${logic.view === "shopping" ? "opacity-0 pointer-events-none border-transparent bg-transparent" : logic.showFilter || logic.hasActiveFilters ? "bg-blue-600 border-blue-500 text-white" : "bg-slate-800 border-slate-700 text-slate-400"}`}
+            onClick={() => logic.setShowFilter(!logic.showFilter)}
+            className={`p-2 w-10 h-10 rounded-lg border flex items-center justify-center transition-opacity shrink-0 ${logic.showFilter || logic.hasActiveFilters ? "bg-blue-600 border-blue-500 text-white" : "bg-slate-800 border-slate-700 text-slate-400"}`}
           >
             <Filter size={20} />
           </button>
         </div>
         {/* FILTER PANEL */}
-        {logic.showFilter && logic.view !== "shopping" && (
+        {logic.showFilter && (
           <div className="bg-slate-900 border border-slate-700 rounded-lg p-3 mb-3 animate-in slide-in-from-top-2">
             <div className="flex justify-between items-center mb-2">
               <h4 className="text-xs font-bold text-slate-500 uppercase">
@@ -275,7 +273,7 @@ const AppHeader = ({
                   </div>
                 </div>
               </div>
-            ) : (
+            ) : logic.view === "projects" ? (
               <div>
                 <span className="text-[10px] text-slate-600 font-bold block mb-1">
                   Stav projektu
@@ -290,6 +288,10 @@ const AppHeader = ({
                     />
                   ))}
                 </div>
+              </div>
+            ) : (
+              <div className="text-xs text-slate-500 italic">
+                Filtry pro nákupní seznam zatím nejsou dostupné.
               </div>
             )}
           </div>

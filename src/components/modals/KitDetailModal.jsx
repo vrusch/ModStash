@@ -275,27 +275,25 @@ const KitDetailModal = ({
                 className="col-span-1 sm:w-24"
                 label="Kat. č."
                 value={data.catNum}
-                onChange={(e) => setData({ ...data, catNum: e.target.value })}
+                onChange={(e) =>
+                  setData({ ...data, catNum: Normalizer.code(e.target.value) })
+                }
                 placeholder="48000"
               />
             </div>
             <div className="flex gap-3">
               <FloatingInput
-                className="flex-1"
-                label="Předloha *"
+                className="w-full"
+                label="Název *"
                 value={data.subject || ""}
-                onChange={(e) => setData({ ...data, subject: e.target.value })}
+                onChange={(e) =>
+                  setData({
+                    ...data,
+                    subject: Normalizer.brand(e.target.value),
+                  })
+                }
                 placeholder="TF-104G"
                 labelColor="text-blue-400"
-              />
-              <FloatingInput
-                className="flex-[1.5]"
-                label="Název"
-                value={data.name}
-                onChange={(e) =>
-                  setData({ ...data, name: Normalizer.name(e.target.value) })
-                }
-                placeholder="Starfighter"
               />
             </div>
           </div>
@@ -971,12 +969,17 @@ const KitDetailModal = ({
                 </div>
                 <div className="flex gap-2 mb-2">
                   <button
-                    onClick={() =>
+                    onClick={() => {
+                      // Scalemates hledá nejlépe podle "Značka Kat.číslo"
+                      // Pokud chybí kat. číslo, zkusíme "Značka Předloha" (Název rušíme/ignorujeme)
+                      const query = data.catNum
+                        ? `${data.brand} ${data.catNum}`
+                        : `${data.brand} ${data.subject} ${data.scale}`;
                       window.open(
-                        `https://www.scalemates.com/search.php?q=${encodeURIComponent(data.brand + " " + data.catNum + " " + data.name)}`,
+                        `https://www.scalemates.com/search.php?q=${encodeURIComponent(query)}`,
                         "_blank",
-                      )
-                    }
+                      );
+                    }}
                     className="bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 text-xs px-3 py-2 rounded border border-blue-500/30 flex items-center gap-2 whitespace-nowrap"
                   >
                     <Search size={14} /> Najít kit
