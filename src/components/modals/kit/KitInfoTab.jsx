@@ -12,13 +12,47 @@ import {
 import { FloatingInput, FloatingTextarea } from "../../ui/FormElements";
 import { Normalizer } from "../../../utils/normalizers";
 import { scrapeScalemates } from "../../../utils/sm_scraper";
+import KIT_BRANDS from "../../../data/brands-kits.json";
+
+const COMMON_SCALES = [
+  "1/6",
+  "1/9",
+  "1/12",
+  "1/16",
+  "1/24",
+  "1/32",
+  "1/35",
+  "1/48",
+  "1/72",
+  "1/76",
+  "1/100",
+  "1/144",
+  "1/200",
+  "1/350",
+  "1/700",
+];
 
 const KitInfoTab = ({ data, setData, projects }) => {
   const [isScraping, setIsScraping] = useState(false);
   const [showMarkings, setShowMarkings] = useState(false);
   const [showMarketplace, setShowMarketplace] = useState(false);
+  const [brandSuggestions, setBrandSuggestions] = useState([]);
+  const [showBrandSuggestions, setShowBrandSuggestions] = useState(false);
 
   const isScaleValid = (s) => !s || /^\d+\/\d+$/.test(s);
+
+  // Validace výrobce: Varování, pokud není v seznamu (a není prázdný)
+  const isUnknownBrand =
+    data.brand &&
+    data.brand.length > 1 &&
+    !KIT_BRANDS.some((b) => b.toLowerCase() === data.brand.toLowerCase());
+
+  // Validace měřítka: Varování, pokud není v seznamu běžných (ale formát je OK)
+  const isUnknownScale =
+    data.scale &&
+    data.scale.length > 0 &&
+    isScaleValid(data.scale) &&
+    !COMMON_SCALES.includes(data.scale);
 
   const handleScrape = async () => {
     if (!data.scalematesUrl) return;
@@ -70,6 +104,36 @@ const KitInfoTab = ({ data, setData, projects }) => {
     }
   };
 
+  const handleBrandChange = (e) => {
+    const val = e.target.value;
+    // Ponecháme normalizaci pro ruční psaní, ale našeptávač nabídne správný tvar z JSONu
+    setData({ ...data, brand: Normalizer.brand(val) });
+
+    if (val.length > 0) {
+      const lowerVal = val.toLowerCase();
+      const matches = KIT_BRANDS.filter((b) =>
+        b.toLowerCase().includes(lowerVal),
+      )
+        .sort((a, b) => {
+          const aStarts = a.toLowerCase().startsWith(lowerVal);
+          const bStarts = b.toLowerCase().startsWith(lowerVal);
+          if (aStarts && !bStarts) return -1;
+          if (!aStarts && bStarts) return 1;
+          return a.localeCompare(b);
+        })
+        .slice(0, 8); // Max 8 návrhů
+      setBrandSuggestions(matches);
+      setShowBrandSuggestions(matches.length > 0);
+    } else {
+      setShowBrandSuggestions(false);
+    }
+  };
+
+  const selectBrand = (brand) => {
+    setData({ ...data, brand });
+    setShowBrandSuggestions(false);
+  };
+
   return (
     <div className="space-y-4 p-4">
       {/* HLAVIČKA: OBRÁZEK A ZÁKLADNÍ DATA */}
@@ -89,25 +153,76 @@ const KitInfoTab = ({ data, setData, projects }) => {
         </div>
         <div className="flex-1 space-y-3">
           <div className="grid grid-cols-2 sm:flex gap-3">
-            <FloatingInput
-              className="col-span-2 sm:flex-1"
-              label="Výrobce *"
-              value={data.brand}
-              onChange={(e) =>
-                setData({ ...data, brand: Normalizer.brand(e.target.value) })
-              }
-              placeholder="Kinetic"
-              labelColor="text-blue-400"
-            />
-            <FloatingInput
-              className="col-span-1 sm:w-20"
-              label="Měřítko *"
-              value={data.scale}
-              onChange={(e) => setData({ ...data, scale: e.target.value })}
-              placeholder="1/48"
-              labelColor="text-blue-400"
-              classNameInput={!isScaleValid(data.scale) ? "border-red-500" : ""}
-            />
+            <div className="col-span-2 sm:flex-1 relative">
+              <FloatingInput
+                className="w-full"
+                label="Výrobce *"
+                value={data.brand}
+                onChange={handleBrandChange}
+                onFocus={(e) => {
+                  if (e.target.value) handleBrandChange(e);
+                }}
+                onBlur={() =>
+                  setTimeout(() => setShowBrandSuggestions(false), 200)
+                }
+                placeholder="Kinetic"
+                labelColor={
+                  isUnknownBrand ? "text-yellow-500" : "text-blue-400"
+                }
+                classNameInput={isUnknownBrand ? "border-yellow-500/50" : ""}
+                autoComplete="off"
+              />
+              {showBrandSuggestions && (
+                <div className="absolute top-full left-0 right-0 bg-slate-800 border border-slate-600 rounded-lg mt-1 z-50 shadow-xl max-h-48 overflow-y-auto animate-in fade-in zoom-in-95">
+                  {brandSuggestions.map((brand) => (
+                    <div
+                      key={brand}
+                      onClick={() => selectBrand(brand)}
+                      className="p-2 hover:bg-blue-600/20 hover:text-blue-300 cursor-pointer text-xs text-slate-300 border-b border-slate-700/50 last:border-0 transition-colors"
+                    >
+                      {brand}
+                    </div>
+                  ))}
+                </div>
+              )}
+              {isUnknownBrand && !showBrandSuggestions && (
+                <div className="absolute top-full left-0 mt-1 text-[10px] text-yellow-500 font-bold animate-in fade-in z-10 pointer-events-none">
+                  ⚠️ Neznámý výrobce
+                </div>
+              )}
+            </div>
+            <div className="col-span-1 sm:w-20 relative">
+              <FloatingInput
+                className="w-full"
+                label="Měřítko *"
+                value={data.scale}
+                onChange={(e) => setData({ ...data, scale: e.target.value })}
+                onFocus={(e) =>
+                  !data.scale && setData({ ...data, scale: "1/" })
+                }
+                placeholder="1/48"
+                labelColor={
+                  !isScaleValid(data.scale)
+                    ? "text-red-500"
+                    : isUnknownScale
+                      ? "text-yellow-500"
+                      : "text-blue-400"
+                }
+                classNameInput={
+                  !isScaleValid(data.scale)
+                    ? "border-red-500"
+                    : isUnknownScale
+                      ? "border-yellow-500/50"
+                      : ""
+                }
+                list="common-scales"
+              />
+              {isUnknownScale && (
+                <div className="absolute top-full left-0 mt-1 text-[10px] text-yellow-500 font-bold animate-in fade-in z-10 pointer-events-none whitespace-nowrap">
+                  ⚠️ Atypické
+                </div>
+              )}
+            </div>
             <FloatingInput
               className="col-span-1 sm:w-24"
               label="Kat. č."

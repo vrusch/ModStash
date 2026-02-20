@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from "react";
 import {
   Cloud,
+  Settings,
+  Palette,
   X,
   User,
   WifiOff,
   Ghost,
   Loader2,
   LogOut,
-  Wand2,
   RefreshCw,
   Check,
   Copy,
-  Database,
-  Download,
-  Upload,
 } from "lucide-react";
 import { GoogleIcon } from "../ui/Icons";
 import { auth } from "../../config/firebase";
@@ -33,10 +31,6 @@ const APP_VERSION = import.meta.env.PACKAGE_VERSION || "Dev";
  * @param {Object} props
  * @param {Object} props.user - Objekt aktuálně přihlášeného uživatele (Firebase User).
  * @param {Function} props.onClose - Handler pro zavření modalu.
- * @param {Array} props.kits - Data modelů pro export.
- * @param {Array} props.projects - Data projektů pro export.
- * @param {Array} props.paints - Data barev pro export.
- * @param {Function} props.onImport - Handler pro import dat ze souboru.
  * @param {string} props.activeUid - ID aktuálního skladu/uživatele.
  * @param {Function} props.onSetManualId - Handler pro ruční nastavení ID skladu.
  * @param {Object} props.masterCatalog - Data hlavního katalogu barev (pro info).
@@ -45,48 +39,17 @@ const APP_VERSION = import.meta.env.PACKAGE_VERSION || "Dev";
 const SettingsModal = ({
   user,
   onClose,
-  kits,
-  projects,
-  paints,
-  onImport,
   activeUid,
   onSetManualId,
   masterCatalog,
 }) => {
   const [copied, setCopied] = useState(false);
-  const [importing, setImporting] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
   const [authError, setAuthError] = useState(null);
   const [manualIdInput, setManualIdInput] = useState(activeUid || "");
   useEffect(() => {
     setManualIdInput(activeUid || "");
   }, [activeUid]);
-  const handleExport = () => {
-    const data = {
-      version: APP_VERSION,
-      exportedAt: new Date().toISOString(),
-      kits,
-      projects,
-      paints,
-    };
-    const blob = new Blob([JSON.stringify(data, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `model-diary-backup-${new Date().toISOString().slice(0, 10)}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-  const handleImportClick = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    onImport(file);
-    e.target.value = "";
-  };
   const copyToClipboard = () => {
     if (user?.uid) {
       navigator.clipboard.writeText(user.uid);
@@ -122,14 +85,18 @@ const SettingsModal = ({
       <div className="bg-slate-900 w-full max-w-md rounded-2xl border border-slate-700 shadow-2xl overflow-hidden h-[90vh] flex flex-col">
         <div className="bg-slate-800 p-4 border-b border-slate-700 flex justify-between items-center">
           <h2 className="text-lg font-bold text-white flex items-center gap-2">
-            <Cloud className="text-blue-400" size={20} /> Nastavení Cloudu
+            <Settings className="text-slate-400" size={20} /> Nastavení
           </h2>
           <button onClick={onClose} className="text-slate-400 hover:text-white">
             <X size={24} />
           </button>
         </div>
         <div className="p-6 space-y-6 flex-1 overflow-y-auto">
+          {/* SEKCE: ÚČET */}
           <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
+            <h3 className="text-xs font-bold text-slate-500 uppercase mb-3 flex items-center gap-2">
+              <Cloud size={14} /> Účet a Synchronizace
+            </h3>
             <div className="flex items-center gap-3 mb-3">
               <div
                 className={`p-2 rounded-full ${!user ? "bg-slate-700 text-slate-400" : user.isAnonymous ? "bg-orange-500/20 text-orange-400" : "bg-green-500/20 text-green-400"}`}
@@ -193,21 +160,8 @@ const SettingsModal = ({
               )}
             </div>
           </div>
-          <div className="p-3 bg-slate-900 border border-slate-700 rounded-xl flex items-center gap-3">
-            <div className="bg-blue-600/20 p-2 rounded-full text-blue-400">
-              <Wand2 size={20} />
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-white">Master Katalog</h4>
-              <p className="text-xs text-slate-500">
-                Obsahuje{" "}
-                <span className="text-blue-400 font-mono font-bold">
-                  {Object.keys(masterCatalog || {}).length}
-                </span>{" "}
-                ukázkových barev (Offline).
-              </p>
-            </div>
-          </div>
+
+          {/* SEKCE: ID SKLADU */}
           <div className="space-y-2">
             <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
               ID Deníku / Skladu
@@ -245,56 +199,36 @@ const SettingsModal = ({
               zařízenímí).
             </p>
           </div>
-          <div
-            className={`p-4 rounded-xl border ${user ? "bg-blue-900/20 border-blue-500/20" : "bg-orange-900/10 border-orange-500/20"}`}
-          >
-            <h4
-              className={`font-bold mb-1 flex items-center gap-2 ${user ? "text-blue-400" : "text-orange-400"}`}
-            >
-              <RefreshCw size={16} /> Status synchronizace
-            </h4>
-            <p className="text-sm text-slate-300/80">
-              {user
-                ? "Data se ukládají do cloudu."
-                : "Offline režim. Data jsou pouze v tomto prohlížeči."}
-            </p>
-          </div>
-          <div className="border-t border-slate-800 pt-4">
+
+          {/* SEKCE: PŘEDVOLBY (Placeholder pro budoucí funkcionalitu) */}
+          <div className="border-t border-slate-800 pt-4 opacity-50 pointer-events-none grayscale">
             <h4 className="text-sm font-bold text-slate-300 mb-4 flex items-center gap-2">
-              <Database size={18} className="text-orange-400" /> Správa dat
+              <Palette size={18} className="text-purple-400" /> Vzhled a chování
+              (Brzy)
             </h4>
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                onClick={handleExport}
-                className="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 py-3 rounded-xl flex flex-col items-center gap-2 transition-all active:scale-95"
-              >
-                <Download size={24} className="text-blue-400" />
-                <span className="text-xs font-bold">Exportovat</span>
-              </button>
-              <label
-                className={`bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 py-3 rounded-xl flex flex-col items-center gap-2 transition-all active:scale-95 cursor-pointer ${importing ? "opacity-50 pointer-events-none" : ""}`}
-              >
-                {importing ? (
-                  <Loader2 size={24} className="animate-spin text-orange-400" />
-                ) : (
-                  <Upload size={24} className="text-orange-400" />
-                )}
-                <span className="text-xs font-bold">
-                  {importing ? "Importuji..." : "Importovat"}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between bg-slate-800 p-3 rounded-lg border border-slate-700">
+                <span className="text-sm text-slate-300">Výchozí pohled</span>
+                <span className="text-xs font-bold text-slate-500">Modely</span>
+              </div>
+              <div className="flex items-center justify-between bg-slate-800 p-3 rounded-lg border border-slate-700">
+                <span className="text-sm text-slate-300">
+                  Kompaktní zobrazení
                 </span>
-                <input
-                  type="file"
-                  accept=".json"
-                  onChange={handleImportClick}
-                  className="hidden"
-                  disabled={importing}
-                />
-              </label>
+                <div className="w-8 h-4 bg-slate-700 rounded-full relative">
+                  <div className="w-4 h-4 bg-slate-500 rounded-full absolute left-0"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
         <div className="p-4 bg-slate-950 border-t border-slate-800 text-center">
-          <span className="text-xs text-slate-600">{APP_VERSION}</span>
+          <span className="text-xs font-bold text-blue-500">
+            Verze: {APP_VERSION}
+          </span>
+          <div className="text-[10px] text-slate-700 mt-1">
+            Katalog obsahuje {Object.keys(masterCatalog || {}).length} barev
+          </div>
         </div>
       </div>
     </div>

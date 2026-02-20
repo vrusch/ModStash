@@ -483,10 +483,6 @@ export default function App() {
         <SettingsModal
           user={user}
           onClose={() => setShowSettings(false)}
-          kits={kits}
-          projects={projects}
-          paints={paints}
-          onImport={importData}
           activeUid={activeUid}
           onSetManualId={setManualDataUid}
           appVersion={APP_VERSION}
