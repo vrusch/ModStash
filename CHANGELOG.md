@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.31.2] - 2026-02-20
+
+### Změněno
+
+- **UI:** Optimalizace kitDetailModal, naseptavac
+
 ## [2.31.1] - 2026-02-20
 
 ### Vývoj
