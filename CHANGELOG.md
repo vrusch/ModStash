@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.32.0] - 2026-02-21
+
+### Přidáno
+
+- **Funkce:** Automatická detekce typu barvy a ředidla podle kódu (např. `XF-` -> Akryl).
+- **Data:** Standardizace specifikací barev (Tamiya, Gunze) a přidání mapování prefixů kódů.
+
+### Opraveno
+
+- **Dev:** Odstraněny duplicitní klíče v `PaintDetailModal`, které způsobovaly varování při buildu.
+
 ## [2.31.2] - 2026-02-20
 
 ### Změněno
