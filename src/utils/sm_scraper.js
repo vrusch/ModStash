@@ -12,7 +12,7 @@
 async function fetchWithProxy(targetUrl) {
   const encodedUrl = encodeURIComponent(targetUrl);
 
-  // Pomocná funkce pro detekci blokace (Akamai/Cloudflare)
+  // Funkce pro detekci blokace (Akamai/Cloudflare)
   const isBlocked = (text) => {
     if (!text) return true;
     const lowerText = text.toLowerCase();
@@ -23,64 +23,49 @@ async function fetchWithProxy(targetUrl) {
     );
   };
 
-  // 1. Pokus: Tvoje Vercel Proxy (nejlepší pro obcházení mobilních sítí)
-  try {
-    const myProxyUrl = `https://mates-proxy.vercel.app/api/scrape?url=${encodedUrl}`;
-    const response = await fetch(myProxyUrl);
-    if (response.ok) {
-      const text = await response.text();
-      // Zkontrolujeme, zda nám Vercel nevrátil chybové HTML od Akamai
-      if (!isBlocked(text) && !text.includes('{"error"')) {
-        return text;
+  // Helper pro paralelní stažení s timeoutem 8 vteřin
+  const fetchVia = async (proxyUrl, timeoutMs = 8000) => {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const response = await fetch(proxyUrl, { signal: controller.signal });
+      clearTimeout(id);
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      let text = await response.text();
+
+      // Kontrola, zda nám proxy nevrátila chybovou stránku ochrany
+      if (isBlocked(text) || text.includes('{"error"')) {
+        throw new Error("Zablokováno ochranou");
       }
+      return text;
+    } catch (err) {
+      clearTimeout(id);
+      throw err; // Vyhození chyby řekne Promise.any, ať tento pokus ignoruje
     }
-  } catch (e) {
-    console.warn("Vercel proxy selhala");
-  }
+  };
 
-  // 2. Pokus: AllOrigins (velmi spolehlivá veřejná proxy)
+  // Vystřelíme všechny 4 požadavky NAJEDNOU (Paralelně)
+  // Používáme allorigins.win/raw, což vrací čisté HTML a je bleskurychlé
+  const proxies = [
+    fetchVia(`https://api.allorigins.win/raw?url=${encodedUrl}`),
+    fetchVia(`https://corsproxy.io/?${encodedUrl}`),
+    fetchVia(`https://api.codetabs.com/v1/proxy?quest=${encodedUrl}`),
+    fetchVia(`https://mates-proxy.vercel.app/api/scrape?url=${encodedUrl}`),
+  ];
+
   try {
-    const response = await fetch(
-      `https://api.allorigins.win/get?url=${encodedUrl}`,
+    // Promise.any vezme ten PRVNÍ úspěšný výsledek. Zkrátí to čas na 1-3 vteřiny!
+    const html = await Promise.any(proxies);
+    return html;
+  } catch (aggregateError) {
+    // Pokud selžou úplně všechny (odchyceno z Promise.any)
+    throw new Error(
+      "Nepodařilo se stáhnout data. Zkontrolujte URL nebo to zkuste později.",
     );
-    if (response.ok) {
-      const json = await response.json();
-      if (json.contents && !isBlocked(json.contents)) {
-        return json.contents;
-      }
-    }
-  } catch (e) {
-    console.warn("AllOrigins selhala");
   }
-
-  // 3. Pokus: CodeTabs (alternativní bezplatná proxy)
-  try {
-    const response = await fetch(
-      `https://api.codetabs.com/v1/proxy?quest=${encodedUrl}`,
-    );
-    if (response.ok) {
-      const text = await response.text();
-      if (!isBlocked(text)) return text;
-    }
-  } catch (e) {
-    console.warn("CodeTabs selhala");
-  }
-
-  // 4. Pokus: Corsproxy.io (záložní možnost)
-  try {
-    const response = await fetch(`https://corsproxy.io/?${encodedUrl}`);
-    if (response.ok) {
-      const text = await response.text();
-      if (!isBlocked(text)) return text;
-    }
-  } catch (e) {
-    console.warn("Corsproxy selhala");
-  }
-
-  // Pokud selže úplně všechno
-  throw new Error(
-    "Access Denied. Scalemates blokuje přístup. Zkuste to později nebo zadejte data ručně.",
-  );
 }
 
 function extractOffers(doc) {
