@@ -23,13 +23,17 @@ async function fetchWithProxy(targetUrl) {
     );
   };
 
-  // Helper pro paralelní stažení s timeoutem 8 vteřin
-  const fetchVia = async (proxyUrl, timeoutMs = 8000) => {
+  // Helper pro paralelní stažení s prodlouženým timeoutem pro mobilní sítě (15 vteřin)
+  const fetchVia = async (proxyUrl, timeoutMs = 15000) => {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
-      const response = await fetch(proxyUrl, { signal: controller.signal });
+      // Přidáno cache: 'no-store', aby mobilní prohlížeč nevracel staré zablokované odpovědi z paměti
+      const response = await fetch(proxyUrl, {
+        signal: controller.signal,
+        cache: "no-store",
+      });
       clearTimeout(id);
 
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -57,7 +61,7 @@ async function fetchWithProxy(targetUrl) {
   ];
 
   try {
-    // Promise.any vezme ten PRVNÍ úspěšný výsledek. Zkrátí to čas na 1-3 vteřiny!
+    // Promise.any vezme ten PRVNÍ úspěšný výsledek.
     const html = await Promise.any(proxies);
     return html;
   } catch (aggregateError) {

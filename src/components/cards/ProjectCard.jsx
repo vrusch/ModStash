@@ -108,7 +108,7 @@ const ProjectCard = ({ project, onClick, kits, onKitClick, onOpenDetail }) => {
     >
       <div className="flex justify-between items-start mb-2">
         <div>
-          <h3 className="font-bold text-base text-white group-hover:text-blue-400 transition-colors">
+          <h3 className="font-bold text-sm text-white group-hover:text-blue-400 transition-colors uppercase tracking-wide">
             {project.name}
           </h3>
           <div className="flex items-center gap-2 mt-1">
@@ -188,7 +188,7 @@ const ProjectCard = ({ project, onClick, kits, onKitClick, onOpenDetail }) => {
                 className={`flex items-center justify-between p-1.5 rounded border border-slate-700/50 border-l-2 ${borderClass} ${bgClass} text-xs cursor-pointer transition-colors`}
               >
                 <div className="truncate mr-2 flex-1">
-                  <span className="font-bold text-slate-300 mr-1">
+                  <span className="font-bold text-slate-300 mr-1 text-[11px] uppercase">
                     {safeRender(k.subject)}
                   </span>
                   <span className="text-slate-500">{safeRender(k.name)}</span>

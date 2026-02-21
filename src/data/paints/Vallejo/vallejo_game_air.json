@@ -1,0 +1,317 @@
+{
+  "VALLEJO_73001": {
+    "displayCode": "73.001",
+    "name": "Dead White",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#FFFFFF"
+  },
+  "VALLEJO_73003": {
+    "displayCode": "73.003",
+    "name": "Pale Flesh",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#FCD9BA"
+  },
+  "VALLEJO_73004": {
+    "displayCode": "73.004",
+    "name": "Elf Skintone",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#F5C7A3"
+  },
+  "VALLEJO_73005": {
+    "displayCode": "73.005",
+    "name": "Moon Yellow",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#FFF66E"
+  },
+  "VALLEJO_73006": {
+    "displayCode": "73.006",
+    "name": "Sun Yellow",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#FFEA00"
+  },
+  "VALLEJO_73007": {
+    "displayCode": "73.007",
+    "name": "Gold Yellow",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#FFC000"
+  },
+  "VALLEJO_73008": {
+    "displayCode": "73.008",
+    "name": "Orange Fire",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#FF7518"
+  },
+  "VALLEJO_73009": {
+    "displayCode": "73.009",
+    "name": "Hot Orange",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#FF4500"
+  },
+  "VALLEJO_73010": {
+    "displayCode": "73.010",
+    "name": "Bloody Red",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#D62828"
+  },
+  "VALLEJO_73011": {
+    "displayCode": "73.011",
+    "name": "Gory Red",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#B11226"
+  },
+  "VALLEJO_73012": {
+    "displayCode": "73.012",
+    "name": "Scarlett Red",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#990000"
+  },
+  "VALLEJO_73013": {
+    "displayCode": "73.013",
+    "name": "Squid Pink",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#FF66CC"
+  },
+  "VALLEJO_73014": {
+    "displayCode": "73.014",
+    "name": "Warlord Purple",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#B23B7C"
+  },
+  "VALLEJO_73015": {
+    "displayCode": "73.015",
+    "name": "Hexed Lichen",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#5A2E80"
+  },
+  "VALLEJO_73020": {
+    "displayCode": "73.020",
+    "name": "Imperial Blue",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#0D47A1"
+  },
+  "VALLEJO_73021": {
+    "displayCode": "73.021",
+    "name": "Magic Blue",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#1976D2"
+  },
+  "VALLEJO_73022": {
+    "displayCode": "73.022",
+    "name": "Ultramarine Blue",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#2196F3"
+  },
+  "VALLEJO_73028": {
+    "displayCode": "73.028",
+    "name": "Dark Green",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#1B5E20"
+  },
+  "VALLEJO_73029": {
+    "displayCode": "73.029",
+    "name": "Sick Green",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#2E7D32"
+  },
+  "VALLEJO_73030": {
+    "displayCode": "73.030",
+    "name": "Goblin Green",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#4CAF50"
+  },
+  "VALLEJO_73032": {
+    "displayCode": "73.032",
+    "name": "Escorpena Green",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#8BC34A"
+  },
+  "VALLEJO_73033": {
+    "displayCode": "73.033",
+    "name": "Livery Green",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#CDDC39"
+  },
+  "VALLEJO_73034": {
+    "displayCode": "73.034",
+    "name": "Bone White",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#EAE0C8"
+  },
+  "VALLEJO_73035": {
+    "displayCode": "73.035",
+    "name": "Dead Flesh",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#C5CFA1"
+  },
+  "VALLEJO_73036": {
+    "displayCode": "73.036",
+    "name": "Bronze Fleshtone",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#D88B5A"
+  },
+  "VALLEJO_73037": {
+    "displayCode": "73.037",
+    "name": "Filthy Brown",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#C68E17"
+  },
+  "VALLEJO_73038": {
+    "displayCode": "73.038",
+    "name": "Scrofulous Brown",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#B87333"
+  },
+  "VALLEJO_73039": {
+    "displayCode": "73.039",
+    "name": "Plague Brown",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#A88339"
+  },
+  "VALLEJO_73040": {
+    "displayCode": "73.040",
+    "name": "Leather Brown",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#6C4B25"
+  },
+  "VALLEJO_73041": {
+    "displayCode": "73.041",
+    "name": "Dwarf Skin",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#DF997A"
+  },
+  "VALLEJO_73043": {
+    "displayCode": "73.043",
+    "name": "Beasty Brown",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#5B3A29"
+  },
+  "VALLEJO_73044": {
+    "displayCode": "73.044",
+    "name": "Dark Fleshtone",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#4A2E1B"
+  },
+  "VALLEJO_73047": {
+    "displayCode": "73.047",
+    "name": "Wolf Grey",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#A2B5CD"
+  },
+  "VALLEJO_73048": {
+    "displayCode": "73.048",
+    "name": "Sombre Grey",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#607D8B"
+  },
+  "VALLEJO_73049": {
+    "displayCode": "73.049",
+    "name": "Stonewall Grey",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#9E9E9E"
+  },
+  "VALLEJO_73050": {
+    "displayCode": "73.050",
+    "name": "Cold Grey",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#757575"
+  },
+  "VALLEJO_73051": {
+    "displayCode": "73.051",
+    "name": "Black",
+    "type": "Game Air",
+    "finish": "Matná",
+    "hex": "#1A1A1A"
+  },
+  "VALLEJO_73052": {
+    "displayCode": "73.052",
+    "name": "Silver",
+    "type": "Game Air",
+    "finish": "Metalická",
+    "hex": "#D8D8D8"
+  },
+  "VALLEJO_73053": {
+    "displayCode": "73.053",
+    "name": "Chainmail Silver",
+    "type": "Game Air",
+    "finish": "Metalická",
+    "hex": "#A8A8A8"
+  },
+  "VALLEJO_73054": {
+    "displayCode": "73.054",
+    "name": "Gunmetal",
+    "type": "Game Air",
+    "finish": "Metalická",
+    "hex": "#4A4A4A"
+  },
+  "VALLEJO_73055": {
+    "displayCode": "73.055",
+    "name": "Polished Gold",
+    "type": "Game Air",
+    "finish": "Metalická",
+    "hex": "#FFE87C"
+  },
+  "VALLEJO_73056": {
+    "displayCode": "73.056",
+    "name": "Glorious Gold",
+    "type": "Game Air",
+    "finish": "Metalická",
+    "hex": "#DAA520"
+  },
+  "VALLEJO_73057": {
+    "displayCode": "73.057",
+    "name": "Bright Bronze",
+    "type": "Game Air",
+    "finish": "Metalická",
+    "hex": "#CD7F32"
+  },
+  "VALLEJO_73058": {
+    "displayCode": "73.058",
+    "name": "Brassy Brass",
+    "type": "Game Air",
+    "finish": "Metalická",
+    "hex": "#B5A642"
+  },
+  "VALLEJO_73059": {
+    "displayCode": "73.059",
+    "name": "Hammered Copper",
+    "type": "Game Air",
+    "finish": "Metalická",
+    "hex": "#C67346"
+  }
+}

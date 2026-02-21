@@ -1,0 +1,513 @@
+{
+  "VALLEJO_71001": {
+    "displayCode": "71.001",
+    "name": "White",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#F2F2F2"
+  },
+  "VALLEJO_71002": {
+    "displayCode": "71.002",
+    "name": "Medium Yellow",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#FAD02C"
+  },
+  "VALLEJO_71003": {
+    "displayCode": "71.003",
+    "name": "Red",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#C22127"
+  },
+  "VALLEJO_71004": {
+    "displayCode": "71.004",
+    "name": "Blue",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#1D4E89"
+  },
+  "VALLEJO_71005": {
+    "displayCode": "71.005",
+    "name": "Intermediate Blue",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#5A768A"
+  },
+  "VALLEJO_71006": {
+    "displayCode": "71.006",
+    "name": "Light Green Blue",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#7CA1A6"
+  },
+  "VALLEJO_71007": {
+    "displayCode": "71.007",
+    "name": "Olive Green",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#4A5D3E"
+  },
+  "VALLEJO_71008": {
+    "displayCode": "71.008",
+    "name": "Pale Blue",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#8AADC2"
+  },
+  "VALLEJO_71009": {
+    "displayCode": "71.009",
+    "name": "Duck Egg Green",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#B5CBB7"
+  },
+  "VALLEJO_71010": {
+    "displayCode": "71.010",
+    "name": "Interior Green",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#6C7A53"
+  },
+  "VALLEJO_71011": {
+    "displayCode": "71.011",
+    "name": "Tank Green",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#455941"
+  },
+  "VALLEJO_71012": {
+    "displayCode": "71.012",
+    "name": "Dark Green",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#2E4733"
+  },
+  "VALLEJO_71013": {
+    "displayCode": "71.013",
+    "name": "Yellow Olive",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#636648"
+  },
+  "VALLEJO_71014": {
+    "displayCode": "71.014",
+    "name": "Gunship Green",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#415C54"
+  },
+  "VALLEJO_71015": {
+    "displayCode": "71.015",
+    "name": "Olive Grey",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#4D5D53"
+  },
+  "VALLEJO_71016": {
+    "displayCode": "71.016",
+    "name": "USAF Olive Drab",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#555D42"
+  },
+  "VALLEJO_71017": {
+    "displayCode": "71.017",
+    "name": "Russian Green",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#4A5D23"
+  },
+  "VALLEJO_71018": {
+    "displayCode": "71.018",
+    "name": "Black Green",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#273328"
+  },
+  "VALLEJO_71019": {
+    "displayCode": "71.019",
+    "name": "Camouflage Dark Green",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#3A4A36"
+  },
+  "VALLEJO_71020": {
+    "displayCode": "71.020",
+    "name": "German Green",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#4D6357"
+  },
+  "VALLEJO_71022": {
+    "displayCode": "71.022",
+    "name": "Light Green",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#6E9C54"
+  },
+  "VALLEJO_71023": {
+    "displayCode": "71.023",
+    "name": "Hemp",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#A89F6A"
+  },
+  "VALLEJO_71024": {
+    "displayCode": "71.024",
+    "name": "Khaki Brown",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#7A7B69"
+  },
+  "VALLEJO_71025": {
+    "displayCode": "71.025",
+    "name": "Dark Earth",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#5B4A3A"
+  },
+  "VALLEJO_71026": {
+    "displayCode": "71.026",
+    "name": "US Flat Brown",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#4A2F24"
+  },
+  "VALLEJO_71027": {
+    "displayCode": "71.027",
+    "name": "Light Brown",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#9E5A35"
+  },
+  "VALLEJO_71028": {
+    "displayCode": "71.028",
+    "name": "Sand Yellow",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#DDB878"
+  },
+  "VALLEJO_71029": {
+    "displayCode": "71.029",
+    "name": "Dark Earth",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#6E4C38"
+  },
+  "VALLEJO_71030": {
+    "displayCode": "71.030",
+    "name": "Brown Green",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#7A7252"
+  },
+  "VALLEJO_71031": {
+    "displayCode": "71.031",
+    "name": "Middlestone",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#A89F6A"
+  },
+  "VALLEJO_71032": {
+    "displayCode": "71.032",
+    "name": "Golden Brown",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#9E713E"
+  },
+  "VALLEJO_71033": {
+    "displayCode": "71.033",
+    "name": "Yellow Ochre",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#CB9A3E"
+  },
+  "VALLEJO_71034": {
+    "displayCode": "71.034",
+    "name": "Sand Brown",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#C49A71"
+  },
+  "VALLEJO_71035": {
+    "displayCode": "71.035",
+    "name": "Camouflage Pale Brown",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#A27A59"
+  },
+  "VALLEJO_71036": {
+    "displayCode": "71.036",
+    "name": "Mahogany",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#592E2B"
+  },
+  "VALLEJO_71037": {
+    "displayCode": "71.037",
+    "name": "Mud Brown",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#6C541E"
+  },
+  "VALLEJO_71038": {
+    "displayCode": "71.038",
+    "name": "Camo Medium Brown",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#7A3527"
+  },
+  "VALLEJO_71039": {
+    "displayCode": "71.039",
+    "name": "Hull Red",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#592E2B"
+  },
+  "VALLEJO_71040": {
+    "displayCode": "71.040",
+    "name": "Burnt Umber",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#3D2B1F"
+  },
+  "VALLEJO_71042": {
+    "displayCode": "71.042",
+    "name": "Dark Brown",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#3E2723"
+  },
+  "VALLEJO_71043": {
+    "displayCode": "71.043",
+    "name": "US Olive Drab",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#4D5D53"
+  },
+  "VALLEJO_71044": {
+    "displayCode": "71.044",
+    "name": "Light Grey Green",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#828977"
+  },
+  "VALLEJO_71045": {
+    "displayCode": "71.045",
+    "name": "US Grey Light",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#A2AAB0"
+  },
+  "VALLEJO_71046": {
+    "displayCode": "71.046",
+    "name": "Pale Grey Blue",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#A2B3C1"
+  },
+  "VALLEJO_71047": {
+    "displayCode": "71.047",
+    "name": "US Grey",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#696E6D"
+  },
+  "VALLEJO_71048": {
+    "displayCode": "71.048",
+    "name": "Dark Sea Grey",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#5E6466"
+  },
+  "VALLEJO_71049": {
+    "displayCode": "71.049",
+    "name": "Medium Sea Grey",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#848E99"
+  },
+  "VALLEJO_71050": {
+    "displayCode": "71.050",
+    "name": "Light Grey",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#969B9E"
+  },
+  "VALLEJO_71051": {
+    "displayCode": "71.051",
+    "name": "Neutral Grey",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#6E7172"
+  },
+  "VALLEJO_71052": {
+    "displayCode": "71.052",
+    "name": "German Grey",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#3E4347"
+  },
+  "VALLEJO_71053": {
+    "displayCode": "71.053",
+    "name": "Dark Seagreen",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#2E8B57"
+  },
+  "VALLEJO_71054": {
+    "displayCode": "71.054",
+    "name": "Dark Grey Blue",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#3E5266"
+  },
+  "VALLEJO_71055": {
+    "displayCode": "71.055",
+    "name": "Black Grey",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#2A2E33"
+  },
+  "VALLEJO_71056": {
+    "displayCode": "71.056",
+    "name": "Panzer Dark Grey",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#353B40"
+  },
+  "VALLEJO_71057": {
+    "displayCode": "71.057",
+    "name": "Black",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#1A1A1A"
+  },
+  "VALLEJO_71062": {
+    "displayCode": "71.062",
+    "name": "Aluminium",
+    "type": "Model Air",
+    "finish": "Metalická",
+    "hex": "#D3D4D5"
+  },
+  "VALLEJO_71063": {
+    "displayCode": "71.063",
+    "name": "Silver",
+    "type": "Model Air",
+    "finish": "Metalická",
+    "hex": "#C0C0C0"
+  },
+  "VALLEJO_71064": {
+    "displayCode": "71.064",
+    "name": "Chrome",
+    "type": "Model Air",
+    "finish": "Metalická",
+    "hex": "#E8E9EB"
+  },
+  "VALLEJO_71065": {
+    "displayCode": "71.065",
+    "name": "Steel",
+    "type": "Model Air",
+    "finish": "Metalická",
+    "hex": "#71797E"
+  },
+  "VALLEJO_71066": {
+    "displayCode": "71.066",
+    "name": "Gold",
+    "type": "Model Air",
+    "finish": "Metalická",
+    "hex": "#D4AF37"
+  },
+  "VALLEJO_71067": {
+    "displayCode": "71.067",
+    "name": "Bright Brass",
+    "type": "Model Air",
+    "finish": "Metalická",
+    "hex": "#B5A642"
+  },
+  "VALLEJO_71068": {
+    "displayCode": "71.068",
+    "name": "Copper",
+    "type": "Model Air",
+    "finish": "Metalická",
+    "hex": "#B87333"
+  },
+  "VALLEJO_71069": {
+    "displayCode": "71.069",
+    "name": "Rust",
+    "type": "Model Air",
+    "finish": "Metalická",
+    "hex": "#B7410E"
+  },
+  "VALLEJO_71071": {
+    "displayCode": "71.071",
+    "name": "Artic Blue",
+    "type": "Model Air",
+    "finish": "Metalická",
+    "hex": "#4B6F8E"
+  },
+  "VALLEJO_71072": {
+    "displayCode": "71.072",
+    "name": "Gunmetal",
+    "type": "Model Air",
+    "finish": "Metalická",
+    "hex": "#2A3439"
+  },
+  "VALLEJO_71073": {
+    "displayCode": "71.073",
+    "name": "Black Metal",
+    "type": "Model Air",
+    "finish": "Metalická",
+    "hex": "#1C1C1C"
+  },
+  "VALLEJO_71085": {
+    "displayCode": "71.085",
+    "name": "Ferrari Red",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#FF2800"
+  },
+  "VALLEJO_71097": {
+    "displayCode": "71.097",
+    "name": "Base Grey",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#808080"
+  },
+  "VALLEJO_71101": {
+    "displayCode": "71.101",
+    "name": "Light Blue RLM78",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#6C92AF"
+  },
+  "VALLEJO_71108": {
+    "displayCode": "71.108",
+    "name": "UK Azure Blue",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#4D7399"
+  },
+  "VALLEJO_71111": {
+    "displayCode": "71.111",
+    "name": "USAF Light Blue",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#A2C3D4"
+  },
+  "VALLEJO_71137": {
+    "displayCode": "71.137",
+    "name": "US Light Green",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#7CA368"
+  },
+  "VALLEJO_71251": {
+    "displayCode": "71.251",
+    "name": "NATO Black",
+    "type": "Model Air",
+    "finish": "Matná",
+    "hex": "#242526"
+  }
+}

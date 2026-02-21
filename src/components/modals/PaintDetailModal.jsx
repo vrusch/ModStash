@@ -116,9 +116,9 @@ const PaintDetailModal = ({
   const [isSaving, setIsSaving] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [isTyping, setIsTyping] = useState(false); // Indikátor, že uživatel píše (pro našeptávač)
   const [duplicateError, setDuplicateError] = useState(null);
   const [statusToast, setStatusToast] = useState(false);
-  const [suggestionSelected, setSuggestionSelected] = useState(false);
   const [confirmConfig, setConfirmConfig] = useState(null);
 
   // Omnibox / Global Search States
@@ -153,6 +153,33 @@ const PaintDetailModal = ({
     // Vrátíme konkrétní typ (např. klíč "Akryl")
     return allSpecs ? allSpecs[data.type] : null;
   }, [data.brand, data.type]);
+
+  // B2) DYNAMICKÉ MOŽNOSTI PRO SELECT "TYP"
+  // Pokud má značka definované specifické typy (např. Vallejo -> Game Air, Model Color),
+  // použijeme je místo obecných (Akryl, Enamel).
+  const typeOptions = useMemo(() => {
+    const specs = PaintAPI.getSpecs(data.brand);
+    if (specs && Object.keys(specs).length > 0) {
+      return Object.entries(specs).map(([key, spec]) => ({
+        value: key,
+        label: spec.title || key,
+      }));
+    }
+    // Fallback na obecné typy
+    return [
+      { value: "acrylic", label: "💧 Akryl" },
+      { value: "enamel", label: "🛢️ Enamel" },
+      { value: "lacquer", label: "☣️ Lacquer" },
+      { value: "oil", label: "🎨 Olej" },
+      { value: "pigment", label: "🏜️ Pigment" },
+      { value: "primer", label: "🛡️ Primer" },
+      { value: "glue", label: "🧴 Lepidlo" },
+      { value: "thinner", label: "💧 Ředidlo" },
+      { value: "varnish", label: "✨ Lak" },
+      { value: "weathering", label: "🟤 Weathering" },
+      { value: "putty", label: "🧱 Tmel" },
+    ];
+  }, [data.brand]);
 
   // C) AUTO-FILL: Doplnění ředidla podle specifikace
   useEffect(() => {
@@ -208,7 +235,7 @@ const PaintDetailModal = ({
 
           // Detekce typu podle prefixu (stejná logika jako v KitPaintsTab)
           const rawCode = paintVal.displayCode || key;
-          const seriesMatch = rawCode.match(/^([A-Za-z]+)/);
+          const seriesMatch = rawCode.match(/^([A-Za-z]+|\d+\.\d)/);
           const seriesPrefix = seriesMatch ? seriesMatch[1] : "";
           const spec = PaintAPI.getSpecForSeries(brand.id, seriesPrefix);
 
@@ -234,16 +261,29 @@ const PaintDetailModal = ({
 
   // D) NAŠEPTÁVAČ (Autocomplete)
   useEffect(() => {
-    // Našeptáváme jen pro: Novou barvu, Není Mix, Máme značku, Píšeme kód
+    // Pokud uživatel nepíše (např. právě vybral ze seznamu), nehledáme
+    if (!isTyping) {
+      setShowSuggestions(false);
+      return;
+    }
+
+    // Našeptáváme jen pro: Novou barvu, Není Mix, Máme značku, Píšeme kód, Manuální režim
     if (
       !data.isMix &&
       data.brand &&
       data.code &&
       !isEditMode &&
-      isManualEntry && // Jen v manuálním režimu
-      !suggestionSelected
+      isManualEntry
     ) {
-      const searchCode = data.code.toUpperCase().replace(/[\s\-\.]/g, "");
+      // Hledaný výraz (raw)
+      const searchCode = data.code.trim().toUpperCase();
+
+      // Pokud je prázdný, nehledáme
+      if (!searchCode) {
+        setSuggestions([]);
+        setShowSuggestions(false);
+        return;
+      }
 
       // Zjistíme, kde hledat (konkrétní řada vs. celá značka)
       const sourceData = selectedSeries
@@ -254,14 +294,43 @@ const PaintDetailModal = ({
       const entries = sourceData ? Object.entries(sourceData) : [];
 
       const matches = entries
-        .filter(([key, val]) => {
-          const valCode = (val.displayCode || "")
-            .toUpperCase()
-            .replace(/[\s\-\.]/g, "");
-          const valName = (val.name || "").toUpperCase();
-          return valCode.includes(searchCode) || valName.includes(searchCode);
+        .map(([key, val]) => {
+          // Zkusíme hledat v displayCode, code (pokud existuje) nebo klíči
+          const mainCode = (val.displayCode || val.code || key).toUpperCase();
+          // Odstraníme pomlčky a mezery pro "volnější" vyhledávání (např. H1 vs H-1)
+          const normalizedCode = mainCode.replace(/[\s\-\.]/g, "");
+
+          const name = (val.name || "").toUpperCase();
+
+          // Hledaný výraz taky normalizujeme jen pokud obsahuje pomlčky/mezery
+          const searchNormalized = searchCode.replace(/[\s\-\.]/g, "");
+
+          let score = 0;
+
+          // 1. Přesná shoda (nejvyšší priorita)
+          if (mainCode === searchCode || normalizedCode === searchNormalized)
+            score = 100;
+          // 2. Začíná na (vysoká priorita) - např. "H" -> "H-1"
+          else if (
+            mainCode.startsWith(searchCode) ||
+            normalizedCode.startsWith(searchNormalized)
+          )
+            score = 50;
+          // 3. Obsahuje kód (střední priorita) - např. "1" -> "H-1"
+          else if (
+            mainCode.includes(searchCode) ||
+            normalizedCode.includes(searchNormalized)
+          )
+            score = 25;
+          // 4. Obsahuje název (nízká priorita)
+          else if (name.includes(searchCode)) score = 10;
+
+          return { key, val, score };
         })
-        .slice(0, 10); // Max 10 výsledků
+        .filter((item) => item.score > 0)
+        .sort((a, b) => b.score - a.score) // Seřadíme podle relevance (nejvyšší skóre první)
+        .slice(0, 10)
+        .map((item) => [item.key, item.val]);
 
       setSuggestions(matches);
       setShowSuggestions(matches.length > 0);
@@ -275,8 +344,8 @@ const PaintDetailModal = ({
     selectedSeries,
     isEditMode,
     data.isMix,
-    suggestionSelected,
     isManualEntry,
+    isTyping,
   ]);
 
   // E) VALIDACE DUPLICIT (jen u nové barvy, abychom nepřidali to samé dvakrát)
@@ -382,15 +451,16 @@ const PaintDetailModal = ({
   };
 
   const handleSelectSuggestion = ([key, val]) => {
+    setIsTyping(false); // Zabráníme dalšímu hledání po výběru
     // Pokus o detekci typu při výběru z našeptávače
     const rawCode = val.displayCode || key;
-    const seriesMatch = rawCode.match(/^([A-Za-z]+)/);
+    const seriesMatch = rawCode.match(/^([A-Za-z]+|\d+\.\d)/);
     const seriesPrefix = seriesMatch ? seriesMatch[1] : "";
     const spec = PaintAPI.getSpecForSeries(data.brand, seriesPrefix);
 
     const newData = {
       ...data,
-      code: val.displayCode || data.code,
+      code: val.displayCode || key,
       name: val.name,
       type: spec ? spec.type : val.type || "acrylic",
       finish: val.finish,
@@ -399,7 +469,6 @@ const PaintDetailModal = ({
 
     setData(newData);
     setShowSuggestions(false);
-    setSuggestionSelected(true);
   };
 
   const handleRatioChange = (type, value) => {
@@ -716,6 +785,7 @@ const PaintDetailModal = ({
                               brand: e.target.value,
                               code: "",
                             });
+                            setIsTyping(false);
                             setSelectedSeries("");
                           }}
                         >
@@ -756,11 +826,11 @@ const PaintDetailModal = ({
                         }
                         value={data.code}
                         onChange={(e) => {
+                          setIsTyping(true); // Uživatel začal psát -> aktivujeme našeptávač
                           setData({
                             ...data,
-                            code: Normalizer.code(e.target.value),
+                            code: e.target.value.toUpperCase(),
                           });
-                          setSuggestionSelected(false);
                         }}
                         placeholder="Zadejte kód (např. XF-1)..."
                         labelColor="text-blue-400"
@@ -776,7 +846,10 @@ const PaintDetailModal = ({
                           {suggestions.map(([key, val]) => (
                             <div
                               key={key}
-                              onClick={() => handleSelectSuggestion([key, val])}
+                              onMouseDown={(e) => {
+                                e.preventDefault();
+                                handleSelectSuggestion([key, val]);
+                              }}
                               className="p-2 hover:bg-blue-600/20 hover:text-blue-300 cursor-pointer text-xs flex items-center gap-3 border-b border-slate-700/50 last:border-0"
                             >
                               <div
@@ -819,14 +892,7 @@ const PaintDetailModal = ({
                 label="Typ"
                 value={data.type}
                 onChange={(e) => setData({ ...data, type: e.target.value })}
-                options={[
-                  { value: "acrylic", label: "💧 Akryl" },
-                  { value: "enamel", label: "🛢️ Enamel" },
-                  { value: "lacquer", label: "☣️ Lacquer" },
-                  { value: "oil", label: "🎨 Olej" },
-                  { value: "pigment", label: "🏜️ Pigment" },
-                  { value: "primer", label: "🛡️ Primer" },
-                ]}
+                options={typeOptions}
               />
               <FloatingSelect
                 className="flex-1"

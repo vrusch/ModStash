@@ -1,0 +1,121 @@
+{
+  "VALLEJO_73600": {
+    "displayCode": "73.600",
+    "name": "White Primer",
+    "type": "Surface Primer",
+    "finish": "Matná",
+    "hex": "#F2F2F2"
+  },
+  "VALLEJO_73601": {
+    "displayCode": "73.601",
+    "name": "Grey Primer",
+    "type": "Surface Primer",
+    "finish": "Matná",
+    "hex": "#9CA3AF"
+  },
+  "VALLEJO_73602": {
+    "displayCode": "73.602",
+    "name": "Black Primer",
+    "type": "Surface Primer",
+    "finish": "Matná",
+    "hex": "#1A1A1A"
+  },
+  "VALLEJO_73603": {
+    "displayCode": "73.603",
+    "name": "German Panzer Grey Primer",
+    "type": "Surface Primer",
+    "finish": "Matná",
+    "hex": "#4B5563"
+  },
+  "VALLEJO_73604": {
+    "displayCode": "73.604",
+    "name": "German Dark Yellow Primer",
+    "type": "Surface Primer",
+    "finish": "Matná",
+    "hex": "#BDB76B"
+  },
+  "VALLEJO_73605": {
+    "displayCode": "73.605",
+    "name": "German Red Brown Primer",
+    "type": "Surface Primer",
+    "finish": "Matná",
+    "hex": "#8B4513"
+  },
+  "VALLEJO_73606": {
+    "displayCode": "73.606",
+    "name": "German Green Primer",
+    "type": "Surface Primer",
+    "finish": "Matná",
+    "hex": "#4D5D53"
+  },
+  "VALLEJO_73607": {
+    "displayCode": "73.607",
+    "name": "UK Bronze Green Primer",
+    "type": "Surface Primer",
+    "finish": "Matná",
+    "hex": "#3A4A36"
+  },
+  "VALLEJO_73608": {
+    "displayCode": "73.608",
+    "name": "US Olive Drab Primer",
+    "type": "Surface Primer",
+    "finish": "Matná",
+    "hex": "#556B2F"
+  },
+  "VALLEJO_73609": {
+    "displayCode": "73.609",
+    "name": "Russian Green Primer",
+    "type": "Surface Primer",
+    "finish": "Matná",
+    "hex": "#4A5D23"
+  },
+  "VALLEJO_73612": {
+    "displayCode": "73.612",
+    "name": "Desert Tan Primer",
+    "type": "Surface Primer",
+    "finish": "Matná",
+    "hex": "#D2B48C"
+  },
+  "VALLEJO_73613": {
+    "displayCode": "73.613",
+    "name": "Desert Sand Primer",
+    "type": "Surface Primer",
+    "finish": "Matná",
+    "hex": "#EEDC82"
+  },
+  "VALLEJO_73614": {
+    "displayCode": "73.614",
+    "name": "IDF Israeli Sand Grey Primer",
+    "type": "Surface Primer",
+    "finish": "Matná",
+    "hex": "#B0A696"
+  },
+  "VALLEJO_73615": {
+    "displayCode": "73.615",
+    "name": "USN Light Ghost Grey Primer",
+    "type": "Surface Primer",
+    "finish": "Matná",
+    "hex": "#A2B3C1"
+  },
+  "VALLEJO_73624": {
+    "displayCode": "73.624",
+    "name": "Pure Red Primer",
+    "type": "Surface Primer",
+    "finish": "Matná",
+    "hex": "#D40000"
+  },
+  "VALLEJO_73640": {
+    "displayCode": "73.640",
+    "name": "White Polyurethane Primer",
+    "type": "Surface Primer",
+    "finish": "Matná",
+    "hex": "#FFFFFF"
+  },
+  "VALLEJO_73660": {
+    "displayCode": "73.660",
+    "name": "Gloss Black Primer",
+    "type": "Surface Primer",
+    "finish": "Lesklá",
+    "hex": "#050505"
+  }
+}

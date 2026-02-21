@@ -12,12 +12,13 @@
 
 // --- 1. DYNAMICKÉ NAČTENÍ DAT ---
 
-// Načte všechny .json soubory v aktuální složce
-const modules = import.meta.glob("./*.json", { eager: true });
+// Načte všechny .json soubory v aktuální složce A PODSLOŽKÁCH
+const modules = import.meta.glob("./**/*.json", { eager: true });
 
 const catalogs = {};
 const specs = {};
 const brandsSet = new Set();
+const folderNames = {}; // Mapování: Brand ID -> Název složky (pro hezké názvy)
 
 // Soubory, které nejsou katalogy barev ani specifikace
 const IGNORED_FILES = ["brands", "catalog", "package"];
@@ -26,6 +27,7 @@ const IGNORED_FILES = ["brands", "catalog", "package"];
 const DISPLAY_NAMES = {
   gunze: "Gunze (Mr. Hobby)",
   tamiya: "Tamiya",
+  vallejo: "Vallejo",
 };
 
 // Mapování pro hezčí názvy řad (zachování původního UX)
@@ -36,11 +38,29 @@ const SERIES_NAMES = {
   GX: "Mr. Color GX",
   MC: "Mr. Metal Color",
   SF: "Mr. Surfacer / Primer",
+  // Vallejo
+  model_color: "Model Color (MC)",
+  panzer_aces: "Panzer Aces",
+  surface_primer: "Surface Primer",
+  metal_color: "Metal Color",
+  mecha_color: "Mecha Color",
+  game_air: "Game Air (GA)",
+  model_air: "Model Air (MA)",
+  game_color: "Game Color (GC)",
+  // AK Interactive
+  real_colors: "Real Colors (RC)",
+  "3rd_gen": "3rd Gen Acrylics",
+  xtreme_metal: "Xtreme Metal",
 };
 
 for (const path in modules) {
-  // path je např. "./gunze_C.json" nebo "./tamiya.json"
-  const fileName = path.split("/").pop().replace(".json", "");
+  // path je např. "./gunze_C.json" nebo "./AK Interactive/ak_real_colors.json"
+  const parts = path.split("/");
+  const fileName = parts.pop().replace(".json", "");
+
+  // Zjistíme název složky (pokud je soubor v podsložce)
+  // parts[0] je ".", parts[1] je název složky (pokud existuje)
+  const folderName = parts.length >= 2 ? parts[1] : null;
 
   if (IGNORED_FILES.includes(fileName)) continue;
 
@@ -51,13 +71,14 @@ for (const path in modules) {
     const brand = fileName.replace("_spec", "");
     specs[brand] = content;
     brandsSet.add(brand);
+    if (folderName) folderNames[brand] = folderName;
   } else {
     // Katalog: {brand}_{series}.json nebo {brand}.json
     let brand, series;
     if (fileName.includes("_")) {
-      const parts = fileName.split("_");
-      brand = parts[0];
-      series = parts.slice(1).join("_");
+      const partsName = fileName.split("_");
+      brand = partsName[0];
+      series = partsName.slice(1).join("_");
     } else {
       brand = fileName;
       series = "master";
@@ -66,6 +87,7 @@ for (const path in modules) {
     if (!catalogs[brand]) catalogs[brand] = {};
     catalogs[brand][series] = content;
     brandsSet.add(brand);
+    if (folderName) folderNames[brand] = folderName;
   }
 }
 
@@ -202,7 +224,13 @@ export const getSpecForSeries = (brandId, seriesId) => {
 export const getManufacturers = () => {
   return Array.from(brandsSet).map((id) => ({
     id,
-    name: DISPLAY_NAMES[id] || id.charAt(0).toUpperCase() + id.slice(1),
+    // 1. Manuální název (Gunze)
+    // 2. Název složky (AK Interactive)
+    // 3. Fallback (Tamiya)
+    name:
+      DISPLAY_NAMES[id] ||
+      folderNames[id] ||
+      id.charAt(0).toUpperCase() + id.slice(1),
   }));
 };
 

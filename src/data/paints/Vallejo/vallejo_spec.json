@@ -1,0 +1,85 @@
+{
+  "model_color": {
+    "title": "Vallejo Model Color (MC)",
+    "codes": ["70.8", "70.9"],
+    "description": "Hustší akrylové barvy na vodní bázi s vynikajícím krytím. Matný povrch.",
+    "thinner": "Voda / Vallejo Thinner (70.524).",
+    "bestFor": "Natírání štětcem (figurky, detaily).",
+    "safety": "Netoxické, nehořlavé, bez zápachu."
+  },
+  "panzer_aces": {
+    "title": "Vallejo Panzer Aces",
+    "codes": ["70.3"],
+    "description": "Speciální odstíny pro uniformy tankistů, pneumatiky, pásy a dřevo.",
+    "thinner": "Voda / Vallejo Thinner.",
+    "bestFor": "Štětec (figurky a detaily techniky).",
+    "safety": "Netoxické, nehořlavé."
+  },
+  "game_air": {
+    "title": "Vallejo Game Air (GA)",
+    "codes": ["73.0", "GA"],
+    "description": "Stejné barvy jako Game Color, ale naředěné pro airbrush",
+    "thinner": "Voda / Vallejo Thinner (70.524).",
+    "bestFor": "Natírání štětcem (figurky, detaily).",
+    "safety": "Netoxické, nehořlavé, bez zápachu."
+  },
+  "model_air": {
+    "title": "Vallejo Model Air (MA)",
+    "codes": [
+      "71.0",
+      "71.1",
+      "71.2",
+      "71.3",
+      "71.4",
+      "71.5",
+      "71.6",
+      "71.7",
+      "71.8",
+      "71.9"
+    ],
+    "description": "Z výroby naředěné akrylové barvy pro stříkací pistole s velmi jemným pigmentem.",
+    "thinner": "Vallejo Airbrush Thinner (71.361) / Flow Improver.",
+    "bestFor": "Airbrush (kamufláže, velké plochy).",
+    "safety": "Netoxické, nehořlavé."
+  },
+  "mecha_color": {
+    "title": "Vallejo Mecha Color",
+    "codes": ["69.0"],
+    "description": "Vysoce odolné akrylové barvy se saténovým povrchem, určené pro Mecha roboty.",
+    "thinner": "Voda / Vallejo Thinner / Airbrush Thinner.",
+    "bestFor": "Airbrush i štětec, klouby a pohyblivé části.",
+    "safety": "Netoxické, vysoká přilnavost."
+  },
+  "metal_color": {
+    "title": "Vallejo Metal Color",
+    "codes": ["77.7"],
+    "description": "Extrémně tekuté metalické akrylové barvy na vodní bázi. Skvělý lesk a odolný povrch.",
+    "thinner": "Airbrush Thinner (přidávat jen minimum, barva je velmi tekutá) / Gloss Varnish.",
+    "bestFor": "Airbrush (kovové povrchy letadel a motorů).",
+    "safety": "Netoxické, nehořlavé."
+  },
+  "surface_primer": {
+    "title": "Vallejo Surface Primer",
+    "codes": ["73.6", "74.6"],
+    "description": "Polyuretanový základ na vodní bázi. Vytváří odolný a sjednocený povrch.",
+    "thinner": "Neředit, nebo max. 5% Airbrush Thinner.",
+    "bestFor": "Příprava modelů před barvením (štětcem i airbrushem).",
+    "safety": "Netoxické, při stříkání doporučena maska."
+  },
+  "game_color": {
+    "title": "Vallejo Game Color (GC)",
+    "codes": ["72.0"],
+    "description": "Akrylové barvy vyvinuté speciálně pro figurky a wargaming. Mají vyšší odolnost proti otěru.",
+    "thinner": "Voda / Vallejo Thinner (70.524).",
+    "bestFor": "Štětec, fantasy a sci-fi figurky (častá manipulace).",
+    "safety": "Netoxické, nehořlavé, bez zápachu."
+  },
+  "acrylic": {
+    "title": "Vallejo Acrylics",
+    "codes": ["VALLEJO"],
+    "description": "Standardní akrylové barvy na vodní bázi (vinyl-akryl).",
+    "thinner": "Voda / Vallejo Thinner.",
+    "bestFor": "Štětec i airbrush.",
+    "safety": "Netoxické, nehořlavé."
+  }
+}

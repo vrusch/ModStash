@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { Hammer, Plus, Trash2 } from "lucide-react";
+import {
+  Hammer,
+  Plus,
+  Trash2,
+  Image as ImageIcon,
+  ExternalLink,
+} from "lucide-react";
 
 const KitBuildTab = ({ data, setData }) => {
   const [newTodo, setNewTodo] = useState("");
@@ -43,6 +49,38 @@ const KitBuildTab = ({ data, setData }) => {
           }
           className="w-full cursor-pointer"
         />
+      </div>
+
+      {/* FOTOGALERIE (Stavba Lite) */}
+      <div className="bg-slate-800 p-3 rounded-xl border border-slate-700/50">
+        <h4 className="text-xs font-bold text-slate-400 uppercase mb-2 flex items-center gap-2">
+          <ImageIcon size={14} className="text-blue-400" /> Fotogalerie stavby
+          (Album)
+        </h4>
+        <div className="flex gap-2">
+          <input
+            className="flex-1 bg-slate-900 border border-slate-600 rounded p-2 text-xs text-white placeholder-slate-600 focus:border-blue-500 outline-none transition-colors"
+            placeholder="URL odkazu na album (Google Photos, Facebook, Rajče...)"
+            value={data.buildAlbumUrl || ""}
+            onChange={(e) =>
+              setData({ ...data, buildAlbumUrl: e.target.value })
+            }
+          />
+          {data.buildAlbumUrl && (
+            <a
+              href={data.buildAlbumUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="bg-blue-600 hover:bg-blue-500 text-white p-2 rounded border border-blue-500 transition-colors flex items-center gap-2"
+              title="Otevřít album"
+            >
+              <ExternalLink size={16} />
+            </a>
+          )}
+        </div>
+        <p className="text-[10px] text-slate-500 mt-2 italic">
+          Zde můžete vložit odkaz na externí galerii, kde dokumentujete stavbu.
+        </p>
       </div>
 
       <div>

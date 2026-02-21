@@ -1,0 +1,282 @@
+{
+  "VALLEJO_70301": {
+    "displayCode": "70.301",
+    "name": "Light Rust",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#B55A30"
+  },
+  "VALLEJO_70302": {
+    "displayCode": "70.302",
+    "name": "Dark Rust",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#6B3E2E"
+  },
+  "VALLEJO_70303": {
+    "displayCode": "70.303",
+    "name": "Yellowish Rust",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#D48B3D"
+  },
+  "VALLEJO_70304": {
+    "displayCode": "70.304",
+    "name": "Track Primer",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#4A423D"
+  },
+  "VALLEJO_70305": {
+    "displayCode": "70.305",
+    "name": "Light Rubber",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#5A5D60"
+  },
+  "VALLEJO_70306": {
+    "displayCode": "70.306",
+    "name": "Dark Rubber",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#353839"
+  },
+  "VALLEJO_70307": {
+    "displayCode": "70.307",
+    "name": "Red Tail Light",
+    "type": "Panzer Aces",
+    "finish": "Lesklá",
+    "hex": "#990000"
+  },
+  "VALLEJO_70308": {
+    "displayCode": "70.308",
+    "name": "Green Tail Light",
+    "type": "Panzer Aces",
+    "finish": "Lesklá",
+    "hex": "#004D00"
+  },
+  "VALLEJO_70309": {
+    "displayCode": "70.309",
+    "name": "Periscopes",
+    "type": "Panzer Aces",
+    "finish": "Lesklá",
+    "hex": "#1A2B3C"
+  },
+  "VALLEJO_70310": {
+    "displayCode": "70.310",
+    "name": "Old Wood",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#8B7D6B"
+  },
+  "VALLEJO_70311": {
+    "displayCode": "70.311",
+    "name": "New Wood",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#C4A477"
+  },
+  "VALLEJO_70312": {
+    "displayCode": "70.312",
+    "name": "Leather Belt",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#5C3A21"
+  },
+  "VALLEJO_70313": {
+    "displayCode": "70.313",
+    "name": "Stencil",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#E0E0E0"
+  },
+  "VALLEJO_70314": {
+    "displayCode": "70.314",
+    "name": "Canvas",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#9C927A"
+  },
+  "VALLEJO_70315": {
+    "displayCode": "70.315",
+    "name": "Light Mud",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#A89B82"
+  },
+  "VALLEJO_70316": {
+    "displayCode": "70.316",
+    "name": "Dark Mud",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#635445"
+  },
+  "VALLEJO_70317": {
+    "displayCode": "70.317",
+    "name": "British Tank Crew",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#7A643B"
+  },
+  "VALLEJO_70318": {
+    "displayCode": "70.318",
+    "name": "US Army Skytone",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#A2B3C1"
+  },
+  "VALLEJO_70319": {
+    "displayCode": "70.319",
+    "name": "USMC Tank Crew",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#5B6645"
+  },
+  "VALLEJO_70320": {
+    "displayCode": "70.320",
+    "name": "French Tank Crew",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#5D6856"
+  },
+  "VALLEJO_70321": {
+    "displayCode": "70.321",
+    "name": "Highlights British Tank Crew",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#968154"
+  },
+  "VALLEJO_70322": {
+    "displayCode": "70.322",
+    "name": "Highlights US Tank Crew",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#6C7A53"
+  },
+  "VALLEJO_70323": {
+    "displayCode": "70.323",
+    "name": "Highlights USMC Tank Crew",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#7CA368"
+  },
+  "VALLEJO_70324": {
+    "displayCode": "70.324",
+    "name": "Highlights French Tank Crew",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#788770"
+  },
+  "VALLEJO_70325": {
+    "displayCode": "70.325",
+    "name": "Russian Tank Crew I",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#4A5D23"
+  },
+  "VALLEJO_70326": {
+    "displayCode": "70.326",
+    "name": "Russian Tank Crew II",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#687654"
+  },
+  "VALLEJO_70327": {
+    "displayCode": "70.327",
+    "name": "Italian Tank Crew",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#5A685A"
+  },
+  "VALLEJO_70328": {
+    "displayCode": "70.328",
+    "name": "Japanese Tank Crew",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#8A794E"
+  },
+  "VALLEJO_70333": {
+    "displayCode": "70.333",
+    "name": "German Tank Crew (Black)",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#242526"
+  },
+  "VALLEJO_70334": {
+    "displayCode": "70.334",
+    "name": "German Tank Crew I (Feldgrau)",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#4D5D53"
+  },
+  "VALLEJO_70335": {
+    "displayCode": "70.335",
+    "name": "German Tank Crew II (Splinter)",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#636648"
+  },
+  "VALLEJO_70336": {
+    "displayCode": "70.336",
+    "name": "Afrikakorps Tank Crew",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#B5955C"
+  },
+  "VALLEJO_70341": {
+    "displayCode": "70.341",
+    "name": "Flesh Base",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#C88B74"
+  },
+  "VALLEJO_70342": {
+    "displayCode": "70.342",
+    "name": "Flesh Highlights",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#E8BAA2"
+  },
+  "VALLEJO_70343": {
+    "displayCode": "70.343",
+    "name": "Flesh Shadows",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#9E5A44"
+  },
+  "VALLEJO_70344": {
+    "displayCode": "70.344",
+    "name": "White (German Winter Camo)",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#F0F4F5"
+  },
+  "VALLEJO_70345": {
+    "displayCode": "70.345",
+    "name": "Splinter Camouflage Base",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#7A826B"
+  },
+  "VALLEJO_70346": {
+    "displayCode": "70.346",
+    "name": "Splinter Camouflage Blob",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#454D3D"
+  },
+  "VALLEJO_70347": {
+    "displayCode": "70.347",
+    "name": "Splinter Camouflage Strips",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#303A30"
+  },
+  "VALLEJO_70348": {
+    "displayCode": "70.348",
+    "name": "Splinter Camouflage Shadow",
+    "type": "Panzer Aces",
+    "finish": "Matná",
+    "hex": "#4A4D42"
+  }
+}

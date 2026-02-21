@@ -12,6 +12,7 @@ import {
   ShoppingBag,
   Trash2,
   Hammer,
+  Image as ImageIcon,
 } from "lucide-react";
 import { safeRender } from "../../utils/helpers";
 
@@ -102,6 +103,8 @@ const KitCard = React.memo(
     const filesCount =
       (kit.scalematesUrl ? 1 : 0) + (kit.attachments?.length || 0);
 
+    const hasPhotos = !!kit.buildAlbumUrl;
+
     const isReadyToBuild = useMemo(() => {
       if (["finished", "scrap", "wishlist"].includes(kit.status)) return false;
 
@@ -126,7 +129,7 @@ const KitCard = React.memo(
       >
         <div className="flex justify-between items-stretch">
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1.5">
+            <div className="flex items-center gap-2 mb-0.5">
               <span className="text-[10px] font-bold bg-slate-900 text-slate-400 px-1.5 py-0.5 rounded border border-slate-700 whitespace-nowrap">
                 {safeRender(kit.scale)}
               </span>
@@ -135,11 +138,11 @@ const KitCard = React.memo(
                 {kit.catNum && `• ${safeRender(kit.catNum)}`}
               </span>
             </div>
-            <h3 className="font-bold text-slate-100 leading-tight truncate text-base">
+            <h3 className="font-bold text-white leading-tight truncate text-xs">
               {kit.subject ? (
                 <>
                   {safeRender(kit.subject)}
-                  <span className="text-slate-400 text-xs font-bold ml-1.5 opacity-80">
+                  <span className="text-slate-400 text-xs font-normal ml-1.5">
                     {safeRender(kit.name)}
                   </span>
                 </>
@@ -265,6 +268,20 @@ const KitCard = React.memo(
                     </span>
                   </div>
                 )}
+
+              {/* Photos Badge */}
+              {hasPhotos && (
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onOpenDetail) onOpenDetail(kit, "build");
+                  }}
+                  className="flex items-center gap-1.5 text-xs font-bold rounded px-1.5 py-0.5 border cursor-pointer hover:opacity-80 transition-opacity bg-indigo-500/10 text-indigo-400 border-indigo-500/20"
+                >
+                  <ImageIcon size={12} />
+                  <span className="hidden sm:inline">Album</span>
+                </div>
+              )}
 
               {/* Files Badge */}
               {hasFiles && (

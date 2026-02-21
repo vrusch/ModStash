@@ -10,6 +10,8 @@ import {
   ImageOff,
   Check,
   Copy,
+  Plus,
+  Trash2,
 } from "lucide-react";
 import { FloatingInput, FloatingTextarea } from "../../ui/FormElements";
 import { Normalizer } from "../../../utils/normalizers";
@@ -44,6 +46,14 @@ const KitInfoTab = ({ data, setData, projects, allKits, preferences }) => {
   const [scaleSuggestions, setScaleSuggestions] = useState([]);
   const [showScaleSuggestions, setShowScaleSuggestions] = useState(false);
   const [highlightedScaleIndex, setHighlightedScaleIndex] = useState(0);
+
+  // State pro přidání vlastní nabídky
+  const [showAddOffer, setShowAddOffer] = useState(false);
+  const [newOffer, setNewOffer] = useState({
+    shopName: "",
+    price: "",
+    shopUrl: "",
+  });
 
   const isScaleValid = (s) => !s || /^\d+\/\d+$/.test(s);
 
@@ -216,6 +226,25 @@ const KitInfoTab = ({ data, setData, projects, allKits, preferences }) => {
     } else if (e.key === "Escape") {
       setShowScaleSuggestions(false);
     }
+  };
+
+  // --- MARKETPLACE HANDLERS ---
+  const handleAddOffer = () => {
+    if (!newOffer.shopName || !newOffer.price) return;
+    const offer = { ...newOffer, status: "Vlastní" };
+    setData((prev) => ({
+      ...prev,
+      marketplace: [...(prev.marketplace || []), offer],
+    }));
+    setNewOffer({ shopName: "", price: "", shopUrl: "" });
+    setShowAddOffer(false);
+  };
+
+  const handleDeleteOffer = (index) => {
+    setData((prev) => ({
+      ...prev,
+      marketplace: prev.marketplace.filter((_, i) => i !== index),
+    }));
   };
 
   return (
@@ -594,34 +623,101 @@ const KitInfoTab = ({ data, setData, projects, allKits, preferences }) => {
         </button>
         {showMarketplace && (
           <div className="p-2 border-t border-slate-700 bg-slate-900/50 space-y-1">
-            {data.marketplace && data.marketplace.length > 0 ? (
-              data.marketplace.map((offer, idx) => (
-                <a
-                  key={idx}
-                  href={offer.shopUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center justify-between p-2 rounded hover:bg-slate-800 transition-colors group"
-                >
-                  <span className="text-xs text-blue-400 font-medium group-hover:underline">
-                    {offer.shopName}
-                  </span>
-                  <div className="text-right">
-                    <span className="block text-xs font-bold text-green-400">
-                      {offer.price}
-                    </span>
-                    {offer.status && (
-                      <span className="block text-[9px] text-slate-500">
-                        {offer.status}
+            {/* Seznam nabídek */}
+            {data.marketplace && data.marketplace.length > 0
+              ? data.marketplace.map((offer, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between p-2 rounded hover:bg-slate-800 transition-colors group gap-2"
+                  >
+                    <a
+                      href={offer.shopUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex-1 flex items-center justify-between min-w-0"
+                    >
+                      <span className="text-xs text-blue-400 font-medium group-hover:underline truncate mr-2">
+                        {offer.shopName}
                       </span>
-                    )}
+                      <div className="text-right shrink-0">
+                        <span className="block text-xs font-bold text-green-400">
+                          {offer.price}
+                        </span>
+                        {offer.status && (
+                          <span className="block text-[9px] text-slate-500">
+                            {offer.status}
+                          </span>
+                        )}
+                      </div>
+                    </a>
+                    <button
+                      onClick={() => handleDeleteOffer(idx)}
+                      className="text-slate-600 hover:text-red-400 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      title="Odstranit nabídku"
+                    >
+                      <Trash2 size={14} />
+                    </button>
                   </div>
-                </a>
-              ))
+                ))
+              : !showAddOffer && (
+                  <p className="text-xs text-slate-500 italic p-2">
+                    Žádné nabídky.
+                  </p>
+                )}
+
+            {/* Přidání nové nabídky */}
+            {showAddOffer ? (
+              <div className="p-2 bg-slate-800 rounded border border-slate-600 mt-2 animate-in fade-in">
+                <div className="grid grid-cols-2 gap-2 mb-2">
+                  <input
+                    placeholder="Obchod (např. MN Modelář)"
+                    className="bg-slate-900 border border-slate-600 rounded p-1.5 text-xs text-white outline-none focus:border-blue-500"
+                    value={newOffer.shopName}
+                    onChange={(e) =>
+                      setNewOffer({ ...newOffer, shopName: e.target.value })
+                    }
+                  />
+                  <input
+                    placeholder="Cena (např. 450 Kč)"
+                    className="bg-slate-900 border border-slate-600 rounded p-1.5 text-xs text-white outline-none focus:border-blue-500"
+                    value={newOffer.price}
+                    onChange={(e) =>
+                      setNewOffer({ ...newOffer, price: e.target.value })
+                    }
+                  />
+                </div>
+                <input
+                  placeholder="URL odkazu (volitelné)"
+                  className="w-full bg-slate-900 border border-slate-600 rounded p-1.5 text-xs text-white outline-none focus:border-blue-500 mb-2"
+                  value={newOffer.shopUrl}
+                  onChange={(e) =>
+                    setNewOffer({ ...newOffer, shopUrl: e.target.value })
+                  }
+                />
+                <div className="flex justify-end gap-2">
+                  <button
+                    onClick={() => setShowAddOffer(false)}
+                    className="text-xs text-slate-400 hover:text-white px-2 py-1"
+                  >
+                    Zrušit
+                  </button>
+                  <button
+                    onClick={handleAddOffer}
+                    className="text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded font-bold"
+                  >
+                    Přidat
+                  </button>
+                </div>
+              </div>
             ) : (
-              <p className="text-xs text-slate-500 italic p-2">
-                Žádné nabídky.
-              </p>
+              <div className="p-1 mt-1">
+                <button
+                  onClick={() => setShowAddOffer(true)}
+                  className="w-full py-1.5 border border-dashed border-slate-600 rounded text-xs text-slate-400 hover:text-blue-400 hover:border-blue-500/50 hover:bg-slate-800 transition-all flex items-center justify-center gap-1"
+                >
+                  <Plus size={14} /> Přidat vlastní cenu / obchod
+                </button>
+              </div>
             )}
           </div>
         )}

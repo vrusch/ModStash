@@ -15,7 +15,7 @@ const ShoppingAccessoryCard = ({ accessory, onBuy }) => {
   return (
     <div className="bg-slate-800 p-3 rounded-lg border border-slate-700 flex justify-between items-center group">
       <div className="min-w-0 flex-1 pr-2">
-        <p className="text-sm font-bold text-white truncate">
+        <p className="text-xs font-bold text-white truncate">
           {accessory.name}
         </p>
         <p className="text-[10px] text-slate-500 flex items-center gap-1 mt-0.5">

@@ -1,0 +1,373 @@
+{
+  "VALLEJO_72001": {
+    "displayCode": "72.001",
+    "name": "Dead White",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#FFFFFF"
+  },
+  "VALLEJO_72003": {
+    "displayCode": "72.003",
+    "name": "Pale Flesh",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#FCD9BA"
+  },
+  "VALLEJO_72004": {
+    "displayCode": "72.004",
+    "name": "Elf Skintone",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#F5C7A3"
+  },
+  "VALLEJO_72005": {
+    "displayCode": "72.005",
+    "name": "Moon Yellow",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#FFF66E"
+  },
+  "VALLEJO_72006": {
+    "displayCode": "72.006",
+    "name": "Sun Yellow",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#FFEA00"
+  },
+  "VALLEJO_72007": {
+    "displayCode": "72.007",
+    "name": "Gold Yellow",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#FFC000"
+  },
+  "VALLEJO_72008": {
+    "displayCode": "72.008",
+    "name": "Orange Fire",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#FF7518"
+  },
+  "VALLEJO_72009": {
+    "displayCode": "72.009",
+    "name": "Hot Orange",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#FF4500"
+  },
+  "VALLEJO_72010": {
+    "displayCode": "72.010",
+    "name": "Bloody Red",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#D62828"
+  },
+  "VALLEJO_72011": {
+    "displayCode": "72.011",
+    "name": "Gory Red",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#B11226"
+  },
+  "VALLEJO_72012": {
+    "displayCode": "72.012",
+    "name": "Scarlett Red",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#990000"
+  },
+  "VALLEJO_72013": {
+    "displayCode": "72.013",
+    "name": "Squid Pink",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#FF66CC"
+  },
+  "VALLEJO_72014": {
+    "displayCode": "72.014",
+    "name": "Warlord Purple",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#B23B7C"
+  },
+  "VALLEJO_72015": {
+    "displayCode": "72.015",
+    "name": "Hexed Lichen",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#5A2E80"
+  },
+  "VALLEJO_72016": {
+    "displayCode": "72.016",
+    "name": "Royal Purple",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#401F68"
+  },
+  "VALLEJO_72017": {
+    "displayCode": "72.017",
+    "name": "Dark Blue",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#1A237E"
+  },
+  "VALLEJO_72018": {
+    "displayCode": "72.018",
+    "name": "Stormy Blue",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#283593"
+  },
+  "VALLEJO_72019": {
+    "displayCode": "72.019",
+    "name": "Night Blue",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#0F1C42"
+  },
+  "VALLEJO_72020": {
+    "displayCode": "72.020",
+    "name": "Imperial Blue",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#0D47A1"
+  },
+  "VALLEJO_72021": {
+    "displayCode": "72.021",
+    "name": "Magic Blue",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#1976D2"
+  },
+  "VALLEJO_72022": {
+    "displayCode": "72.022",
+    "name": "Ultramarine Blue",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#2196F3"
+  },
+  "VALLEJO_72023": {
+    "displayCode": "72.023",
+    "name": "Electric Blue",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#4FC3F7"
+  },
+  "VALLEJO_72024": {
+    "displayCode": "72.024",
+    "name": "Falcon Turquoise",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#00BCD4"
+  },
+  "VALLEJO_72028": {
+    "displayCode": "72.028",
+    "name": "Dark Green",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#1B5E20"
+  },
+  "VALLEJO_72029": {
+    "displayCode": "72.029",
+    "name": "Sick Green",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#2E7D32"
+  },
+  "VALLEJO_72030": {
+    "displayCode": "72.030",
+    "name": "Goblin Green",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#4CAF50"
+  },
+  "VALLEJO_72032": {
+    "displayCode": "72.032",
+    "name": "Escorpena Green",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#8BC34A"
+  },
+  "VALLEJO_72033": {
+    "displayCode": "72.033",
+    "name": "Livery Green",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#CDDC39"
+  },
+  "VALLEJO_72034": {
+    "displayCode": "72.034",
+    "name": "Bone White",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#EAE0C8"
+  },
+  "VALLEJO_72035": {
+    "displayCode": "72.035",
+    "name": "Dead Flesh",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#C5CFA1"
+  },
+  "VALLEJO_72036": {
+    "displayCode": "72.036",
+    "name": "Bronze Fleshtone",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#D88B5A"
+  },
+  "VALLEJO_72037": {
+    "displayCode": "72.037",
+    "name": "Filthy Brown",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#C68E17"
+  },
+  "VALLEJO_72038": {
+    "displayCode": "72.038",
+    "name": "Scrofulous Brown",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#B87333"
+  },
+  "VALLEJO_72039": {
+    "displayCode": "72.039",
+    "name": "Plague Brown",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#A88339"
+  },
+  "VALLEJO_72040": {
+    "displayCode": "72.040",
+    "name": "Leather Brown",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#6C4B25"
+  },
+  "VALLEJO_72041": {
+    "displayCode": "72.041",
+    "name": "Dwarf Skin",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#DF997A"
+  },
+  "VALLEJO_72042": {
+    "displayCode": "72.042",
+    "name": "Parasite Brown",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#9E4112"
+  },
+  "VALLEJO_72043": {
+    "displayCode": "72.043",
+    "name": "Beasty Brown",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#5B3A29"
+  },
+  "VALLEJO_72044": {
+    "displayCode": "72.044",
+    "name": "Dark Fleshtone",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#4A2E1B"
+  },
+  "VALLEJO_72045": {
+    "displayCode": "72.045",
+    "name": "Charred Brown",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#382317"
+  },
+  "VALLEJO_72047": {
+    "displayCode": "72.047",
+    "name": "Wolf Grey",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#A2B5CD"
+  },
+  "VALLEJO_72048": {
+    "displayCode": "72.048",
+    "name": "Sombre Grey",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#607D8B"
+  },
+  "VALLEJO_72049": {
+    "displayCode": "72.049",
+    "name": "Stonewall Grey",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#9E9E9E"
+  },
+  "VALLEJO_72050": {
+    "displayCode": "72.050",
+    "name": "Cold Grey",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#757575"
+  },
+  "VALLEJO_72051": {
+    "displayCode": "72.051",
+    "name": "Black",
+    "type": "Game Color",
+    "finish": "Matná",
+    "hex": "#1A1A1A"
+  },
+  "VALLEJO_72052": {
+    "displayCode": "72.052",
+    "name": "Silver",
+    "type": "Game Color",
+    "finish": "Metalická",
+    "hex": "#D8D8D8"
+  },
+  "VALLEJO_72053": {
+    "displayCode": "72.053",
+    "name": "Chainmail Silver",
+    "type": "Game Color",
+    "finish": "Metalická",
+    "hex": "#A8A8A8"
+  },
+  "VALLEJO_72054": {
+    "displayCode": "72.054",
+    "name": "Gunmetal",
+    "type": "Game Color",
+    "finish": "Metalická",
+    "hex": "#4A4A4A"
+  },
+  "VALLEJO_72055": {
+    "displayCode": "72.055",
+    "name": "Polished Gold",
+    "type": "Game Color",
+    "finish": "Metalická",
+    "hex": "#FFE87C"
+  },
+  "VALLEJO_72056": {
+    "displayCode": "72.056",
+    "name": "Glorious Gold",
+    "type": "Game Color",
+    "finish": "Metalická",
+    "hex": "#DAA520"
+  },
+  "VALLEJO_72057": {
+    "displayCode": "72.057",
+    "name": "Bright Bronze",
+    "type": "Game Color",
+    "finish": "Metalická",
+    "hex": "#CD7F32"
+  },
+  "VALLEJO_72058": {
+    "displayCode": "72.058",
+    "name": "Brassy Brass",
+    "type": "Game Color",
+    "finish": "Metalická",
+    "hex": "#B5A642"
+  },
+  "VALLEJO_72059": {
+    "displayCode": "72.059",
+    "name": "Hammered Copper",
+    "type": "Game Color",
+    "finish": "Metalická",
+    "hex": "#C67346"
+  }
+}

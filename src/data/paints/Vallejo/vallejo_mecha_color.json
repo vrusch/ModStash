@@ -1,0 +1,275 @@
+{
+  "VALLEJO_69001": {
+    "displayCode": "69.001",
+    "name": "Pure White",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#FFFFFF"
+  },
+  "VALLEJO_69002": {
+    "displayCode": "69.002",
+    "name": "White",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#F2F2F2"
+  },
+  "VALLEJO_69003": {
+    "displayCode": "69.003",
+    "name": "Off-White",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#EAE8E3"
+  },
+  "VALLEJO_69004": {
+    "displayCode": "69.004",
+    "name": "Yellow",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#FFD700"
+  },
+  "VALLEJO_69005": {
+    "displayCode": "69.005",
+    "name": "Light Orange",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#FFA500"
+  },
+  "VALLEJO_69006": {
+    "displayCode": "69.006",
+    "name": "Pink",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#FFC0CB"
+  },
+  "VALLEJO_69007": {
+    "displayCode": "69.007",
+    "name": "Red",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#FF0000"
+  },
+  "VALLEJO_69008": {
+    "displayCode": "69.008",
+    "name": "Dark Red",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#8B0000"
+  },
+  "VALLEJO_69009": {
+    "displayCode": "69.009",
+    "name": "SZ Red",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#A03434"
+  },
+  "VALLEJO_69010": {
+    "displayCode": "69.010",
+    "name": "Magenta",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#FF00FF"
+  },
+  "VALLEJO_69011": {
+    "displayCode": "69.011",
+    "name": "Dark Pink",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#E75480"
+  },
+  "VALLEJO_69012": {
+    "displayCode": "69.012",
+    "name": "Purple",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#800080"
+  },
+  "VALLEJO_69013": {
+    "displayCode": "69.013",
+    "name": "Titan Blue",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#1A5276"
+  },
+  "VALLEJO_69014": {
+    "displayCode": "69.014",
+    "name": "Green",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#008000"
+  },
+  "VALLEJO_69015": {
+    "displayCode": "69.015",
+    "name": "Green Blue",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#2E86C1"
+  },
+  "VALLEJO_69016": {
+    "displayCode": "69.016",
+    "name": "Light Green",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#90EE90"
+  },
+  "VALLEJO_69017": {
+    "displayCode": "69.017",
+    "name": "Green Grey",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#A2B59F"
+  },
+  "VALLEJO_69018": {
+    "displayCode": "69.018",
+    "name": "Deep Green",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#006400"
+  },
+  "VALLEJO_69019": {
+    "displayCode": "69.019",
+    "name": "Blue",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#0000FF"
+  },
+  "VALLEJO_69020": {
+    "displayCode": "69.020",
+    "name": "Electric Blue",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#7DF9FF"
+  },
+  "VALLEJO_69021": {
+    "displayCode": "69.021",
+    "name": "Dark Blue",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#00008B"
+  },
+  "VALLEJO_69022": {
+    "displayCode": "69.022",
+    "name": "Blue Grey",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#7393B3"
+  },
+  "VALLEJO_69023": {
+    "displayCode": "69.023",
+    "name": "Turquoise",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#40E0D0"
+  },
+  "VALLEJO_69024": {
+    "displayCode": "69.024",
+    "name": "Grey",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#808080"
+  },
+  "VALLEJO_69025": {
+    "displayCode": "69.025",
+    "name": "Light Grey",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#D3D3D3"
+  },
+  "VALLEJO_69027": {
+    "displayCode": "69.027",
+    "name": "Light Brown",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#B5651D"
+  },
+  "VALLEJO_69028": {
+    "displayCode": "69.028",
+    "name": "Sand",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#C2B280"
+  },
+  "VALLEJO_69031": {
+    "displayCode": "69.031",
+    "name": "Sand Yellow",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#F4A460"
+  },
+  "VALLEJO_69032": {
+    "displayCode": "69.032",
+    "name": "Yellow Ochre",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#DFB143"
+  },
+  "VALLEJO_69040": {
+    "displayCode": "69.040",
+    "name": "Phantom Grey",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#4C5866"
+  },
+  "VALLEJO_69041": {
+    "displayCode": "69.041",
+    "name": "Dark Grey",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#A9A9A9"
+  },
+  "VALLEJO_69042": {
+    "displayCode": "69.042",
+    "name": "Black",
+    "type": "Mecha Color",
+    "finish": "Polomatná",
+    "hex": "#000000"
+  },
+  "VALLEJO_69054": {
+    "displayCode": "69.054",
+    "name": "Gunmetal",
+    "type": "Mecha Color",
+    "finish": "Metalická",
+    "hex": "#2A3439"
+  },
+  "VALLEJO_69058": {
+    "displayCode": "69.058",
+    "name": "Gunmetal Grey",
+    "type": "Mecha Color",
+    "finish": "Metalická",
+    "hex": "#535C68"
+  },
+  "VALLEJO_69059": {
+    "displayCode": "69.059",
+    "name": "Steel",
+    "type": "Mecha Color",
+    "finish": "Metalická",
+    "hex": "#71797E"
+  },
+  "VALLEJO_69060": {
+    "displayCode": "69.060",
+    "name": "Gold",
+    "type": "Mecha Color",
+    "finish": "Metalická",
+    "hex": "#D4AF37"
+  },
+  "VALLEJO_69061": {
+    "displayCode": "69.061",
+    "name": "Copper",
+    "type": "Mecha Color",
+    "finish": "Metalická",
+    "hex": "#B87333"
+  },
+  "VALLEJO_69062": {
+    "displayCode": "69.062",
+    "name": "Bronze",
+    "type": "Mecha Color",
+    "finish": "Metalická",
+    "hex": "#CD7F32"
+  },
+  "VALLEJO_69064": {
+    "displayCode": "69.064",
+    "name": "Light Steel",
+    "type": "Mecha Color",
+    "finish": "Metalická",
+    "hex": "#B0B5B9"
+  }
+}

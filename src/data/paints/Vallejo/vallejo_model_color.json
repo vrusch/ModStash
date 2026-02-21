@@ -1,0 +1,793 @@
+{
+  "VALLEJO_70801": {
+    "displayCode": "70.801",
+    "name": "Brass",
+    "type": "Model Color",
+    "finish": "Metalická",
+    "hex": "#B5A642"
+  },
+  "VALLEJO_70863": {
+    "displayCode": "70.863",
+    "name": "Gunmetal Grey",
+    "type": "Model Color",
+    "finish": "Metalická",
+    "hex": "#2F4F4F"
+  },
+  "VALLEJO_70864": {
+    "displayCode": "70.864",
+    "name": "Natural Steel",
+    "type": "Model Color",
+    "finish": "Metalická",
+    "hex": "#708090"
+  },
+  "VALLEJO_70865": {
+    "displayCode": "70.865",
+    "name": "Oily Steel",
+    "type": "Model Color",
+    "finish": "Metalická",
+    "hex": "#5A6369"
+  },
+  "VALLEJO_70868": {
+    "displayCode": "70.868",
+    "name": "Dark Seagreen",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#2E8B57"
+  },
+  "VALLEJO_70869": {
+    "displayCode": "70.869",
+    "name": "Basalt Grey",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#4D5359"
+  },
+  "VALLEJO_70870": {
+    "displayCode": "70.870",
+    "name": "Medium Sea Grey",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#848E99"
+  },
+  "VALLEJO_70871": {
+    "displayCode": "70.871",
+    "name": "Leather Brown",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#5C3A21"
+  },
+  "VALLEJO_70872": {
+    "displayCode": "70.872",
+    "name": "Chocolate Brown",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#3E2723"
+  },
+  "VALLEJO_70873": {
+    "displayCode": "70.873",
+    "name": "US Field Drab",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#6C541E"
+  },
+  "VALLEJO_70874": {
+    "displayCode": "70.874",
+    "name": "Tan Earth",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#A27A59"
+  },
+  "VALLEJO_70875": {
+    "displayCode": "70.875",
+    "name": "Iraqui Sand",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#D3B892"
+  },
+  "VALLEJO_70876": {
+    "displayCode": "70.876",
+    "name": "Brown Sand",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#C49A71"
+  },
+  "VALLEJO_70877": {
+    "displayCode": "70.877",
+    "name": "Goldbrown",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#9E713E"
+  },
+  "VALLEJO_70878": {
+    "displayCode": "70.878",
+    "name": "Old Gold",
+    "type": "Model Color",
+    "finish": "Metalická",
+    "hex": "#CFB53B"
+  },
+  "VALLEJO_70879": {
+    "displayCode": "70.879",
+    "name": "Green Brown",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#7A7252"
+  },
+  "VALLEJO_70880": {
+    "displayCode": "70.880",
+    "name": "Khaki Grey",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#7A7B69"
+  },
+  "VALLEJO_70881": {
+    "displayCode": "70.881",
+    "name": "Yellow Green",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#9ACD32"
+  },
+  "VALLEJO_70882": {
+    "displayCode": "70.882",
+    "name": "Middlestone",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#A89F6A"
+  },
+  "VALLEJO_70883": {
+    "displayCode": "70.883",
+    "name": "Silvergrey",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#A6A9AA"
+  },
+  "VALLEJO_70884": {
+    "displayCode": "70.884",
+    "name": "Stone Grey",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#8F8E84"
+  },
+  "VALLEJO_70886": {
+    "displayCode": "70.886",
+    "name": "Green Grey",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#828977"
+  },
+  "VALLEJO_70887": {
+    "displayCode": "70.887",
+    "name": "Brown Violet",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#5D5348"
+  },
+  "VALLEJO_70888": {
+    "displayCode": "70.888",
+    "name": "Olive Grey",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#4D5D53"
+  },
+  "VALLEJO_70889": {
+    "displayCode": "70.889",
+    "name": "USA Olive Drab",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#555D42"
+  },
+  "VALLEJO_70890": {
+    "displayCode": "70.890",
+    "name": "Reflective Green",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#3B593F"
+  },
+  "VALLEJO_70891": {
+    "displayCode": "70.891",
+    "name": "Intermediate Green",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#4A7C59"
+  },
+  "VALLEJO_70892": {
+    "displayCode": "70.892",
+    "name": "Yellow Olive",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#636648"
+  },
+  "VALLEJO_70893": {
+    "displayCode": "70.893",
+    "name": "US Dark Green",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#2E4733"
+  },
+  "VALLEJO_70894": {
+    "displayCode": "70.894",
+    "name": "Camouflage Olive Green",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#424E38"
+  },
+  "VALLEJO_70895": {
+    "displayCode": "70.895",
+    "name": "Gunship Green",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#415C54"
+  },
+  "VALLEJO_70896": {
+    "displayCode": "70.896",
+    "name": "Extra Dark Green",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#2A3B32"
+  },
+  "VALLEJO_70897": {
+    "displayCode": "70.897",
+    "name": "Bronze Green",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#374735"
+  },
+  "VALLEJO_70898": {
+    "displayCode": "70.898",
+    "name": "Dark Navy Blue",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#1B263B"
+  },
+  "VALLEJO_70899": {
+    "displayCode": "70.899",
+    "name": "Dark Prussian Blue",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#1E3A8A"
+  },
+  "VALLEJO_70900": {
+    "displayCode": "70.900",
+    "name": "French Mirage Blue",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#4D6B82"
+  },
+  "VALLEJO_70901": {
+    "displayCode": "70.901",
+    "name": "Pastel Blue",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#8AADC2"
+  },
+  "VALLEJO_70902": {
+    "displayCode": "70.902",
+    "name": "Azure",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#2E66A8"
+  },
+  "VALLEJO_70903": {
+    "displayCode": "70.903",
+    "name": "Intermediate Blue",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#476A8A"
+  },
+  "VALLEJO_70904": {
+    "displayCode": "70.904",
+    "name": "Dark Blue Grey",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#3E5266"
+  },
+  "VALLEJO_70905": {
+    "displayCode": "70.905",
+    "name": "Blue Grey Pale",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#889CAE"
+  },
+  "VALLEJO_70906": {
+    "displayCode": "70.906",
+    "name": "Pale Blue",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#93B4D1"
+  },
+  "VALLEJO_70907": {
+    "displayCode": "70.907",
+    "name": "Pale Greyblue",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#A2B3C1"
+  },
+  "VALLEJO_70908": {
+    "displayCode": "70.908",
+    "name": "Carmine Red",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#A3202E"
+  },
+  "VALLEJO_70909": {
+    "displayCode": "70.909",
+    "name": "Vermillion",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#D9382E"
+  },
+  "VALLEJO_70910": {
+    "displayCode": "70.910",
+    "name": "Orange Red",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#E35129"
+  },
+  "VALLEJO_70911": {
+    "displayCode": "70.911",
+    "name": "Light Orange",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#F08C3A"
+  },
+  "VALLEJO_70912": {
+    "displayCode": "70.912",
+    "name": "Tan Yellow",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#D19B54"
+  },
+  "VALLEJO_70913": {
+    "displayCode": "70.913",
+    "name": "Yellow Ochre",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#CB9A3E"
+  },
+  "VALLEJO_70914": {
+    "displayCode": "70.914",
+    "name": "Green Ochre",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#A4904C"
+  },
+  "VALLEJO_70915": {
+    "displayCode": "70.915",
+    "name": "Deep Yellow",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#E6B822"
+  },
+  "VALLEJO_70916": {
+    "displayCode": "70.916",
+    "name": "Sand Yellow",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#DDB878"
+  },
+  "VALLEJO_70917": {
+    "displayCode": "70.917",
+    "name": "Beige",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#DBCDB3"
+  },
+  "VALLEJO_70918": {
+    "displayCode": "70.918",
+    "name": "Ivory",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#E8E2CD"
+  },
+  "VALLEJO_70919": {
+    "displayCode": "70.919",
+    "name": "Foundation White",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#F2F4F3"
+  },
+  "VALLEJO_70920": {
+    "displayCode": "70.920",
+    "name": "German Uniform",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#4D6357"
+  },
+  "VALLEJO_70921": {
+    "displayCode": "70.921",
+    "name": "English Uniform",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#7A643B"
+  },
+  "VALLEJO_70922": {
+    "displayCode": "70.922",
+    "name": "USA Uniform",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#5B6645"
+  },
+  "VALLEJO_70923": {
+    "displayCode": "70.923",
+    "name": "Japan Uniform WWII",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#8A794E"
+  },
+  "VALLEJO_70924": {
+    "displayCode": "70.924",
+    "name": "Russian Uniform WWII",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#687654"
+  },
+  "VALLEJO_70925": {
+    "displayCode": "70.925",
+    "name": "Blue",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#1D4E89"
+  },
+  "VALLEJO_70926": {
+    "displayCode": "70.926",
+    "name": "Red",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#C22127"
+  },
+  "VALLEJO_70927": {
+    "displayCode": "70.927",
+    "name": "Dark Flesh",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#B5664C"
+  },
+  "VALLEJO_70928": {
+    "displayCode": "70.928",
+    "name": "Light Flesh",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#E0A38D"
+  },
+  "VALLEJO_70929": {
+    "displayCode": "70.929",
+    "name": "Light Brown",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#9E5A35"
+  },
+  "VALLEJO_70930": {
+    "displayCode": "70.930",
+    "name": "Dark Blue",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#1F3A60"
+  },
+  "VALLEJO_70940": {
+    "displayCode": "70.940",
+    "name": "Saddle Brown",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#6B4226"
+  },
+  "VALLEJO_70941": {
+    "displayCode": "70.941",
+    "name": "Burnt Umber",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#3D2B1F"
+  },
+  "VALLEJO_70942": {
+    "displayCode": "70.942",
+    "name": "Light Green",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#6E9C54"
+  },
+  "VALLEJO_70947": {
+    "displayCode": "70.947",
+    "name": "Dark Vermillion",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#AA2924"
+  },
+  "VALLEJO_70949": {
+    "displayCode": "70.949",
+    "name": "Light Yellow",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#F4D75E"
+  },
+  "VALLEJO_70950": {
+    "displayCode": "70.950",
+    "name": "Black",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#1A1A1A"
+  },
+  "VALLEJO_70951": {
+    "displayCode": "70.951",
+    "name": "White",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#F2F2F2"
+  },
+  "VALLEJO_70952": {
+    "displayCode": "70.952",
+    "name": "Lemon Yellow",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#E8D943"
+  },
+  "VALLEJO_70953": {
+    "displayCode": "70.953",
+    "name": "Flat Yellow",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#DEB733"
+  },
+  "VALLEJO_70954": {
+    "displayCode": "70.954",
+    "name": "Yellow Green",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#84A842"
+  },
+  "VALLEJO_70955": {
+    "displayCode": "70.955",
+    "name": "Flat Green",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#3E7B44"
+  },
+  "VALLEJO_70956": {
+    "displayCode": "70.956",
+    "name": "Clear Orange",
+    "type": "Model Color",
+    "finish": "Lesklá",
+    "hex": "#D1701F"
+  },
+  "VALLEJO_70957": {
+    "displayCode": "70.957",
+    "name": "Flat Red",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#B32821"
+  },
+  "VALLEJO_70962": {
+    "displayCode": "70.962",
+    "name": "Flat Blue",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#254C7A"
+  },
+  "VALLEJO_70963": {
+    "displayCode": "70.963",
+    "name": "Medium Blue",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#3A638C"
+  },
+  "VALLEJO_70964": {
+    "displayCode": "70.964",
+    "name": "Field Blue",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#4D6980"
+  },
+  "VALLEJO_70965": {
+    "displayCode": "70.965",
+    "name": "Prussian Blue",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#1F3B66"
+  },
+  "VALLEJO_70966": {
+    "displayCode": "70.966",
+    "name": "Turquoise",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#298096"
+  },
+  "VALLEJO_70967": {
+    "displayCode": "70.967",
+    "name": "Olive Green",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#4A5D3E"
+  },
+  "VALLEJO_70968": {
+    "displayCode": "70.968",
+    "name": "Flat Green",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#376342"
+  },
+  "VALLEJO_70969": {
+    "displayCode": "70.969",
+    "name": "Park Green",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#47824B"
+  },
+  "VALLEJO_70970": {
+    "displayCode": "70.970",
+    "name": "Deep Green",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#234F32"
+  },
+  "VALLEJO_70975": {
+    "displayCode": "70.975",
+    "name": "Military Green",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#4E5C41"
+  },
+  "VALLEJO_70976": {
+    "displayCode": "70.976",
+    "name": "Buff",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#D1BB8C"
+  },
+  "VALLEJO_70977": {
+    "displayCode": "70.977",
+    "name": "Desert Yellow",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#B5955C"
+  },
+  "VALLEJO_70978": {
+    "displayCode": "70.978",
+    "name": "Dark Yellow",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#A48F56"
+  },
+  "VALLEJO_70979": {
+    "displayCode": "70.979",
+    "name": "German Camo Dark Green",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#3A4A36"
+  },
+  "VALLEJO_70980": {
+    "displayCode": "70.980",
+    "name": "Black Green",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#273328"
+  },
+  "VALLEJO_70981": {
+    "displayCode": "70.981",
+    "name": "Orange Brown",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#9E5630"
+  },
+  "VALLEJO_70982": {
+    "displayCode": "70.982",
+    "name": "Cavalry Brown",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#7A3527"
+  },
+  "VALLEJO_70983": {
+    "displayCode": "70.983",
+    "name": "Flat Earth",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#6E4C38"
+  },
+  "VALLEJO_70984": {
+    "displayCode": "70.984",
+    "name": "Flat Brown",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#4A2F24"
+  },
+  "VALLEJO_70985": {
+    "displayCode": "70.985",
+    "name": "Hull Red",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#592E2B"
+  },
+  "VALLEJO_70986": {
+    "displayCode": "70.986",
+    "name": "Deck Tan",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#A99C85"
+  },
+  "VALLEJO_70987": {
+    "displayCode": "70.987",
+    "name": "Medium Grey",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#696E6D"
+  },
+  "VALLEJO_70988": {
+    "displayCode": "70.988",
+    "name": "Khaki",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#7D7051"
+  },
+  "VALLEJO_70989": {
+    "displayCode": "70.989",
+    "name": "Sky Grey",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#A2AAB0"
+  },
+  "VALLEJO_70990": {
+    "displayCode": "70.990",
+    "name": "Light Grey",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#969B9E"
+  },
+  "VALLEJO_70991": {
+    "displayCode": "70.991",
+    "name": "Dark Sea Grey",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#5E6466"
+  },
+  "VALLEJO_70992": {
+    "displayCode": "70.992",
+    "name": "Neutral Grey",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#6E7172"
+  },
+  "VALLEJO_70993": {
+    "displayCode": "70.993",
+    "name": "White Grey",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#CBD1D1"
+  },
+  "VALLEJO_70994": {
+    "displayCode": "70.994",
+    "name": "Dark Grey",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#434749"
+  },
+  "VALLEJO_70995": {
+    "displayCode": "70.995",
+    "name": "German Grey",
+    "type": "Model Color",
+    "finish": "Matná",
+    "hex": "#3E4347"
+  },
+  "VALLEJO_70996": {
+    "displayCode": "70.996",
+    "name": "Gold",
+    "type": "Model Color",
+    "finish": "Metalická",
+    "hex": "#D4AF37"
+  },
+  "VALLEJO_70997": {
+    "displayCode": "70.997",
+    "name": "Silver",
+    "type": "Model Color",
+    "finish": "Metalická",
+    "hex": "#C0C0C0"
+  },
+  "VALLEJO_70998": {
+    "displayCode": "70.998",
+    "name": "Bronze",
+    "type": "Model Color",
+    "finish": "Metalická",
+    "hex": "#CD7F32"
+  },
+  "VALLEJO_70999": {
+    "displayCode": "70.999",
+    "name": "Copper",
+    "type": "Model Color",
+    "finish": "Metalická",
+    "hex": "#B87333"
+  }
+}

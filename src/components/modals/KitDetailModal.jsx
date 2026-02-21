@@ -98,6 +98,7 @@ const KitDetailModal = ({
         markings: data.markings ?? null,
         marketplace: data.marketplace ?? null,
         scalematesUrl: data.scalematesUrl ?? null,
+        buildAlbumUrl: data.buildAlbumUrl ?? null,
         notes: data.notes ?? null,
       };
 

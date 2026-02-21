@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Palette,
   Trash2,
@@ -9,6 +9,8 @@ import {
   Package,
   AlertTriangle,
   Loader2,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import PaintAPI from "../../../data/paints/PaintAPI";
 
@@ -16,6 +18,7 @@ const KitPaintsTab = ({ data, setData, allPaints, onQuickCreatePaint }) => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [expandedBrands, setExpandedBrands] = useState({});
 
   // Search Effect (Omnibox Logic)
   useEffect(() => {
@@ -139,6 +142,37 @@ const KitPaintsTab = ({ data, setData, allPaints, onQuickCreatePaint }) => {
     }
   };
 
+  // Grouping logic for Accordions
+  const groupedPaints = useMemo(() => {
+    if (!data.paints || data.paints.length === 0) return {};
+
+    const groups = {};
+    data.paints.forEach((paintLink) => {
+      let fullPaint = allPaints.find((p) => p.id === paintLink.id);
+      if (!fullPaint) {
+        fullPaint = {
+          id: paintLink.id,
+          code: "???",
+          name: "Neznámá barva",
+          hex: "#333",
+          status: "unknown",
+          brand: "Ostatní",
+        };
+      }
+      const brandName = fullPaint.brand || "Ostatní";
+      if (!groups[brandName]) groups[brandName] = [];
+      groups[brandName].push({ link: paintLink, detail: fullPaint });
+    });
+    return groups;
+  }, [data.paints, allPaints]);
+
+  const toggleBrand = (brand) => {
+    setExpandedBrands((prev) => ({
+      ...prev,
+      [brand]: !prev[brand], // Toggle state (undefined = collapsed? No, let's make default expanded)
+    }));
+  };
+
   return (
     <div className="p-4 h-full flex flex-col space-y-4">
       {/* OMNIBOX SEARCH */}
@@ -222,66 +256,82 @@ const KitPaintsTab = ({ data, setData, allPaints, onQuickCreatePaint }) => {
       </div>
 
       <div className="space-y-2 flex-1 overflow-y-auto">
-        {data.paints && data.paints.length > 0 ? (
-          data.paints.map((paintLink, idx) => {
-            let fullPaint = allPaints.find((p) => p.id === paintLink.id);
-            // Fallback if paint deleted or not found
-            if (!fullPaint) {
-              fullPaint = {
-                id: paintLink.id,
-                code: "???",
-                name: "Neznámá barva",
-                hex: "#333",
-                status: "unknown",
-                brand: "?",
-              };
-            }
+        {Object.keys(groupedPaints).length > 0 ? (
+          Object.entries(groupedPaints).map(([brand, items]) => {
+            // Defaultně rozbaleno, pokud není explicitně false
+            const isExpanded = expandedBrands[brand] !== false;
+
             return (
               <div
-                key={`${paintLink.id}_${idx}`}
-                className="bg-slate-800 p-2 rounded border border-slate-700 flex flex-col gap-2 group hover:border-slate-600 transition-colors"
+                key={brand}
+                className="border border-slate-700 rounded-lg overflow-hidden bg-slate-800/30"
               >
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-3 overflow-hidden">
-                    <div className="relative">
+                <button
+                  onClick={() => toggleBrand(brand)}
+                  className="w-full flex items-center justify-between p-2 bg-slate-800 hover:bg-slate-700 transition-colors"
+                >
+                  <span className="text-xs font-bold text-slate-300 flex items-center gap-2">
+                    {brand}
+                    <span className="bg-slate-900 text-slate-500 px-1.5 py-0.5 rounded text-[10px]">
+                      {items.length}
+                    </span>
+                  </span>
+                  {isExpanded ? (
+                    <ChevronUp size={14} className="text-slate-500" />
+                  ) : (
+                    <ChevronDown size={14} className="text-slate-500" />
+                  )}
+                </button>
+
+                {isExpanded && (
+                  <div className="p-2 space-y-2 bg-slate-900/30 border-t border-slate-700">
+                    {items.map(({ link, detail }, idx) => (
                       <div
-                        className="w-8 h-8 rounded border border-slate-600 shadow-sm"
-                        style={{ backgroundColor: fullPaint.hex }}
-                      ></div>
-                      <div className="absolute -bottom-1 -right-1 bg-slate-900 rounded-full p-0.5 border border-slate-700">
-                        {getStatusIcon(fullPaint.status)}
+                        key={`${link.id}_${idx}`}
+                        className="bg-slate-800 p-2 rounded border border-slate-700 flex flex-col gap-2 group hover:border-slate-600 transition-colors"
+                      >
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center gap-3 overflow-hidden">
+                            <div className="relative">
+                              <div
+                                className="w-8 h-8 rounded border border-slate-600 shadow-sm"
+                                style={{ backgroundColor: detail.hex }}
+                              ></div>
+                              <div className="absolute -bottom-1 -right-1 bg-slate-900 rounded-full p-0.5 border border-slate-700">
+                                {getStatusIcon(detail.status)}
+                              </div>
+                            </div>
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-bold text-white truncate">
+                                  {detail.code}
+                                </span>
+                              </div>
+                              <div className="text-xs text-slate-500 truncate">
+                                {detail.name}
+                              </div>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => handleRemovePaint(link.id)}
+                            className="text-slate-600 hover:text-red-400 p-2 transition-colors"
+                            title="Odebrat z modelu"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                        <input
+                          className="w-full bg-slate-900/50 border border-slate-700/50 rounded px-2 py-1 text-[11px] text-slate-300 placeholder-slate-600 outline-none focus:border-blue-500/50 focus:bg-slate-900 transition-all"
+                          placeholder="Poznámka (např. trup, kokpit...)"
+                          value={link.note || ""}
+                          onChange={(e) =>
+                            handleUpdatePaintNote(link.id, e.target.value)
+                          }
+                        />
                       </div>
-                    </div>
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-white truncate">
-                          {fullPaint.code}
-                        </span>
-                        <span className="text-xs text-slate-400 truncate">
-                          {fullPaint.brand}
-                        </span>
-                      </div>
-                      <div className="text-xs text-slate-500 truncate">
-                        {fullPaint.name}
-                      </div>
-                    </div>
+                    ))}
                   </div>
-                  <button
-                    onClick={() => handleRemovePaint(paintLink.id)}
-                    className="text-slate-600 hover:text-red-400 p-2 transition-colors"
-                    title="Odebrat z modelu"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-                <input
-                  className="w-full bg-slate-900/50 border border-slate-700/50 rounded px-2 py-1 text-[11px] text-slate-300 placeholder-slate-600 outline-none focus:border-blue-500/50 focus:bg-slate-900 transition-all"
-                  placeholder="Poznámka (např. trup, kokpit...)"
-                  value={paintLink.note || ""}
-                  onChange={(e) =>
-                    handleUpdatePaintNote(paintLink.id, e.target.value)
-                  }
-                />
+                )}
               </div>
             );
           })

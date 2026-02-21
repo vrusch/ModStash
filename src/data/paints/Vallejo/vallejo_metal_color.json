@@ -1,0 +1,128 @@
+{
+  "VALLEJO_77701": {
+    "displayCode": "77.701",
+    "name": "Aluminium",
+    "type": "Metal Color",
+    "finish": "Metalická",
+    "hex": "#E5E7EB"
+  },
+  "VALLEJO_77702": {
+    "displayCode": "77.702",
+    "name": "Duraluminium",
+    "type": "Metal Color",
+    "finish": "Metalická",
+    "hex": "#D1D5DB"
+  },
+  "VALLEJO_77703": {
+    "displayCode": "77.703",
+    "name": "Dark Aluminium",
+    "type": "Metal Color",
+    "finish": "Metalická",
+    "hex": "#9CA3AF"
+  },
+  "VALLEJO_77704": {
+    "displayCode": "77.704",
+    "name": "Pale Burnt Metal",
+    "type": "Metal Color",
+    "finish": "Metalická",
+    "hex": "#D4C4B7"
+  },
+  "VALLEJO_77706": {
+    "displayCode": "77.706",
+    "name": "White Aluminium",
+    "type": "Metal Color",
+    "finish": "Metalická",
+    "hex": "#F3F4F6"
+  },
+  "VALLEJO_77707": {
+    "displayCode": "77.707",
+    "name": "Chrome",
+    "type": "Metal Color",
+    "finish": "Metalická",
+    "hex": "#E8E9EB"
+  },
+  "VALLEJO_77710": {
+    "displayCode": "77.710",
+    "name": "Copper",
+    "type": "Metal Color",
+    "finish": "Metalická",
+    "hex": "#B87333"
+  },
+  "VALLEJO_77711": {
+    "displayCode": "77.711",
+    "name": "Magnesium",
+    "type": "Metal Color",
+    "finish": "Metalická",
+    "hex": "#8A8D91"
+  },
+  "VALLEJO_77712": {
+    "displayCode": "77.712",
+    "name": "Steel",
+    "type": "Metal Color",
+    "finish": "Metalická",
+    "hex": "#71797E"
+  },
+  "VALLEJO_77713": {
+    "displayCode": "77.713",
+    "name": "Jet Exhaust",
+    "type": "Metal Color",
+    "finish": "Metalická",
+    "hex": "#4B5563"
+  },
+  "VALLEJO_77714": {
+    "displayCode": "77.714",
+    "name": "Dark Engine",
+    "type": "Metal Color",
+    "finish": "Metalická",
+    "hex": "#374151"
+  },
+  "VALLEJO_77716": {
+    "displayCode": "77.716",
+    "name": "Semi Matte Aluminium",
+    "type": "Metal Color",
+    "finish": "Metalická",
+    "hex": "#C0C4CC"
+  },
+  "VALLEJO_77717": {
+    "displayCode": "77.717",
+    "name": "Dull Aluminium",
+    "type": "Metal Color",
+    "finish": "Metalická",
+    "hex": "#A0A4AC"
+  },
+  "VALLEJO_77720": {
+    "displayCode": "77.720",
+    "name": "Gunmetal Grey",
+    "type": "Metal Color",
+    "finish": "Metalická",
+    "hex": "#2A3439"
+  },
+  "VALLEJO_77721": {
+    "displayCode": "77.721",
+    "name": "Burnt Iron",
+    "type": "Metal Color",
+    "finish": "Metalická",
+    "hex": "#4A3C31"
+  },
+  "VALLEJO_77723": {
+    "displayCode": "77.723",
+    "name": "Exhaust Manifold",
+    "type": "Metal Color",
+    "finish": "Metalická",
+    "hex": "#5D4B3C"
+  },
+  "VALLEJO_77724": {
+    "displayCode": "77.724",
+    "name": "Silver",
+    "type": "Metal Color",
+    "finish": "Metalická",
+    "hex": "#C0C0C0"
+  },
+  "VALLEJO_77725": {
+    "displayCode": "77.725",
+    "name": "Gold",
+    "type": "Metal Color",
+    "finish": "Metalická",
+    "hex": "#D4AF37"
+  }
+}

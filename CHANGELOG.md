@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.33.0] - 2026-02-21
+
+### Přidáno
+
+- **Stavba:** Možnost přidat odkaz na externí fotoalbum (Google Photos, Rajče...) k modelu (sekce Stavba).
+- **Tržiště:** Možnost manuálně přidávat vlastní ceny a obchody k modelu.
+- **Barvy:** Nové typy produktů v číselníku: Lepidla, Tmely, Ředidla, Laky, Weathering.
+- **Barvy:** Podpora pro barvy AK Interactive a rozšíření specifikací Vallejo (včetně detekce číselných kódů).
+- **UI:** Sbalovací skupiny (Accordions) v seznamu barev u modelu pro lepší přehlednost podle výrobců.
+- **UI:** Indikátor "Album" na kartě modelu.
+
+### Změněno
+
+- **Design:** Sjednocení a zjemnění typografie na kartách modelů, projektů a doplňků (menší písmo, technický vzhled).
+- **Barvy:** Vylepšený algoritmus vyhledávání v našeptávači (lépe řadí krátké kódy jako "H-1").
+- **Data:** Automatické načítání JSON souborů barev i z podsložek (umožňuje lepší organizaci dat).
+- **UX:** Vypnuto automatické doplňování prohlížeče (`autocomplete="off"`) ve formulářích barev a modelů.
+
 ## [2.32.0] - 2026-02-21
 
 ### Přidáno
