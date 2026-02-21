@@ -1,34 +1,39 @@
 {
-  "Mr. Color (Lacquer)": {
+  "lacquer": {
     "title": "GSI Creos Mr. Color (C)",
+    "codes": ["C"],
     "description": "Standard profesionálních modelářů. Extrémně jemný pigment a odolnost.",
     "thinner": "Mr. Color Thinner, Levelling Thinner.",
     "bestFor": "Airbrush, přesné vojenské odstíny.",
     "safety": "Obsahuje organická rozpouštědla, používejte masku."
   },
-  "Aqueous (Akryl)": {
+  "acrylic": {
     "title": "GSI Creos Aqueous Hobby Color (H)",
+    "codes": ["H"],
     "description": "Vodou ředitelné akryly, bezpečnější varianta pro domácí použití.",
     "thinner": "Aqueous Hobby Color Thinner.",
     "bestFor": "Štětec, začátečníci, práce v bytě.",
     "safety": "Minimální zápach."
   },
-  "Mr. Color GX": {
+  "lacquer_gx": {
     "title": "Mr. Color GX Series",
+    "codes": ["GX"],
     "description": "Prémiová řada s vyšší krycí schopností a sytostí barev.",
     "thinner": "Mr. Color Thinner.",
     "bestFor": "Konečné vrstvy, sytě bílá a černá.",
     "safety": "Stejná jako řada C."
   },
-  "Mr. Metal Color": {
+  "metal_color": {
     "title": "Mr. Metal Color (Leštitelné)",
+    "codes": ["MC"],
     "description": "Speciální metalízy, které se po zaschnutí leští do vysokého kovového lesku.",
     "thinner": "Mr. Color Thinner.",
     "bestFor": "Motory, zbraně, detaily s kovovým vzhledem.",
     "safety": "Povrch je náchylný k otěru, dokud se nezalakuje."
   },
-  "Primer": {
+  "primer": {
     "title": "Mr. Surfacer / Primer",
+    "codes": ["SF", "B"],
     "description": "Kombinace základu a tmelu. Vyhlazuje povrch a odhaluje chyby v broušení.",
     "thinner": "Mr. Color Thinner, Levelling Thinner.",
     "bestFor": "Sjednocení povrchu před barvením.",

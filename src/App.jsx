@@ -81,6 +81,48 @@ export default function App() {
   const [isNewPaint, setIsNewPaint] = useState(false);
   const [filterByPaintId, setFilterByPaintId] = useState(null);
 
+  // Uživatelské preference (načtení z localStorage)
+  const [preferences, setPreferences] = useState(() => {
+    const saved = localStorage.getItem("kithub_preferences");
+    const defaults = {
+      theme: "dark",
+      compactMode: false,
+      defaultView: "kits",
+      hideFinished: false,
+      hideScrap: false,
+      currency: "CZK",
+      animations: true,
+      autoSaveRatios: false,
+      paintRatios: {},
+      disableScalemates: false,
+    };
+    // Sloučení uložených preferencí s výchozími (pro případ nových klíčů)
+    return saved ? { ...defaults, ...JSON.parse(saved) } : defaults;
+  });
+
+  // Uložení preferencí při změně
+  useEffect(() => {
+    localStorage.setItem("kithub_preferences", JSON.stringify(preferences));
+    // Aplikace tématu (zatím jen příprava, vyžadovalo by to refactor CSS tříd)
+    if (preferences.theme === "light") {
+      document.documentElement.classList.add("light-mode");
+    } else {
+      document.documentElement.classList.remove("light-mode");
+    }
+  }, [preferences]);
+
+  // Nastavení výchozího pohledu po startu
+  useEffect(() => {
+    if (logic.setView && preferences.defaultView && logic.view === "kits") {
+      // logic.view === "kits" je default v useAppLogic, změníme ho jen pokud user chce jinak
+      // a jen při prvním načtení (nechceme to resetovat při každém renderu)
+      // Poznámka: Toto je zjednodušené, ideálně by useAppLogic měl brát defaultView jako argument.
+      // Pro teď to necháme na uživateli, aby si kliknul, nebo to vyřešíme v useAppLogic v budoucnu.
+      // Zde jen ukázka, že data máme k dispozici.
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const requestConfirm = (
     title,
     message,
@@ -170,6 +212,55 @@ export default function App() {
     }
   };
 
+  const handleResetPreferences = (onSuccess) => {
+    requestConfirm(
+      "Obnovit nastavení",
+      "Opravdu chcete obnovit všechna nastavení do výchozího stavu? Vaše data (modely, barvy) zůstanou zachována.",
+      () => {
+        setPreferences({
+          theme: "dark",
+          compactMode: false,
+          defaultView: "kits",
+          hideFinished: false,
+          hideScrap: false,
+          currency: "CZK",
+          animations: true,
+          autoSaveRatios: false,
+          paintRatios: {},
+          disableScalemates: false,
+        });
+        if (onSuccess && typeof onSuccess === "function") onSuccess();
+      },
+      true,
+      "Obnovit",
+    );
+  };
+
+  // Export dat do JSON
+  const handleExportData = () => {
+    const dataToExport = {
+      kits,
+      projects,
+      paints,
+      meta: {
+        version: APP_VERSION,
+        date: new Date().toISOString(),
+        uid: activeUid,
+      },
+    };
+    const blob = new Blob([JSON.stringify(dataToExport, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `kithub_backup_${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   // Reset filtru při změně pohledu (pokud odejdu z kitů)
   useEffect(() => {
     if (logic.view !== "kits") {
@@ -253,8 +344,12 @@ export default function App() {
       </div>
 
       {/* CONTENT */}
-      <main className="flex-1 overflow-y-auto overscroll-y-contain pb-24 p-2 sm:p-4 bg-slate-900/50">
-        <div className="max-w-md mx-auto space-y-6">
+      <main
+        className={`flex-1 overflow-y-auto overscroll-y-contain pb-24 p-2 sm:p-4 bg-slate-900/50 ${preferences.animations ? "" : "motion-reduce:transition-none"}`}
+      >
+        <div
+          className={`max-w-md mx-auto ${preferences.compactMode ? "space-y-2" : "space-y-6"}`}
+        >
           {logic.view === "kits" && (
             <>
               {filterByPaintId && (
@@ -289,6 +384,10 @@ export default function App() {
                       k.paints?.some((p) => p.id === filterByPaintId),
                     )
                   : list;
+
+                // Aplikace filtrů z nastavení (skrytí hotových/vrakoviště)
+                if (key === "finished" && preferences.hideFinished) return null;
+                if (key === "scrap" && preferences.hideScrap) return null;
 
                 return (
                   filteredList.length > 0 && (
@@ -548,6 +647,11 @@ export default function App() {
           onSetManualId={setManualDataUid}
           appVersion={APP_VERSION}
           onCheckUpdates={handleManualUpdateCheck}
+          onExport={handleExportData}
+          onImport={importData}
+          preferences={preferences}
+          onUpdatePreferences={setPreferences}
+          onResetPreferences={handleResetPreferences}
         />
       )}
       {showLanguageModal && (
@@ -596,6 +700,7 @@ export default function App() {
           allPaints={paints}
           allKits={kits}
           onQuickCreatePaint={quickCreatePaint}
+          preferences={preferences}
           onClose={() => setActiveKit(null)}
           onSave={(d) => saveItem("kits", d, isNewKit)}
           onDelete={(id) => {
@@ -610,8 +715,27 @@ export default function App() {
           paint={activePaint}
           existingPaints={paints}
           allKits={kits}
+          preferences={preferences}
           onClose={() => setActivePaint(null)}
-          onSave={(d) => saveItem("paints", d, isNewPaint)}
+          onSave={(d) => {
+            saveItem("paints", d, isNewPaint);
+            // Uložení preferovaného poměru, pokud je funkce zapnutá
+            if (
+              preferences.autoSaveRatios &&
+              d.brand &&
+              d.type &&
+              d.ratioPaint !== undefined
+            ) {
+              const key = `${d.brand}|${d.type}`;
+              setPreferences((prev) => ({
+                ...prev,
+                paintRatios: {
+                  ...(prev.paintRatios || {}),
+                  [key]: { paint: d.ratioPaint, thinner: d.ratioThinner },
+                },
+              }));
+            }
+          }}
           onDelete={(id) => {
             deleteItem("paints", id);
             setActivePaint(null);

@@ -1,16 +1,18 @@
-
 ```
 kithub
+├─ AI Integrace.pdf
 ├─ CHANGELOG.md
+├─ dev_diary.md
 ├─ index.html
 ├─ package-lock.json
 ├─ package.json
 ├─ project_tree.md
 ├─ public
-│  └─ favicon.png
+│  ├─ apple-touch-icon.png
+│  ├─ favicon.png
+│  ├─ icon-192.png
+│  └─ icon-512.png
 ├─ README.md
-├─ release_notes_v2.30.0
-├─ roadmap.md
 ├─ src
 │  ├─ App.jsx
 │  ├─ components
@@ -22,6 +24,11 @@ kithub
 │  │  ├─ layout
 │  │  │  └─ AppHeader.jsx
 │  │  ├─ modals
+│  │  │  ├─ kit
+│  │  │  │  ├─ KitBuildTab.jsx
+│  │  │  │  ├─ KitInfoTab.jsx
+│  │  │  │  ├─ KitPaintsTab.jsx
+│  │  │  │  └─ KitResourcesTab.jsx
 │  │  │  ├─ KitDetailModal.jsx
 │  │  │  ├─ LanguageModal.jsx
 │  │  │  ├─ PaintDetailModal.jsx
@@ -34,9 +41,7 @@ kithub
 │  ├─ config
 │  │  └─ firebase.js
 │  ├─ data
-│  │  ├─ brands.json
-│  │  ├─ catalog.json
-│  │  ├─ kit-brands.json
+│  │  ├─ brands-kits.json
 │  │  └─ paints
 │  │     ├─ gunze_C.json
 │  │     ├─ gunze_GX.json
@@ -57,7 +62,8 @@ kithub
 │  ├─ main.jsx
 │  └─ utils
 │     ├─ helpers.js
-│     └─ normalizers.js
+│     ├─ normalizers.js
+│     └─ sm_scraper.js
 └─ vite.config.js
 
 ```

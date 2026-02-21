@@ -174,6 +174,28 @@ export const getSpecs = (brandId) => {
 };
 
 /**
+ * Najde správnou specifikaci (typ barvy) pro konkrétní řadu.
+ * Využívá pole "codes" v definici specifikace (např. ["X", "XF"] -> acrylic).
+ *
+ * @param {string} brandId - ID značky (např. "tamiya").
+ * @param {string} seriesId - ID řady (např. "XF", "LP").
+ * @returns {Object|null} Specifikace barvy nebo null, pokud nenalezeno.
+ */
+export const getSpecForSeries = (brandId, seriesId) => {
+  const brandSpecs = specs[brandId];
+  if (!brandSpecs) return null;
+
+  // Projde všechny typy (acrylic, lacquer...) a hledá shodu v poli codes
+  for (const typeKey in brandSpecs) {
+    const typeData = brandSpecs[typeKey];
+    if (typeData.codes && typeData.codes.includes(seriesId)) {
+      return { type: typeKey, ...typeData };
+    }
+  }
+  return null;
+};
+
+/**
  * Vrátí seznam všech podporovaných výrobců barev.
  * @returns {Array<{id: string, name: string}>} Seznam výrobců.
  */
@@ -191,5 +213,6 @@ export default {
   getSpecificSeries,
   getSeriesList,
   getSpecs,
+  getSpecForSeries,
   getManufacturers,
 };

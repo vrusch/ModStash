@@ -34,7 +34,7 @@ const COMMON_SCALES = [
   "1/700",
 ];
 
-const KitInfoTab = ({ data, setData, projects, allKits }) => {
+const KitInfoTab = ({ data, setData, projects, allKits, preferences }) => {
   const [isScraping, setIsScraping] = useState(false);
   const [showMarkings, setShowMarkings] = useState(false);
   const [showMarketplace, setShowMarketplace] = useState(false);
@@ -451,69 +451,71 @@ const KitInfoTab = ({ data, setData, projects, allKits }) => {
       )}
 
       {/* SCALEMATES INTEGRATION */}
-      <div className="bg-slate-800 p-3 rounded-xl border border-slate-700">
-        <div className="flex items-center justify-between mb-2">
-          <h4 className="text-xs font-bold text-slate-400 uppercase flex items-center gap-2">
-            <img
-              src="https://www.scalemates.com/favicon.ico"
-              alt="SM"
-              className="w-3 h-3 opacity-50 grayscale"
-            />
-            Scalemates Integrace
-          </h4>
-          {data.scalematesUrl && (
-            <a
-              href={data.scalematesUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="text-[10px] text-blue-400 hover:underline flex items-center gap-1"
-            >
-              Otevřít <ExternalLink size={10} />
-            </a>
-          )}
-        </div>
-        <div className="flex gap-2">
-          <input
-            className="flex-1 bg-slate-900 border border-slate-600 rounded p-2 text-xs text-white placeholder-slate-600 focus:border-blue-500 outline-none transition-colors"
-            placeholder="Vložte URL kitu ze Scalemates..."
-            value={data.scalematesUrl || ""}
-            onChange={(e) =>
-              setData({ ...data, scalematesUrl: e.target.value })
-            }
-          />
-          <button
-            onClick={() => {
-              const query = data.catNum
-                ? `${data.brand} ${data.catNum}`
-                : `${data.brand} ${data.subject} ${data.scale}`;
-              window.open(
-                `https://www.scalemates.com/search.php?q=${encodeURIComponent(query)}`,
-                "_blank",
-              );
-            }}
-            className="bg-slate-700 hover:bg-slate-600 text-slate-300 p-2 rounded border border-slate-600 transition-colors"
-            title="Najít na Scalemates (otevře nové okno)"
-          >
-            <Search size={16} />
-          </button>
-          <button
-            onClick={handleScrape}
-            disabled={!data.scalematesUrl || isScraping}
-            className={`p-2 rounded border flex items-center gap-2 transition-all ${
-              data.scalematesUrl
-                ? "bg-blue-600 text-white border-blue-500 hover:bg-blue-500 shadow-lg shadow-blue-900/20"
-                : "bg-slate-800 text-slate-600 border-slate-700 cursor-not-allowed"
-            }`}
-            title="Načíst data (Scraper)"
-          >
-            {isScraping ? (
-              <Loader2 size={16} className="animate-spin" />
-            ) : (
-              <Download size={16} />
+      {!preferences?.disableScalemates && (
+        <div className="bg-slate-800 p-3 rounded-xl border border-slate-700">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-xs font-bold text-slate-400 uppercase flex items-center gap-2">
+              <img
+                src="https://www.scalemates.com/favicon.ico"
+                alt="SM"
+                className="w-3 h-3 opacity-50 grayscale"
+              />
+              Scalemates Integrace
+            </h4>
+            {data.scalematesUrl && (
+              <a
+                href={data.scalematesUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-[10px] text-blue-400 hover:underline flex items-center gap-1"
+              >
+                Otevřít <ExternalLink size={10} />
+              </a>
             )}
-          </button>
+          </div>
+          <div className="flex gap-2">
+            <input
+              className="flex-1 bg-slate-900 border border-slate-600 rounded p-2 text-xs text-white placeholder-slate-600 focus:border-blue-500 outline-none transition-colors"
+              placeholder="Vložte URL kitu ze Scalemates..."
+              value={data.scalematesUrl || ""}
+              onChange={(e) =>
+                setData({ ...data, scalematesUrl: e.target.value })
+              }
+            />
+            <button
+              onClick={() => {
+                const query = data.catNum
+                  ? `${data.brand} ${data.catNum}`
+                  : `${data.brand} ${data.subject} ${data.scale}`;
+                window.open(
+                  `https://www.scalemates.com/search.php?q=${encodeURIComponent(query)}`,
+                  "_blank",
+                );
+              }}
+              className="bg-slate-700 hover:bg-slate-600 text-slate-300 p-2 rounded border border-slate-600 transition-colors"
+              title="Najít na Scalemates (otevře nové okno)"
+            >
+              <Search size={16} />
+            </button>
+            <button
+              onClick={handleScrape}
+              disabled={!data.scalematesUrl || isScraping}
+              className={`p-2 rounded border flex items-center gap-2 transition-all ${
+                data.scalematesUrl
+                  ? "bg-blue-600 text-white border-blue-500 hover:bg-blue-500 shadow-lg shadow-blue-900/20"
+                  : "bg-slate-800 text-slate-600 border-slate-700 cursor-not-allowed"
+              }`}
+              title="Načíst data (Scraper)"
+            >
+              {isScraping ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <Download size={16} />
+              )}
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="grid grid-cols-2 gap-3">
         <div>

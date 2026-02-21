@@ -84,6 +84,7 @@ const PaintDetailModal = ({
   onSave,
   existingPaints,
   allKits,
+  preferences,
 }) => {
   // --- 1. INITIALIZATION & STATE ---
 
@@ -95,6 +96,7 @@ const PaintDetailModal = ({
     code: "",
     name: "",
     type: "Akryl",
+    type: "acrylic",
     finish: "Matná",
     status: "in_stock",
     hex: "#999999",
@@ -161,6 +163,21 @@ const PaintDetailModal = ({
     }
   }, [currentSpec, isEditMode]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // C2) AUTO-FILL RATIO: Načtení výchozího poměru z preferencí
+  useEffect(() => {
+    if (!isEditMode && data.brand && data.type && preferences?.paintRatios) {
+      const key = `${data.brand}|${data.type}`;
+      const savedRatio = preferences.paintRatios[key];
+      if (savedRatio) {
+        setData((prev) => ({
+          ...prev,
+          ratioPaint: savedRatio.paint,
+          ratioThinner: savedRatio.thinner,
+        }));
+      }
+    }
+  }, [data.brand, data.type, isEditMode, preferences]);
+
   // D0) GLOBAL OMNIBOX SEARCH (Prohledává všechny značky)
   useEffect(() => {
     if (isEditMode || isManualEntry || data.isMix || omniboxQuery.length < 2) {
@@ -190,6 +207,12 @@ const PaintDetailModal = ({
               p.code.toLowerCase().replace(/[\s\-\.]/g, "") === codeClean,
           );
 
+          // Detekce typu podle prefixu (stejná logika jako v KitPaintsTab)
+          const rawCode = paintVal.displayCode || key;
+          const seriesMatch = rawCode.match(/^([A-Za-z]+)/);
+          const seriesPrefix = seriesMatch ? seriesMatch[1] : "";
+          const spec = PaintAPI.getSpecForSeries(brand.id, seriesPrefix);
+
           results.push({
             ...paintVal,
             id: key, // Klíč z JSONu (např. XF-1)
@@ -198,6 +221,7 @@ const PaintDetailModal = ({
             displayCode: paintVal.displayCode || key,
             owned: !!owned,
             ownedStatus: owned?.status,
+            detectedType: spec ? spec.type : null,
           });
         }
         // Optimalizace: Max 5 výsledků na značku, celkem max 20
@@ -282,6 +306,7 @@ const PaintDetailModal = ({
       code: "",
       name: "",
       type: "Akryl",
+      type: "acrylic",
       finish: "Matná",
       status: "in_stock",
       hex: "#999999",
@@ -350,6 +375,7 @@ const PaintDetailModal = ({
       code: result.displayCode,
       name: result.name,
       type: result.type || "Akryl",
+      type: result.detectedType || result.type || "acrylic",
       finish: result.finish || "Matná",
       hex: result.hex || data.hex,
       thinner: result.thinner || "",
@@ -359,11 +385,18 @@ const PaintDetailModal = ({
   };
 
   const handleSelectSuggestion = ([key, val]) => {
+    // Pokus o detekci typu při výběru z našeptávače
+    const rawCode = val.displayCode || key;
+    const seriesMatch = rawCode.match(/^([A-Za-z]+)/);
+    const seriesPrefix = seriesMatch ? seriesMatch[1] : "";
+    const spec = PaintAPI.getSpecForSeries(data.brand, seriesPrefix);
+
     const newData = {
       ...data,
       code: val.displayCode || data.code,
       name: val.name,
       type: val.type,
+      type: spec ? spec.type : val.type || "acrylic",
       finish: val.finish,
       hex: val.hex || data.hex,
     };
@@ -797,6 +830,12 @@ const PaintDetailModal = ({
                   { value: "Olej", label: "🎨 Olej" },
                   { value: "Pigment", label: "🏜️ Pigment" },
                   { value: "Primer", label: "🛡️ Primer" },
+                  { value: "acrylic", label: "💧 Akryl" },
+                  { value: "enamel", label: "🛢️ Enamel" },
+                  { value: "lacquer", label: "☣️ Lacquer" },
+                  { value: "oil", label: "🎨 Olej" },
+                  { value: "pigment", label: "🏜️ Pigment" },
+                  { value: "primer", label: "🛡️ Primer" },
                 ]}
               />
               <FloatingSelect

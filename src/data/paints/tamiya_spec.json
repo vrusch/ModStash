@@ -1,30 +1,34 @@
 {
-  "Akryl": {
+  "acrylic": {
     "title": "Tamiya Acrylic Mini (X/XF)",
-    "description": "Akrylové barvy na bázi alkoholu. Velmi oblíbené pro svou univerzálnost a bezpečnost.",
-    "thinner": "Tamiya X-20A (akrylové) nebo Lacquer Thinner (pro airbrush).",
+    "codes": ["X", "XF"],
+    "description": "Akrylové barvy na bázi alkoholu. Velmi oblíbené pro svou univerzálnost. Ředitelné vodou (před zaschnutím).",
+    "thinner": "Tamiya X-20A (akrylové) nebo Tamiya Lacquer Thinner (pro hladší povrch).",
     "bestFor": "Štětec i airbrush, základní nátěry.",
-    "safety": "Nízký zápach, nehořlavé."
+    "safety": "Hořlavé (obsahuje alkohol), nízký zápach."
   },
-  "Lacquer": {
+  "lacquer": {
     "title": "Tamiya Lacquer Paint (LP)",
-    "description": "Syntetické laky pro extrémně hladký a tvrdý povrch. Ideální pro auta a metalízy.",
+    "codes": ["LP"],
+    "description": "Syntetické laky pro extrémně hladký a tvrdý povrch. Rychle schnou. Ideální pro auta a metalízy.",
     "thinner": "Tamiya Lacquer Thinner (žluté nebo oranžové víčko).",
     "bestFor": "Airbrush, vysoce lesklé povrchy.",
-    "safety": "Silný zápach, nutné větrání!"
+    "safety": "Silný zápach, vysoce hořlavé, nutné větrání!"
   },
-  "Enamel": {
+  "enamel": {
     "title": "Tamiya Enamel Paint (X/XF)",
-    "description": "Syntetické emailové barvy. Schnou pomalu, což umožňuje barvě se krásně slít.",
+    "codes": ["X", "XF"],
+    "description": "Syntetické emailové barvy. Schnou pomalu, což eliminuje tahy štětcem. Skvělé pro wash.",
     "thinner": "Tamiya X-20 Enamel Thinner.",
     "bestFor": "Detaily štětcem, figurky, weathering (wash).",
     "safety": "Hořlavina, střední zápach."
   },
-  "Primer": {
+  "primer": {
     "title": "Tamiya Surface Primer",
+    "codes": ["Liquid Surface Primer"],
     "description": "Základové barvy a tekuté tmely pro sjednocení povrchu a zajištění přilnavosti.",
     "thinner": "Tamiya Lacquer Thinner.",
     "bestFor": "První vrstva na plast nebo kov.",
-    "safety": "Silný zápach, pracujte v maskách."
+    "safety": "Silný zápach, hořlavé, pracujte v maskách."
   }
 }

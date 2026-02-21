@@ -49,6 +49,12 @@ const KitPaintsTab = ({ data, setData, allPaints, onQuickCreatePaint }) => {
                 p.code.toLowerCase().replace(/[\s\-\.]/g, "") === codeClean,
             );
 
+            // Pokus o detekci typu a specifikace podle prefixu kódu (např. "XF" z "XF-1")
+            const rawCode = paintVal.displayCode || key;
+            const seriesMatch = rawCode.match(/^([A-Za-z]+)/); // Vezme písmena na začátku (XF, C, H...)
+            const seriesPrefix = seriesMatch ? seriesMatch[1] : "";
+            const spec = PaintAPI.getSpecForSeries(brand.id, seriesPrefix);
+
             searchResults.push({
               ...paintVal,
               id: key, // Catalog ID (e.g. XF-1)
@@ -56,6 +62,8 @@ const KitPaintsTab = ({ data, setData, allPaints, onQuickCreatePaint }) => {
               brandName: brand.name,
               displayCode: paintVal.displayCode || key,
               localPaint: localPaint, // Pokud existuje, obsahuje ID a status z DB
+              detectedType: spec ? spec.type : null,
+              detectedThinner: spec ? spec.thinner : null,
             });
           }
           if (searchResults.length > 20) break;
@@ -81,11 +89,12 @@ const KitPaintsTab = ({ data, setData, allPaints, onQuickCreatePaint }) => {
         brand: res.brandId,
         code: res.displayCode,
         name: res.name,
-        type: res.type || "Akryl",
+        // Použijeme detekovaný typ ze specifikace, jinak fallback na "acrylic"
+        type: res.detectedType || res.type || "acrylic",
         finish: res.finish || "Matná",
         status: "wanted",
         hex: res.hex || "#999999",
-        thinner: res.thinner || "",
+        thinner: res.detectedThinner || res.thinner || "",
       };
       // Funkce vrátí ID nově vytvořené barvy
       paintIdToAdd = onQuickCreatePaint(newPaint);
@@ -175,7 +184,8 @@ const KitPaintsTab = ({ data, setData, allPaints, onQuickCreatePaint }) => {
                     </span>
                   </div>
                   <div className="text-[10px] text-slate-500">
-                    {res.brandName} • {res.type}
+                    {res.brandName}{" "}
+                    {res.detectedType ? `• ${res.detectedType}` : ""}
                   </div>
                 </div>
                 <div className="text-right shrink-0">
