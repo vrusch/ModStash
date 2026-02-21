@@ -6,7 +6,7 @@ import {
   ShoppingCart,
   Box,
   Cloud,
-  CloudCog,
+  Settings,
   Search,
   Filter,
   XCircle,
@@ -73,7 +73,7 @@ const AppHeader = ({
               onClick={() => setShowSettings(true)}
               className="bg-slate-700/50 hover:bg-slate-700 text-blue-300 p-2 rounded-full border border-blue-500/20"
             >
-              <CloudCog size={20} />
+              <Settings size={20} />
             </button>
             <button
               onClick={() => {

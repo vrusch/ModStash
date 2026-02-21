@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Box,
   ExternalLink,
@@ -9,6 +9,7 @@ import {
   ChevronUp,
   ImageOff,
   Check,
+  Copy,
 } from "lucide-react";
 import { FloatingInput, FloatingTextarea } from "../../ui/FormElements";
 import { Normalizer } from "../../../utils/normalizers";
@@ -33,7 +34,7 @@ const COMMON_SCALES = [
   "1/700",
 ];
 
-const KitInfoTab = ({ data, setData, projects }) => {
+const KitInfoTab = ({ data, setData, projects, allKits }) => {
   const [isScraping, setIsScraping] = useState(false);
   const [showMarkings, setShowMarkings] = useState(false);
   const [showMarketplace, setShowMarketplace] = useState(false);
@@ -58,6 +59,20 @@ const KitInfoTab = ({ data, setData, projects }) => {
     data.scale.length > 0 &&
     isScaleValid(data.scale) &&
     !COMMON_SCALES.includes(data.scale);
+
+  // Validace duplicit (Soft Warning)
+  const duplicateKit = useMemo(() => {
+    if (!data.brand || !data.catNum || !allKits) return null;
+
+    // Hledáme shodu: Stejný výrobce + Stejné kat. číslo
+    // A zároveň to nesmí být ten samý kit (pokud editujeme)
+    return allKits.find(
+      (k) =>
+        k.id !== data.id && // Ignorujeme sami sebe
+        k.brand.toLowerCase() === data.brand.toLowerCase() &&
+        k.catNum === data.catNum,
+    );
+  }, [data.brand, data.catNum, data.id, allKits]);
 
   const handleScrape = async () => {
     if (!data.scalematesUrl) return;
@@ -399,6 +414,41 @@ const KitInfoTab = ({ data, setData, projects }) => {
           </p>
         </div>
       </div>
+
+      {/* DUPLICATE WARNING */}
+      {duplicateKit && (
+        <div className="bg-yellow-500/10 border border-yellow-500/30 p-3 rounded-lg flex items-start gap-3 animate-in fade-in slide-in-from-top-2">
+          <div className="bg-yellow-500/20 p-2 rounded-full text-yellow-500 shrink-0">
+            <Copy size={16} />
+          </div>
+          <div>
+            <h4 className="text-sm font-bold text-yellow-500">
+              Možná duplicita
+            </h4>
+            <p className="text-xs text-yellow-200/80 mt-1">
+              Tento model už máte ve skladu:{" "}
+              <strong>
+                {duplicateKit.brand} {duplicateKit.subject}
+              </strong>{" "}
+              (Status:{" "}
+              {duplicateKit.status === "new"
+                ? "V kitníku"
+                : duplicateKit.status === "wip"
+                  ? "Na stole"
+                  : duplicateKit.status === "finished"
+                    ? "Hotovo"
+                    : duplicateKit.status === "wishlist"
+                      ? "V nákupním seznamu"
+                      : "Vrakoviště"}
+              ).
+            </p>
+            <p className="text-[10px] text-yellow-500/60 mt-2 italic">
+              Pokud je to záměr (např. druhý kus), můžete toto varování
+              ignorovat.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* SCALEMATES INTEGRATION */}
       <div className="bg-slate-800 p-3 rounded-xl border border-slate-700">

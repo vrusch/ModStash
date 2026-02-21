@@ -26,6 +26,7 @@ import ConfirmModal from "../ui/ConfirmModal";
  * @param {Function} props.onSave - Handler pro uložení modelu.
  * @param {Array} props.projects - Seznam projektů (pro přiřazení modelu).
  * @param {Array} props.allPaints - Seznam všech barev (pro výběr barev k modelu).
+ * @param {Array} props.allKits - Seznam všech modelů (pro detekci duplicit).
  * @param {Function} props.onQuickCreatePaint - Handler pro rychlé vytvoření chybějící barvy.
  * @param {string} [props.initialTab] - Počáteční aktivní záložka (default: "info").
  * @returns {JSX.Element}
@@ -36,6 +37,7 @@ const KitDetailModal = ({
   onSave,
   projects,
   allPaints,
+  allKits,
   onQuickCreatePaint,
   initialTab = "info",
 }) => {
@@ -179,7 +181,12 @@ const KitDetailModal = ({
             className={`flex-1 p-0 bg-slate-900 ${activeTab === "paints" ? "overflow-hidden flex flex-col" : "overflow-y-auto"}`}
           >
             {activeTab === "info" && (
-              <KitInfoTab data={data} setData={setData} projects={projects} />
+              <KitInfoTab
+                data={data}
+                setData={setData}
+                projects={projects}
+                allKits={allKits}
+              />
             )}
             {activeTab === "paints" && (
               <KitPaintsTab

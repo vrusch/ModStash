@@ -17,6 +17,7 @@ import {
   Lock,
   Sparkles,
   ShieldAlert,
+  Search,
 } from "lucide-react";
 import {
   FloatingInput,
@@ -119,6 +120,11 @@ const PaintDetailModal = ({
   const [suggestionSelected, setSuggestionSelected] = useState(false);
   const [confirmConfig, setConfirmConfig] = useState(null);
 
+  // Omnibox / Global Search States
+  const [omniboxQuery, setOmniboxQuery] = useState("");
+  const [omniboxResults, setOmniboxResults] = useState([]);
+  const [isManualEntry, setIsManualEntry] = useState(false);
+
   // Stav pro přidávání do mixu
   const [newMixPart, setNewMixPart] = useState({ paintId: "", ratio: 1 });
 
@@ -155,6 +161,54 @@ const PaintDetailModal = ({
     }
   }, [currentSpec, isEditMode]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // D0) GLOBAL OMNIBOX SEARCH (Prohledává všechny značky)
+  useEffect(() => {
+    if (isEditMode || isManualEntry || data.isMix || omniboxQuery.length < 2) {
+      setOmniboxResults([]);
+      return;
+    }
+
+    const query = omniboxQuery.toLowerCase().replace(/[\s\-\.]/g, "");
+    const results = [];
+    const brands = PaintAPI.getManufacturers();
+
+    // Projdeme všechny značky a jejich barvy
+    for (const brand of brands) {
+      const paints = PaintAPI.getBrandPaints(brand.id);
+      if (!paints) continue;
+
+      for (const [key, paintVal] of Object.entries(paints)) {
+        const codeClean = (paintVal.displayCode || key)
+          .toLowerCase()
+          .replace(/[\s\-\.]/g, "");
+        const nameClean = (paintVal.name || "").toLowerCase();
+
+        if (codeClean.includes(query) || nameClean.includes(query)) {
+          const owned = existingPaints.find(
+            (p) =>
+              p.brand.toLowerCase() === brand.id.toLowerCase() &&
+              p.code.toLowerCase().replace(/[\s\-\.]/g, "") === codeClean,
+          );
+
+          results.push({
+            ...paintVal,
+            id: key, // Klíč z JSONu (např. XF-1)
+            brandName: brand.name, // Display name značky
+            brandId: brand.id, // ID značky
+            displayCode: paintVal.displayCode || key,
+            owned: !!owned,
+            ownedStatus: owned?.status,
+          });
+        }
+        // Optimalizace: Max 5 výsledků na značku, celkem max 20
+        if (results.length > 50) break;
+      }
+      if (results.length > 20) break;
+    }
+
+    setOmniboxResults(results);
+  }, [omniboxQuery, isEditMode, isManualEntry, data.isMix, existingPaints]);
+
   // D) NAŠEPTÁVAČ (Autocomplete)
   useEffect(() => {
     // Našeptáváme jen pro: Novou barvu, Není Mix, Máme značku, Píšeme kód
@@ -163,6 +217,7 @@ const PaintDetailModal = ({
       data.brand &&
       data.code &&
       !isEditMode &&
+      isManualEntry && // Jen v manuálním režimu
       !suggestionSelected
     ) {
       const searchCode = data.code.toUpperCase().replace(/[\s\-\.]/g, "");
@@ -198,6 +253,7 @@ const PaintDetailModal = ({
     isEditMode,
     data.isMix,
     suggestionSelected,
+    isManualEntry,
   ]);
 
   // E) VALIDACE DUPLICIT (jen u nové barvy, abychom nepřidali to samé dvakrát)
@@ -286,6 +342,21 @@ const PaintDetailModal = ({
   }, [data.mixParts, data.isMix, existingPaints]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // --- 3. HANDLERS ---
+
+  const handleSelectOmniboxResult = (result) => {
+    setData({
+      ...data,
+      brand: result.brandId,
+      code: result.displayCode,
+      name: result.name,
+      type: result.type || "Akryl",
+      finish: result.finish || "Matná",
+      hex: result.hex || data.hex,
+      thinner: result.thinner || "",
+    });
+    setOmniboxQuery("");
+    setIsManualEntry(true); // Přepneme do "manuálního" zobrazení (formulář), ale už vyplněného
+  };
 
   const handleSelectSuggestion = ([key, val]) => {
     const newData = {
@@ -454,7 +525,7 @@ const PaintDetailModal = ({
             {/* REŽIM EDITACE: ZAMČENO */}
             {isEditMode ? (
               <div className="bg-slate-950 p-3 rounded-lg border border-slate-800 flex flex-col gap-2">
-                <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase">
+                <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
                   <Lock size={12} /> Identifikace produktu (Fixní)
                 </div>
                 <div className="flex items-center gap-3">
@@ -484,7 +555,7 @@ const PaintDetailModal = ({
               <>
                 {/* Přepínač Mix - viditelný jen u nové barvy nebo když už to je mix */}
                 {(!isEditMode || data.isMix) && (
-                  <div
+                  <button
                     className={`flex items-center gap-2 mb-2 p-2 bg-slate-800/50 rounded border border-slate-700 transition-colors ${
                       isEditMode
                         ? "opacity-50 cursor-default"
@@ -512,13 +583,96 @@ const PaintDetailModal = ({
                     <span
                       className={`text-sm font-bold ${data.isMix ? "text-purple-400" : "text-slate-400"}`}
                     >
-                      🧪 Vlastní Mix / Míchaná barva
+                      🧪 Vytvořit vlastní Mix (Míchaná barva)
                     </span>
+                  </button>
+                )}
+
+                {/* OMNIBOX SEARCH (Výchozí stav pro novou barvu) */}
+                {!data.isMix && !isManualEntry && (
+                  <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                        <Search className="text-slate-500" size={20} />
+                      </div>
+                      <input
+                        autoFocus
+                        type="text"
+                        className="w-full bg-slate-950 border border-blue-500/50 rounded-xl py-4 pl-10 pr-4 text-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-xl"
+                        placeholder="Hledat barvu (např. XF-1, Gunze Black)..."
+                        value={omniboxQuery}
+                        onChange={(e) => setOmniboxQuery(e.target.value)}
+                      />
+                      {/* Omnibox Results Dropdown */}
+                      {omniboxResults.length > 0 && (
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-50 overflow-hidden ring-1 ring-white/10 max-h-64 overflow-y-auto">
+                          {omniboxResults.map((res) => (
+                            <button
+                              key={`${res.brandId}-${res.id}`}
+                              onClick={() => handleSelectOmniboxResult(res)}
+                              className="w-full text-left p-3 hover:bg-blue-600/20 hover:text-blue-100 border-b border-slate-800 last:border-0 flex items-center gap-3 group transition-colors"
+                            >
+                              <div
+                                className="w-6 h-6 rounded shadow-sm border border-slate-600 shrink-0"
+                                style={{ backgroundColor: res.hex || "#000" }}
+                              />
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-bold text-white group-hover:text-blue-300">
+                                    {res.displayCode}
+                                  </span>
+                                  <span className="text-slate-400 text-xs truncate group-hover:text-blue-200">
+                                    {res.name}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="text-right shrink-0">
+                                <span className="block text-[10px] font-bold text-slate-500 uppercase group-hover:text-blue-300">
+                                  {res.brandName}
+                                </span>
+                                <span className="block text-[9px] text-slate-600 group-hover:text-blue-400">
+                                  {res.type}
+                                </span>
+                                {res.owned && (
+                                  <span className="block text-[9px] font-bold text-emerald-500 mt-0.5">
+                                    {res.ownedStatus === "in_stock"
+                                      ? "✅ SKLADEM"
+                                      : "🛒 V SEZNAMU"}
+                                  </span>
+                                )}
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="text-center">
+                      <span className="text-xs text-slate-500">nebo</span>
+                      <button
+                        onClick={() => setIsManualEntry(true)}
+                        className="ml-2 text-xs font-bold text-blue-400 hover:underline"
+                      >
+                        Zadat ručně (pokud není v katalogu)
+                      </button>
+                    </div>
                   </div>
                 )}
 
-                {!data.isMix && (
+                {/* MANUAL ENTRY FORM (Zobrazí se po výběru nebo kliknutí na "Zadat ručně") */}
+                {!data.isMix && isManualEntry && (
                   <div className="space-y-3 animate-in slide-in-from-top-2">
+                    <div className="flex justify-end">
+                      <button
+                        onClick={() => {
+                          setIsManualEntry(false);
+                          setOmniboxQuery("");
+                        }}
+                        className="text-[10px] text-slate-500 hover:text-white flex items-center gap-1"
+                      >
+                        <Search size={10} /> Zpět na vyhledávání
+                      </button>
+                    </div>
                     <div className="flex gap-3">
                       <div className="flex-1 relative">
                         <label className="absolute -top-2 left-2 px-1 bg-slate-900 text-[10px] font-bold z-10 text-blue-400">

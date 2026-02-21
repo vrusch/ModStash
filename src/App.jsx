@@ -594,6 +594,7 @@ export default function App() {
           kit={activeKit}
           projects={projects}
           allPaints={paints}
+          allKits={kits}
           onQuickCreatePaint={quickCreatePaint}
           onClose={() => setActiveKit(null)}
           onSave={(d) => saveItem("kits", d, isNewKit)}
