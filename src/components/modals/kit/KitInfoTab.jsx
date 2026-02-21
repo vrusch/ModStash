@@ -8,6 +8,7 @@ import {
   ChevronDown,
   ChevronUp,
   ImageOff,
+  Check,
 } from "lucide-react";
 import { FloatingInput, FloatingTextarea } from "../../ui/FormElements";
 import { Normalizer } from "../../../utils/normalizers";
@@ -38,6 +39,10 @@ const KitInfoTab = ({ data, setData, projects }) => {
   const [showMarketplace, setShowMarketplace] = useState(false);
   const [brandSuggestions, setBrandSuggestions] = useState([]);
   const [showBrandSuggestions, setShowBrandSuggestions] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const [scaleSuggestions, setScaleSuggestions] = useState([]);
+  const [showScaleSuggestions, setShowScaleSuggestions] = useState(false);
+  const [highlightedScaleIndex, setHighlightedScaleIndex] = useState(0);
 
   const isScaleValid = (s) => !s || /^\d+\/\d+$/.test(s);
 
@@ -108,6 +113,7 @@ const KitInfoTab = ({ data, setData, projects }) => {
     const val = e.target.value;
     // Ponecháme normalizaci pro ruční psaní, ale našeptávač nabídne správný tvar z JSONu
     setData({ ...data, brand: Normalizer.brand(val) });
+    setHighlightedIndex(0);
 
     if (val.length > 0) {
       const lowerVal = val.toLowerCase();
@@ -121,7 +127,7 @@ const KitInfoTab = ({ data, setData, projects }) => {
           if (!aStarts && bStarts) return 1;
           return a.localeCompare(b);
         })
-        .slice(0, 8); // Max 8 návrhů
+        .slice(0, 6); // Max 6 návrhů
       setBrandSuggestions(matches);
       setShowBrandSuggestions(matches.length > 0);
     } else {
@@ -132,6 +138,67 @@ const KitInfoTab = ({ data, setData, projects }) => {
   const selectBrand = (brand) => {
     setData((prev) => ({ ...prev, brand }));
     setShowBrandSuggestions(false);
+  };
+
+  const handleKeyDown = (e) => {
+    if (!showBrandSuggestions) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlightedIndex((prev) =>
+        prev < brandSuggestions.length - 1 ? prev + 1 : 0,
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlightedIndex((prev) =>
+        prev > 0 ? prev - 1 : brandSuggestions.length - 1,
+      );
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (brandSuggestions[highlightedIndex]) {
+        selectBrand(brandSuggestions[highlightedIndex]);
+      }
+    } else if (e.key === "Escape") {
+      setShowBrandSuggestions(false);
+    }
+  };
+
+  const handleScaleChange = (e) => {
+    const val = e.target.value;
+    setData({ ...data, scale: val });
+    setHighlightedScaleIndex(0);
+
+    const matches = COMMON_SCALES.filter((s) => s.includes(val));
+    setScaleSuggestions(matches);
+    setShowScaleSuggestions(matches.length > 0);
+  };
+
+  const selectScale = (scale) => {
+    setData((prev) => ({ ...prev, scale }));
+    setShowScaleSuggestions(false);
+  };
+
+  const handleScaleKeyDown = (e) => {
+    if (!showScaleSuggestions) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlightedScaleIndex((prev) =>
+        prev < scaleSuggestions.length - 1 ? prev + 1 : 0,
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlightedScaleIndex((prev) =>
+        prev > 0 ? prev - 1 : scaleSuggestions.length - 1,
+      );
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (scaleSuggestions[highlightedScaleIndex]) {
+        selectScale(scaleSuggestions[highlightedScaleIndex]);
+      }
+    } else if (e.key === "Escape") {
+      setShowScaleSuggestions(false);
+    }
   };
 
   return (
@@ -173,6 +240,7 @@ const KitInfoTab = ({ data, setData, projects }) => {
                 onBlur={() =>
                   setTimeout(() => setShowBrandSuggestions(false), 200)
                 }
+                onKeyDown={handleKeyDown}
                 placeholder="Kinetic"
                 labelColor={
                   isUnknownBrand ? "text-yellow-500" : "text-blue-400"
@@ -181,19 +249,39 @@ const KitInfoTab = ({ data, setData, projects }) => {
                 autoComplete="off"
               />
               {showBrandSuggestions && (
-                <div className="absolute top-full left-0 right-0 bg-slate-800 border border-slate-600 rounded-lg mt-1 z-50 shadow-xl max-h-48 overflow-y-auto animate-in fade-in zoom-in-95">
-                  {brandSuggestions.map((brand) => (
-                    <div
-                      key={brand}
-                      onMouseDown={(e) => {
-                        e.preventDefault();
-                        selectBrand(brand);
-                      }}
-                      className="p-2 hover:bg-blue-600/20 hover:text-blue-300 cursor-pointer text-xs text-slate-300 border-b border-slate-700/50 last:border-0 transition-colors"
-                    >
-                      {brand}
-                    </div>
-                  ))}
+                <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-50 overflow-hidden ring-1 ring-white/10 animate-in fade-in zoom-in-95">
+                  <div className="max-h-60 overflow-y-auto p-2">
+                    {brandSuggestions.map((brand, index) => (
+                      <div
+                        key={brand}
+                        onMouseDown={(e) => {
+                          e.preventDefault(); // Zabrání ztrátě fokusu inputu (blur)
+                          selectBrand(brand);
+                        }}
+                        onMouseEnter={() => setHighlightedIndex(index)}
+                        className={`
+                          group flex items-center justify-between px-3 py-2 rounded-lg text-xs cursor-pointer transition-all mb-1 last:mb-0
+                          ${
+                            index === highlightedIndex
+                              ? "bg-blue-600 text-white shadow-md"
+                              : "text-slate-300 hover:bg-slate-800"
+                          }
+                        `}
+                      >
+                        <span className="font-medium">{brand}</span>
+                        {data.brand === brand && (
+                          <Check
+                            size={16}
+                            className={
+                              index === highlightedIndex
+                                ? "text-white"
+                                : "text-blue-500"
+                            }
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
               {isUnknownBrand && !showBrandSuggestions && (
@@ -207,10 +295,17 @@ const KitInfoTab = ({ data, setData, projects }) => {
                 className="w-full"
                 label="Měřítko *"
                 value={data.scale || ""}
-                onChange={(e) => setData({ ...data, scale: e.target.value })}
-                onFocus={(e) =>
-                  !data.scale && setData({ ...data, scale: "1/" })
+                onChange={handleScaleChange}
+                onFocus={(e) => {
+                  const val = data.scale || "";
+                  const matches = COMMON_SCALES.filter((s) => s.includes(val));
+                  setScaleSuggestions(matches);
+                  setShowScaleSuggestions(true);
+                }}
+                onBlur={() =>
+                  setTimeout(() => setShowScaleSuggestions(false), 200)
                 }
+                onKeyDown={handleScaleKeyDown}
                 placeholder="1/48"
                 labelColor={
                   !isScaleValid(data.scale)
@@ -226,9 +321,44 @@ const KitInfoTab = ({ data, setData, projects }) => {
                       ? "border-yellow-500/50"
                       : ""
                 }
-                list="common-scales"
                 autoComplete="off"
               />
+              {showScaleSuggestions && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-50 overflow-hidden ring-1 ring-white/10 animate-in fade-in zoom-in-95 min-w-[100px]">
+                  <div className="max-h-60 overflow-y-auto p-2">
+                    {scaleSuggestions.map((scale, index) => (
+                      <div
+                        key={scale}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          selectScale(scale);
+                        }}
+                        onMouseEnter={() => setHighlightedScaleIndex(index)}
+                        className={`
+                          group flex items-center justify-between px-3 py-2 rounded-lg text-xs cursor-pointer transition-all mb-1 last:mb-0
+                          ${
+                            index === highlightedScaleIndex
+                              ? "bg-blue-600 text-white shadow-md"
+                              : "text-slate-300 hover:bg-slate-800"
+                          }
+                        `}
+                      >
+                        <span className="font-medium">{scale}</span>
+                        {data.scale === scale && (
+                          <Check
+                            size={14}
+                            className={
+                              index === highlightedScaleIndex
+                                ? "text-white"
+                                : "text-blue-500"
+                            }
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               {isUnknownScale && (
                 <div className="absolute top-full left-0 mt-1 text-[10px] text-yellow-500 font-bold animate-in fade-in z-10 pointer-events-none whitespace-nowrap">
                   ⚠️ Atypické

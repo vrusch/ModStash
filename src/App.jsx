@@ -14,8 +14,6 @@ import {
   X,
 } from "lucide-react";
 import { useRegisterSW } from "virtual:pwa-register/react";
-import brandsData from "./data/brands.json";
-import masterCatalog from "./data/catalog.json";
 import ConfirmModal from "./components/ui/ConfirmModal";
 import { AppLogo } from "./components/ui/Icons";
 import KitCard from "./components/cards/KitCard";
@@ -38,8 +36,6 @@ import AppHeader from "./components/layout/AppHeader";
 
 //const APP_VERSION = "v2.29.9-refactoring-phase 6";
 
-const BRANDS = brandsData;
-const MASTER_CATALOG = masterCatalog;
 const APP_VERSION = import.meta.env.PACKAGE_VERSION || "Dev";
 
 // ==========================================
@@ -551,7 +547,6 @@ export default function App() {
           activeUid={activeUid}
           onSetManualId={setManualDataUid}
           appVersion={APP_VERSION}
-          masterCatalog={MASTER_CATALOG}
           onCheckUpdates={handleManualUpdateCheck}
         />
       )}

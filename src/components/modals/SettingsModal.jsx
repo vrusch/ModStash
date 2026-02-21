@@ -42,7 +42,6 @@ const SettingsModal = ({
   onClose,
   activeUid,
   onSetManualId,
-  masterCatalog,
   onCheckUpdates,
 }) => {
   const [copied, setCopied] = useState(false);
