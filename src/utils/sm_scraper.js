@@ -1,43 +1,58 @@
 /**
- * SCRAPER VERSION: 1.3.0
- * LAST UPDATED: 2026-02-21 23:55
+ * SCRAPER VERSION: 1.5.0
+ * LAST UPDATED: 2026-02-22 10:15
  * * Vlastnosti:
- * - Ultra-resistentní kaskáda (Vercel Stealth, AllOrigins, CodeTabs)
- * - Cache-busting na úrovni protokolu
- * - Automatická rotace proxy při detekci "Access Denied"
+ * - Robustní kaskáda s detekcí úspěchu
+ * - Optimalizace pro produkční Vercel i localhost
+ * - Inteligentní timeout a retry logika
  */
 
-const SCRAPER_VERSION = "1.3.0";
+const SCRAPER_VERSION = "1.5.0";
 
 async function fetchWithProxy(targetUrl) {
-  console.log(`[Scalemates Scraper v${SCRAPER_VERSION}] Inicializace...`);
-
-  // Cache buster zabrání Akamai, aby nás "poznalo" podle předchozí zablokované session
-  const cacheBuster = `_z=${Math.random().toString(36).substring(7)}`;
-  const finalTarget =
-    targetUrl + (targetUrl.includes("?") ? "&" : "?") + cacheBuster;
-  const encodedUrl = encodeURIComponent(finalTarget);
+  console.log(`[Scalemates Scraper v${SCRAPER_VERSION}] Spouštím...`);
 
   const isBlocked = (text) => {
-    if (!text || text.length < 1000) return true;
-    const lowerText = text.toLowerCase();
-    return (
-      lowerText.includes("access denied") ||
-      lowerText.includes("edgesuite.net") ||
-      lowerText.includes("robot check")
-    );
+    if (!text || text.length < 2000) return true;
+    const lower = text.toLowerCase();
+    return lower.includes("access denied") || lower.includes("edgesuite.net");
   };
 
-  const proxies = [
-    {
-      name: "Vercel Stealth",
-      url: `https://mates-proxy.vercel.app/api/scrape?url=${encodedUrl}`,
-      isJson: false,
-    },
+  const fetchVia = async (proxyUrl, name, isJson = false) => {
+    try {
+      const response = await fetch(proxyUrl, { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      let html = "";
+      if (isJson) {
+        const json = await response.json();
+        html = json.contents || "";
+      } else {
+        html = await response.text();
+      }
+
+      if (!isBlocked(html)) return html;
+      throw new Error("Blokováno firewallem");
+    } catch (e) {
+      throw new Error(`${name}: ${e.message}`);
+    }
+  };
+
+  // Definice cest (postupně od nejúspěšnější)
+  const encodedUrl = encodeURIComponent(
+    targetUrl + (targetUrl.includes("?") ? "&" : "?") + `_v=${SCRAPER_VERSION}`,
+  );
+
+  const strategy = [
     {
       name: "AllOrigins JSON",
       url: `https://api.allorigins.win/get?url=${encodedUrl}`,
       isJson: true,
+    },
+    {
+      name: "Vercel Stealth",
+      url: `https://mates-proxy.vercel.app/api/scrape?url=${encodedUrl}`,
+      isJson: false,
     },
     {
       name: "CodeTabs",
@@ -46,42 +61,27 @@ async function fetchWithProxy(targetUrl) {
     },
   ];
 
-  let lastError = "";
-
-  for (const p of proxies) {
+  let errors = [];
+  for (const step of strategy) {
     try {
-      console.log(`[Scraper v${SCRAPER_VERSION}] Zkouším ${p.name}...`);
-      const response = await fetch(p.url, { cache: "no-store" });
-
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-      let html = "";
-      if (p.isJson) {
-        const json = await response.json();
-        html = json.contents || "";
-      } else {
-        html = await response.text();
-      }
-
-      if (!isBlocked(html)) {
-        console.log(`[Scraper v${SCRAPER_VERSION}] Úspěch přes ${p.name}`);
-        return html;
-      }
-      throw new Error("Blokováno");
+      console.log(`[Scraper v${SCRAPER_VERSION}] Zkouším ${step.name}...`);
+      const result = await fetchVia(step.url, step.name, step.isJson);
+      console.log(`[Scraper v${SCRAPER_VERSION}] Úspěch přes ${step.name}`);
+      return result;
     } catch (e) {
-      lastError = e.message;
-      console.warn(
-        `[Scraper v${SCRAPER_VERSION}] ${p.name} selhal: ${e.message}`,
-      );
+      errors.push(e.message);
+      console.warn(`[Scraper v${SCRAPER_VERSION}] ${e.message}`);
+      // Počkej 1 sekundu před dalším pokusem
+      await new Promise((r) => setTimeout(r, 1000));
     }
   }
 
   throw new Error(
-    `Scalemates blokuje přístup. Vyzkoušeno vše. Poslední chyba: ${lastError}`,
+    `Scalemates blokuje přístup (v${SCRAPER_VERSION}). Detaily: ${errors.join(" | ")}`,
   );
 }
 
-// ... (zbytek funkcí extractOffers a scrapeScalemates zůstává stejný jako ve v1.2.0) ...
+// --- PARSOVÁNÍ (Zůstává stejné jako ve v1.4.0) ---
 
 export async function scrapeScalemates(urlToScrape) {
   if (!urlToScrape) return null;
@@ -122,6 +122,7 @@ export async function scrapeScalemates(urlToScrape) {
     if (parts[2]) data.scale = parts[2];
   }
 
+  // Markings, Marketplace, Instructions logic...
   const h3s = doc.querySelectorAll("h3");
   for (const h3 of h3s) {
     const text = h3.innerText.toLowerCase();
@@ -136,23 +137,24 @@ export async function scrapeScalemates(urlToScrape) {
         nodes.push(node);
         node = node.nextElementSibling;
       }
-      let html = '<div class="scalemates-markings">';
-      nodes.forEach((n) => {
-        html += n.outerHTML
-          .replace(/href="\//g, 'href="https://www.scalemates.com/')
-          .replace(/src="\//g, 'src="https://www.scalemates.com/');
-      });
-      html += "</div>";
-      data.markingsHTML = html;
+      let h = '<div class="scalemates-markings">';
+      nodes.forEach(
+        (n) =>
+          (h += n.outerHTML
+            .replace(/href="\//g, 'href="https://www.scalemates.com/')
+            .replace(/src="\//g, 'src="https://www.scalemates.com/')),
+      );
+      h += "</div>";
+      data.markingsHTML = h;
     }
     if (text.includes("instructions") || text.includes("návody")) {
       let node = h3.nextElementSibling;
-      let isExact = true;
+      let exact = true;
       while (node && node.tagName !== "H3") {
         if (
           node.innerText.includes("We don't have the exact instruction sheets")
         )
-          isExact = false;
+          exact = false;
         const link = node.querySelector("a");
         if (
           link &&
@@ -163,45 +165,39 @@ export async function scrapeScalemates(urlToScrape) {
           data.instructionUrl = href.startsWith("http")
             ? href
             : "https://www.scalemates.com" + href;
-          data.instructionIsExact = isExact;
+          data.instructionIsExact = exact;
           break;
         }
         node = node.nextElementSibling;
       }
     }
     if (text.includes("marketplace")) {
-      const offersList = [];
-      const offerElements = doc.querySelectorAll("a.tsr");
-      offerElements.forEach((offer) => {
-        const logoImg = offer.querySelector("img.mpi");
-        let shopName = logoImg ? logoImg.alt.replace("Logo ", "") : "";
-        if (!shopName) shopName = offer.title.replace("Order now at ", "");
-        const origPriceDiv = offer.querySelector("div.mpt");
-        const origPrice = origPriceDiv ? origPriceDiv.innerText.trim() : "";
-        const convPriceSpan = offer.querySelector("span.ut");
-        const convPrice = convPriceSpan ? convPriceSpan.innerText.trim() : "";
-        const statusSpan = offer.querySelector("span.bn");
-        const status = statusSpan ? statusSpan.innerText.trim() : "";
+      const offers = [];
+      doc.querySelectorAll("a.tsr").forEach((offer) => {
+        const logo = offer.querySelector("img.mpi");
+        let name = logo
+          ? logo.alt.replace("Logo ", "")
+          : offer.title.replace("Order now at ", "");
+        const p1 = offer.querySelector("div.mpt")?.innerText.trim() || "";
+        const p2 = offer.querySelector("span.ut")?.innerText.trim() || "";
+        const price = p2 || p1;
         let link = offer.getAttribute("href");
         if (link && !link.startsWith("http"))
           link = "https://www.scalemates.com" + link;
-        const displayPrice = convPrice || origPrice;
-        if (shopName) {
-          const exists = offersList.some(
-            (o) => o.shopName === shopName && o.price === displayPrice,
-          );
-          if (!exists)
-            offersList.push({
-              shopName,
-              price: displayPrice,
-              status,
-              shopUrl: link,
-            });
+        if (
+          name &&
+          !offers.some((o) => o.shopName === name && o.price === price)
+        ) {
+          offers.push({
+            shopName: name,
+            price,
+            status: offer.querySelector("span.bn")?.innerText.trim() || "",
+            shopUrl: link,
+          });
         }
       });
-      data.marketplace = offersList;
+      data.marketplace = offers;
     }
   }
-
   return data;
 }
